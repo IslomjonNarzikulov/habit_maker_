@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/Screens/Analytics.dart';
-import 'package:habit_maker/Screens/DailyPage.dart';
-import 'package:habit_maker/Screens/Settings.dart';
-import 'package:habit_maker/Screens/Weekly.dart';
-import 'package:habit_maker/Screens/profile.dart';
 import 'package:habit_maker/login/signIn.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
+import '../analytics/analytics.dart';
+import '../daily_page/daily_page.dart';
+import '../profile/profile.dart';
+import '../settings/settings.dart';
+import '../weekly/weekly.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,13 +20,13 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     DailyPage(),
-    OverAll(),
+    Weekly(),
     AnalyticsPage(),
   ];
 
   @override
   void initState() {
-    provider = context.read<HabitProvider>();
+    provider =  Provider.of<HabitProvider>(context,listen: false);
     provider.loadHabits();
     super.initState();
   }
@@ -77,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.logout),
               title: const Text('Log out'),
               onTap: () {
-                provider.removeToken();
                 Navigator.push(
                   context,
                   MaterialPageRoute(

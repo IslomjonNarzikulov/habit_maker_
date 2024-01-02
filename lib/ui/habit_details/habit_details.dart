@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/Screens/CreateHabit.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '../create_habit/create_habit.dart';
+
+
 
 class HabitDetails extends StatefulWidget {
   final HabitModel item;
@@ -20,7 +23,7 @@ class _HabitDetailsState extends State<HabitDetails> {
   @override
   void initState() {
     super.initState();
-    provider = context.read<HabitProvider>();
+    provider =  Provider.of<HabitProvider>(context,listen: false);
   }
 
   DateTime today = DateTime.now();
@@ -31,12 +34,19 @@ class _HabitDetailsState extends State<HabitDetails> {
     return Consumer <HabitProvider>(
       builder: (BuildContext context, HabitProvider value, Widget? child) => Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.black,
             title: Text(widget.item.title!),
             actions: [
               IconButton(
                 onPressed: () {
-                  deleteHabit();
+                  provider.deleteHabits(widget.item.id!);
+                  Navigator.pop(context);
+                  final filtered = provider.habits
+                      .where((element) => element.id == widget.item.id)
+                      .toList();
+                  setState(() {
+                    provider.habits = filtered;
+                  });
                 },
                 icon: const Icon(Icons.delete),
               ),
@@ -87,24 +97,6 @@ class _HabitDetailsState extends State<HabitDetails> {
           ),
       )
     );
-  }
-
-  Future<void> deleteHabit() async {
-    final isSuccess = await provider.deleteHabits(widget.item.id!);
-    if (isSuccess) {
-      Navigator.pop(context);
-
-      final filtered = provider.habits
-          .where((element) => element.id == widget.item.id)
-          .toList();
-      setState(() {
-        provider.habits = filtered;
-      });
-
-      print('Deletion Success');
-    } else {
-      print('Deletion failed');
-    }
   }
 
   Future<void> navigateToUpdatePage(HabitModel habitModel) async {

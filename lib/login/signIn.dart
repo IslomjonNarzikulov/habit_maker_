@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/Screens/Home.dart';
-import 'package:habit_maker/login/sign_in_controller.dart';
+import 'package:habit_maker/login/sign_in_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../UI/home/home.dart';
+import '../ui/signup/signUp.dart';
 
 class SignInPage extends StatefulWidget {
   SignInPage({super.key});
@@ -11,19 +13,12 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  late SignInController signinController;
+  late SignInProvider signInProvider;
 
   @override
   void initState() {
     super.initState();
-    signinController = Provider.of<SignInController>(context, listen: false);
-    signinController.resolveNavigation(() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
-      );
-    });
+    signInProvider = Provider.of<SignInProvider>(context, listen: false);
   }
 
   @override
@@ -48,9 +43,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: h * 0.16,
-                  ),
+                  SizedBox(height: h * 0.16),
                 ],
               ),
             ),
@@ -65,40 +58,41 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                              blurRadius: 10,
-                              spreadRadius: 7,
-                              offset: const Offset(1, 1),
-                              color: Colors.grey.withOpacity(0.2))
-                        ]),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 10,
+                          spreadRadius: 7,
+                          color: Colors.grey.withOpacity(0.2),
+                        ),
+                      ],
+                    ),
                     child: TextField(
                       style: const TextStyle(color: Colors.black),
                       controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                          hintText: "Email",
-                          hintStyle: const TextStyle(
-                            color: Colors.black,
-                          ),
-                          prefixIcon: const Icon(
-                            Icons.email,
-                            color: Colors.deepOrange,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 1.0)),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 1.0)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30))),
+                        hintText: "Email",
+                        hintStyle: const TextStyle(color: Colors.black),
+                        prefixIcon: const Icon(
+                          Icons.mail,
+                          color: Colors.deepOrange,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
                     ),
                   ),
+
                   const SizedBox(
                     height: 20,
                   ),
@@ -117,22 +111,26 @@ class _SignInPageState extends State<SignInPage> {
                       controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
-                          hintText: "Password",
-                          hintStyle: const TextStyle(color: Colors.black),
-                          prefixIcon: const Icon(
-                            Icons.password,
-                            color: Colors.deepOrange,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 1.0)),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 1.0)),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30))),
+                        hintText: "Password",
+                        hintStyle: const TextStyle(color: Colors.black),
+                        prefixIcon: const Icon(
+                          Icons.lock_clock_outlined,
+                          color: Colors.deepOrange,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -148,14 +146,13 @@ class _SignInPageState extends State<SignInPage> {
               onPressed: () {
                 var username = emailController.text;
                 var password = passwordController.text;
-                signinController.signIn(username, password, () {
+                signInProvider.signIn(username, password, () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (contex) => const HomeScreen(),
+                      builder: (context) => const HomeScreen(),
                     ),
                   );
-                }, () {}
-                );
+                }, () {});
               },
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.7,
@@ -171,12 +168,19 @@ class _SignInPageState extends State<SignInPage> {
             const SizedBox(
               height: 12,
             ),
-            RichText(
-                text: TextSpan(
-              //recognizer: TapGestureRecognizer()..onTap=()=>Get.back(),
-              text: "Have an account?",
-              style: TextStyle(fontSize: 20, color: Colors.grey[500]),
-            )),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => SignUp(),
+                  ),
+                );
+              },
+              child: const Text(
+                'Register now',
+                style: TextStyle(color: Colors.blueAccent, fontSize: 20),
+              ),
+            ),
             const SizedBox(
               height: 80,
             ),

@@ -3,62 +3,53 @@
 
 class LoginResponse {
   LoginResponse({
-      User? user, 
-      Token? token,}){
+    User? user,
+    Token? token,
+  }) {
     _user = user;
     _token = token;
-}
+  }
 
   LoginResponse.fromJson(dynamic json) {
     _user = json['user'] != null ? User.fromJson(json['user']) : null;
     _token = json['token'] != null ? Token.fromJson(json['token']) : null;
   }
+
   User? _user;
   Token? _token;
-LoginResponse copyWith({  User? user,
-  Token? token,
-}) => LoginResponse(  user: user ?? _user,
-  token: token ?? _token,
-);
+  LoginResponse copyWith({
+    User? user,
+    Token? token,
+  }) =>
+      LoginResponse(
+        user: user ?? _user,
+        token: token ?? _token,
+      );
   User? get user => _user;
   Token? get token => _token;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    if (_user != null) {
-      map['user'] = _user?.toJson();
-    }
-    if (_token != null) {
-      map['token'] = _token?.toJson();
-    }
-    return map;
-  }
-
 }
 
 /// accessToken : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZkM2M1MmZkLWRjNGYtNDk5Yy05NWI5LTYyOTRiM2NiNDZkNiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMTE0NzU4LCJleHAiOjE3MDAxMjU1NTh9.83v5QKKGL6Su9STkRqWIxeqjzyYQWLR_bayQfkRcuQA"
 
 class Token {
   Token({
-      String? accessToken,}){
+    String? accessToken,
+    String? refreshToken,
+  }) {
     _accessToken = accessToken;
-}
+    _refreshToken = refreshToken;
+  }
 
   Token.fromJson(dynamic json) {
     _accessToken = json['accessToken'];
+    _refreshToken = json['refreshToken'];
   }
+
   String? _accessToken;
-Token copyWith({  String? accessToken,
-}) => Token(  accessToken: accessToken ?? _accessToken,
-);
+  String? _refreshToken;
+
   String? get accessToken => _accessToken;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['accessToken'] = _accessToken;
-    return map;
-  }
-
+  String? get refreshToken => _refreshToken;
 }
 
 /// id : "fd3c52fd-dc4f-499c-95b9-6294b3cb46d6"
@@ -71,13 +62,14 @@ Token copyWith({  String? accessToken,
 
 class User {
   User({
-      String? id, 
-      String? firstName, 
-      String? lastName, 
-      String? email, 
-      String? createdAt, 
-      String? updatedAt, 
-      String? role,}){
+    String? id,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? createdAt,
+    String? updatedAt,
+    String? role,
+  }) {
     _id = id;
     _firstName = firstName;
     _lastName = lastName;
@@ -85,7 +77,7 @@ class User {
     _createdAt = createdAt;
     _updatedAt = updatedAt;
     _role = role;
-}
+  }
 
   User.fromJson(dynamic json) {
     _id = json['id'];
@@ -96,6 +88,7 @@ class User {
     _updatedAt = json['updatedAt'];
     _role = json['role'];
   }
+
   String? _id;
   String? _firstName;
   String? _lastName;
@@ -103,21 +96,24 @@ class User {
   String? _createdAt;
   String? _updatedAt;
   String? _role;
-User copyWith({  String? id,
-  String? firstName,
-  String? lastName,
-  String? email,
-  String? createdAt,
-  String? updatedAt,
-  String? role,
-}) => User(  id: id ?? _id,
-  firstName: firstName ?? _firstName,
-  lastName: lastName ?? _lastName,
-  email: email ?? _email,
-  createdAt: createdAt ?? _createdAt,
-  updatedAt: updatedAt ?? _updatedAt,
-  role: role ?? _role,
-);
+  User copyWith({
+    String? id,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? createdAt,
+    String? updatedAt,
+    String? role,
+  }) =>
+      User(
+        id: id ?? _id,
+        firstName: firstName ?? _firstName,
+        lastName: lastName ?? _lastName,
+        email: email ?? _email,
+        createdAt: createdAt ?? _createdAt,
+        updatedAt: updatedAt ?? _updatedAt,
+        role: role ?? _role,
+      );
   String? get id => _id;
   String? get firstName => _firstName;
   String? get lastName => _lastName;
@@ -137,5 +133,4 @@ User copyWith({  String? id,
     map['role'] = _role;
     return map;
   }
-
 }
