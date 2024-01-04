@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:habit_maker/data/exception/unauthorized_exception.dart';
 import 'package:habit_maker/models/login_response.dart';
 import 'package:habit_maker/models/registration_response.dart';
 import 'package:habit_maker/models/verify_response.dart';
@@ -12,18 +13,18 @@ import '../../models/habit_model.dart';
 
 class NetworkClient extends ChangeNotifier {
   Future<LoginResponse?> login(String email, String password) async {
-   try{
-     final response = await post(
-       Uri.parse("https://api.habit.nodirbek.uz/v1/auth/login"),
-       body: {
-         "email": email,
-         "password": password,
-       });
+    try {
+      final response = await post(
+          Uri.parse("https://api.habit.nodirbek.uz/v1/auth/login"),
+          body: {
+            "email": email,
+            "password": password,
+          });
       return LoginResponse.fromJson(jsonDecode(response.body));
-    }catch(e){
-     e.toString();
-     return null;}
-
+    } catch (e) {
+      e.toString();
+      return null;
+    }
   }
 
   Future<SignUpResponse?> signUp_response(String login, String password) async {
@@ -36,15 +37,14 @@ class NetworkClient extends ChangeNotifier {
     return SignUpResponse.fromJson(jsonDecode(response.body));
   }
 
-  Future<LoginResponse?> refreshToken(String refreshToken) async {
+  Future<LoginResponse?> refreshToken(String? refreshToken) async {
     final response = await post(
         Uri.parse("https://api.habit.nodirbek.uz/v1/auth/refresh-token"),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: {
-          "refreshToken": refreshToken,
-        });
+        body: json.encode({'refreshToken': refreshToken}));
+
     return LoginResponse.fromJson(jsonDecode(response.body));
   }
 
@@ -59,20 +59,18 @@ class NetworkClient extends ChangeNotifier {
   }
 
   Future<bool> createHabit(HabitModel habitModel, token) async {
-    try {
-      final response = await http.post(
-        Uri.parse("https://api.habit.nodirbek.uz/v1/habits"),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-        body: jsonEncode(habitModel.toJson()),
-      );
-      return response.statusCode.isSuccessFull();
-    } catch (e) {
-      e.toString();
-      return false;
+    final response = await http.post(
+      Uri.parse("https://api.habit.nodirbek.uz/v1/habits"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode(habitModel.toJson()),
+    );
+    if (response.statusCode == 401) {
+      throw UnAuthorizedException('');
     }
+    return response.statusCode.isSuccessFull();
   }
 
   Future<List<HabitModel>> loadHabits(token) async {
@@ -83,6 +81,9 @@ class NetworkClient extends ChangeNotifier {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         });
+    if (response.statusCode == 401) {
+      throw UnAuthorizedException('');
+    }
     Map<String, dynamic> jsonData = jsonDecode(response.body);
     jsonData['habits'].forEach((element) {
       if (element['repetition']['weekdays'] != null) {
@@ -111,6 +112,9 @@ class NetworkClient extends ChangeNotifier {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         });
+    if (response.statusCode == 401) {
+      throw UnAuthorizedException('');
+    }
     return response.statusCode.isSuccessFull();
   }
 }

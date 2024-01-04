@@ -31,7 +31,7 @@ class DBHelper {
         "id INTEGER "
         "PRIMARY KEY AUTOINCREMENT,"
         "habitId TEXT ,"
-        "  title TEXT ,"
+        "title TEXT ,"
         "color INTEGER DEFAULT 0,"
         "isDeleted INTEGER DEFAULT 0,"
         "isSynced INTEGER DEFAULT 1 )");
@@ -91,8 +91,8 @@ class DBHelper {
     await db;
     final List<Map<String, dynamic>> habitResult =
         await _db!.rawQuery('SELECT * FROM $habitTableName');
-        await Future.forEach(habitResult, (element) async {
-          await delete(element['habitId']!);
+    await Future.forEach(habitResult, (element) async {
+      await delete(element['habitId']!);
     });
   }
 
@@ -135,7 +135,7 @@ class DBHelper {
   Future<void> updateHabit(HabitModel habitModel) async {
     var dbClient = await db;
     await dbClient!.update(habitTableName, habitModel.toDbJson(),
-        where: 'id=?', whereArgs: [habitModel.dbId]);
+        where: 'habitId=?', whereArgs: [habitModel.id]);
     await dbClient.update(
         repetitionTableName, habitModel.repetition!.toDbJson(habitModel.id),
         where: 'habitId=?', whereArgs: [habitModel.id]);
@@ -145,13 +145,14 @@ class DBHelper {
     });
   }
 
-  Future<void> delete(String id) async {
+  Future<void> delete(String habitId) async {
     var dbClient = await db;
-    await dbClient!.delete(habitTableName, where: 'habitId=?', whereArgs: [id]);
+    await dbClient!
+        .delete(habitTableName, where: 'habitId=?', whereArgs: [habitId]);
     await dbClient
-        .delete(repetitionTableName, where: 'habitId=?', whereArgs: [id]);
+        .delete(repetitionTableName, where: 'habitId=?', whereArgs: [habitId]);
     await dbClient
-        .delete(weekdayTableName, where: 'habitId=?', whereArgs: [id]);
+        .delete(weekdayTableName, where: 'habitId=?', whereArgs: [habitId]);
   }
 
   String habitTableName = 'habit';

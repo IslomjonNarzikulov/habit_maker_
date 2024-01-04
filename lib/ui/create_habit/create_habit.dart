@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
-import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/common/colors.dart';
+import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +39,8 @@ class _CreateHabitState extends State<CreateHabit>
     if (habit != null) {
       isEdit = true;
       final title = habit.title;
+      final color = habit.color;
+      final repetition =  habit.repetition;
       titleController.text = title!;
     }
   }
@@ -122,9 +124,8 @@ class _CreateHabitState extends State<CreateHabit>
                       ],
                     ),
                     const SizedBox(height: 36),
-                  tabBar(),
+                    tabBar(),
                     tabBarSwitch(),
-
                     const SizedBox(height: 24),
                     Container(
                       margin: const EdgeInsets.all(12),
@@ -193,7 +194,20 @@ class _CreateHabitState extends State<CreateHabit>
                           style: ElevatedButton.styleFrom(
                               minimumSize: const Size(350, 55),
                               backgroundColor: Colors.green),
-                          onPressed: isEdit ? updateHabits : _saveHabit,
+                          onPressed: () {
+                            if (isEdit) {
+                              var item = widget.habitModel;
+                              if (item == null) {
+                                return;
+                              }
+                              final id = item.id;
+                              provider.updateHabits(id!, body);
+                              Navigator.pop(context);
+                            } else {
+                              provider.createHabit(body);
+                              Navigator.pop(context);
+                            }
+                          },
                           child: Text(
                             isEdit ? 'Update data' : 'Save Data',
                             style: const TextStyle(
@@ -233,22 +247,6 @@ class _CreateHabitState extends State<CreateHabit>
     });
   }
 
-  Future<void> _saveHabit() async {
-    final isSuccess = await provider.createHabit(body);
-    if (isSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Habit successfully saved')),
-      );
-
-      Navigator.pop(context);
-      titleController.text = '';
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to save habit')),
-      );
-    }
-  }
-
   HabitModel get body {
     final habitTitle = titleController.text;
     return HabitModel(
@@ -259,96 +257,84 @@ class _CreateHabitState extends State<CreateHabit>
         color: _selectedIndex);
   }
 
-  Future<void> updateHabits() async {
-    var item = widget.habitModel;
-    if (item == null) {
-      return;
-    }
-    final id = item.id;
-    final isSuccess = await provider.updateHabits(id!, body);
-    if (isSuccess) {
-      Navigator.pop(context);
-    } else {}
-  }
-
-  Widget tabBar(){
-    return  Container(
+  Widget tabBar() {
+    return Container(
       width: 600,
-      child: TabBar(
-          labelColor:Colors.black,
-          controller: _tabController,
-          tabs: [
-            Container(
-              width: 300,
-              color: Colors.blue,
-              child: const Tab(
-                child: Text(
-                  'Daily',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                ),
-              ),
+      child:
+          TabBar(labelColor: Colors.black, controller: _tabController, tabs: [
+        Container(
+          width: 300,
+          color: Colors.blue,
+          child: const Tab(
+            child: Text(
+              'Daily',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            Container(
-              width: 300,
-              color: Colors.lightBlue,
-              child: const Tab(
-                icon: Icon(
-                  Icons.ac_unit_outlined,
-                ),
-              ),
+          ),
+        ),
+        Container(
+          width: 300,
+          color: Colors.lightBlue,
+          child: const Tab(
+            icon: Icon(
+              Icons.ac_unit_outlined,
             ),
-          ]),
+          ),
+        ),
+      ]),
     );
   }
 
-  Widget tabBarSwitch (){
+  Widget tabBarSwitch() {
     return Container(
       height: 110,
       child: TabBarView(
         controller: _tabController,
-          children: [
-            Column(
-              children: [
+        children: [
+          Column(
+            children: [
               const Text(
-                  'Repeat in these days',
-                  style:
-                  TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-              const SizedBox(height: 16),
-            Row(
-              children: List<Widget>.generate(
-                7,
-                    (index) {
-                  var item = repeat.weekdays![index];
-                  return GestureDetector(
-                    onTap: () {
-                      changeButtonColors(index);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                        backgroundColor: item.isSelected == true
-                            ? Colors.amberAccent
-                            : Colors.grey,
-                        radius: 16,
-                        child: Container(
-                          child: Text(
-                              '${repeat.weekdays![index].weekday?.name[0]}'),
-                        ),
-                      ),
-                    ),
-                  );
-                },
+                'Repeat in these days',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: Row(
+                  children: List<Widget>.generate(
+                    7,
+                    (index) {
+                      var item = repeat.weekdays![index];
+                      return GestureDetector(
+                        onTap: () {
+                          changeButtonColors(index);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            backgroundColor: item.isSelected == true
+                                ? Colors.amberAccent
+                                : Colors.grey,
+                            radius: 18,
+                            child: Container(
+                              child: Text(
+                                  '${repeat.weekdays![index].weekday?.name[0]}'),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Center(
+            child: Text(
+              'heeey, it is snowing',
+              style: TextStyle(fontSize: 35),
             ),
-              ],
-            ),
-            Center(
-              child: Text('heeey, it is snowing', style: TextStyle(fontSize: 35),),
-            )
-      ],
+          )
+        ],
       ),
     );
   }

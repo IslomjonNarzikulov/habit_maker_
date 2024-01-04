@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/common/constants.dart';
 import 'package:habit_maker/data/repository/repository.dart';
-
 import '../models/habit_model.dart';
 
 class HabitProvider extends ChangeNotifier {
@@ -10,29 +7,34 @@ class HabitProvider extends ChangeNotifier {
   bool isLoading = false;
   Repository repository;
 
-  HabitProvider(this.repository, );
+  HabitProvider(this.repository){
+   loadHabits();  // bu constructor
+   notifyListeners();
+  }
 
-  Future<bool> createHabit(HabitModel habitModel) async {
-    var result = await repository.createHabit(habitModel);
+
+  void createHabit(HabitModel habitModel) async {
+    await repository.createHabit(habitModel);
     loadHabits();
-    return result;
+    notifyListeners();
   }
 
   void loadHabits() async {
-    isLoading = true;
+    isLoading= true;
     habits = await repository.loadHabits();
     isLoading = false;
     notifyListeners();
   }
 
-  Future<void> deleteHabits(String id) async {
-    await repository.deleteHabits(id);
-    loadHabits();
+  Future<void> deleteHabits(HabitModel item) async {
+    await repository.deleteHabits(item);
     notifyListeners();
   }
 
-  Future<bool> updateHabits(String id, HabitModel habitModel) async {
-    return repository.updateHabits(id, habitModel);
+  Future<void> updateHabits(String id, HabitModel model) async {
+    await repository.updateHabits(id, model);
+    loadHabits();
+    notifyListeners();
   }}
 
 extension StatusParsing on int {

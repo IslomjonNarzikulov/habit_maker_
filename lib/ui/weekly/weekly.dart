@@ -36,7 +36,7 @@ class _WeeklyState extends State<Weekly> {
                       margin: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          color: Colors.blue),
+                          color: Colors.lightBlueAccent),
                       height: 95,
                       width: 360,
                       child: Column(

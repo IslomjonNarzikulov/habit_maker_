@@ -3,7 +3,6 @@ import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import '../create_habit/create_habit.dart';
 
 
@@ -39,10 +38,10 @@ class _HabitDetailsState extends State<HabitDetails> {
             actions: [
               IconButton(
                 onPressed: () {
-                  provider.deleteHabits(widget.item.id!);
+                  provider.deleteHabits(widget.item);
                   Navigator.pop(context);
                   final filtered = provider.habits
-                      .where((element) => element.id == widget.item.id)
+                      .where((element) => element.dbId != widget.item.dbId)
                       .toList();
                   setState(() {
                     provider.habits = filtered;

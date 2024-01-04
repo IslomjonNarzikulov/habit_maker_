@@ -23,7 +23,7 @@ class _DailyPageState extends State<DailyPage> {
   void initState() {
     super.initState();
     provider = Provider.of<HabitProvider>(context, listen: false);
-    // provider.loadHabits();
+     //provider.loadHabits();
   }
 
   @override
@@ -134,11 +134,11 @@ class _DailyPageState extends State<DailyPage> {
                 );
               },
             );
-          } else if (value.habits.isEmpty && provider.isLoading) {
+          } else if (value.habits.isEmpty) {
             return Center(
               child: Container(
-                child: const Text('No data added yet'),
-              ),
+                alignment: Alignment.center,
+                  child: const Text('No data added yet')),
             );
           } else {
             return CircularProgressIndicator();
