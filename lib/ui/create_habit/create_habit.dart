@@ -17,18 +17,43 @@ class CreateHabit extends StatefulWidget {
 
 class _CreateHabitState extends State<CreateHabit>
     with TickerProviderStateMixin {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TabController? _tabController;
   final titleController = TextEditingController();
   late HabitProvider provider;
   bool isEdit = false;
   int _selectedIndex = 0;
   bool light = true;
+  bool isEnded = false;
+  int numberOfDays = 7;
   Repetition repeat = Repetition(
     notifyTime: '0',
     numberOfDays: 0,
     weekdays: defaultRepeat,
     showNotification: false,
   );
+
+  void add() {
+    setState(() {
+      if (numberOfDays == 7) {
+        isEnded == true;
+      } else {
+        numberOfDays++;
+      }
+      repeat.numberOfDays = numberOfDays;
+    });
+  }
+
+  void subtract() {
+    setState(() {
+      if (numberOfDays == 1) {
+        isEnded == true;
+      } else {
+        numberOfDays--;
+      }
+      repeat.numberOfDays = numberOfDays;
+    });
+  }
 
   @override
   void initState() {
@@ -40,7 +65,7 @@ class _CreateHabitState extends State<CreateHabit>
       isEdit = true;
       final title = habit.title;
       final color = habit.color;
-      final repetition =  habit.repetition;
+      final repetition = habit.repetition;
       titleController.text = title!;
     }
   }
@@ -65,160 +90,175 @@ class _CreateHabitState extends State<CreateHabit>
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      height: 75,
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      child: TextField(
-                        controller: titleController,
-                        maxLength: 50,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30)),
-                          filled: true,
-                          hintText: 'Enter title',
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 85,
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        child: TextFormField(
+                          controller: titleController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                            filled: true,
+                            hintText: 'Enter title',
+                          ),
+                          validator: (value) {
+                            if (titleController.text.trim().isEmpty ||
+                                repeat.weekdays!.isEmpty) {
+                              return 'Invalid input';
+                            }
+                            return null;
+                          },
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Colors',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 14),
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List<Widget>.generate(
-                              7,
-                              (index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = index;
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: CircleAvatar(
-                                      radius: 16,
-                                      backgroundColor: colorList[index],
-                                      child: _selectedIndex == index
-                                          ? const Icon(
-                                              Icons.check,
-                                              color: Colors.white,
-                                            )
-                                          : null,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 36),
-                    tabBar(),
-                    tabBarSwitch(),
-                    const SizedBox(height: 24),
-                    Container(
-                      margin: const EdgeInsets.all(12),
-                      height: 36,
-                      child: Row(
+                      const SizedBox(height: 8),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Text(
-                            'Reminder',
+                            'Colors',
                             style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(width: 12),
-                          Visibility(
-                            visible: light,
-                            child: GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                    backgroundColor: Colors.white,
-                                    context: context,
-                                    builder: (context) {
-                                      return Column(
-                                        children: [hourMinute12H()],
-                                      );
-                                    });
-                              },
-                              child: Container(
-                                height: 30,
-                                width: 65,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Colors.grey),
-                                child: Center(
-                                  child: Text(
-                                    _dateTime.hour.toString().padLeft(2, '0') +
-                                        ':' +
-                                        _dateTime.minute
-                                            .toString()
-                                            .padLeft(2, '0'),
-                                    style: const TextStyle(
-                                      fontSize: 18,
+                          const SizedBox(height: 14),
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List<Widget>.generate(
+                                7,
+                                (index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = index;
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CircleAvatar(
+                                        radius: 18,
+                                        backgroundColor: colorList[index],
+                                        child: _selectedIndex == index
+                                            ? const Icon(
+                                                Icons.check,
+                                                color: Colors.white,
+                                              )
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 36),
+                      tabBar(),
+                      tabBarSwitch(),
+                      const SizedBox(height: 24),
+                      Container(
+                        margin: const EdgeInsets.all(12),
+                        height: 36,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Reminder',
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 12),
+                            Visibility(
+                              visible: repeat.showNotification!,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                      backgroundColor: Colors.white,
+                                      context: context,
+                                      builder: (context) {
+                                        return Column(
+                                          children: [hourMinute12H()],
+                                        );
+                                      });
+                                },
+                                child: Container(
+                                  height: 30,
+                                  width: 65,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.blueGrey),
+                                  child: Center(
+                                    child: Text(
+                                      repeat.notifyTime = _dateTime.hour
+                                              .toString()
+                                              .padLeft(2, '0') +
+                                          ':' +
+                                          _dateTime.minute
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Container(
-                            child: Expanded(
+                            Expanded(
                               child: SwitchListTile(
-                                  value: light,
+                                  value: repeat.showNotification!,
+                                  activeColor: Colors.blueAccent,
                                   onChanged: (bool value) {
                                     setState(() {
-                                      light = value;
+                                      repeat.showNotification = value;
                                     });
                                   }),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Column(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(350, 55),
+                                backgroundColor: Colors.green),
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                if (isEdit) {
+                                  var item = widget.habitModel;
+                                  if (item == null) {
+                                    return;
+                                  }
+                                  final id = item.id;
+                                  provider.updateHabits(id!, body);
+                                  Navigator.pop(context);
+                                } else {
+                                  provider.createHabit(body);
+                                  Navigator.pop(context);
+                                }
+                              }
+                            },
+                            child: Text(
+                              isEdit ? 'Update data' : 'Save Data',
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    Column(
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(350, 55),
-                              backgroundColor: Colors.green),
-                          onPressed: () {
-                            if (isEdit) {
-                              var item = widget.habitModel;
-                              if (item == null) {
-                                return;
-                              }
-                              final id = item.id;
-                              provider.updateHabits(id!, body);
-                              Navigator.pop(context);
-                            } else {
-                              provider.createHabit(body);
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: Text(
-                            isEdit ? 'Update data' : 'Save Data',
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -276,8 +316,9 @@ class _CreateHabitState extends State<CreateHabit>
           width: 300,
           color: Colors.lightBlue,
           child: const Tab(
-            icon: Icon(
-              Icons.ac_unit_outlined,
+            child: Text(
+              'Weekly',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
         ),
@@ -299,40 +340,101 @@ class _CreateHabitState extends State<CreateHabit>
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: Row(
-                  children: List<Widget>.generate(
-                    7,
-                    (index) {
-                      var item = repeat.weekdays![index];
-                      return GestureDetector(
-                        onTap: () {
-                          changeButtonColors(index);
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            backgroundColor: item.isSelected == true
-                                ? Colors.amberAccent
-                                : Colors.grey,
-                            radius: 18,
-                            child: Container(
-                              child: Text(
-                                  '${repeat.weekdays![index].weekday?.name[0]}'),
+                child: Center(
+                  child: Row(
+                    children: List<Widget>.generate(
+                      7,
+                      (index) {
+                        var item = repeat.weekdays![index];
+                        return GestureDetector(
+                          onTap: () {
+                            changeButtonColors(index);
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CircleAvatar(
+                              backgroundColor: item.isSelected == true
+                                  ? Colors.amberAccent
+                                  : Colors.blueGrey,
+                              radius: 18,
+                              child: Container(
+                                child: Text(
+                                  '${repeat.weekdays![index].weekday?.name[0]}',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          Center(
-            child: Text(
-              'heeey, it is snowing',
-              style: TextStyle(fontSize: 35),
-            ),
+          Container(
+            margin: EdgeInsets.all(12),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        'Frequency',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '$numberOfDays times a week',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Container(
+                        margin: EdgeInsets.only(left: 30),
+                        padding: EdgeInsets.only(left: 90),
+                        width: 240,
+                        child: Row(children: [
+                          GestureDetector(
+                            onTap: () {
+                              subtract();
+                            },
+                            child: Container(
+                              height: 26,
+                              width: 28,
+                              color: Colors.blue,
+                              child: Icon(Icons.remove),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Text(
+                            "$numberOfDays",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              add();
+                            },
+                            child: Container(
+                              height: 26,
+                              width: 28,
+                              color: Colors.blue,
+                              child: Icon(Icons.add),
+                            ),
+                          )
+                        ])),
+                  ),
+                ]),
           )
         ],
       ),

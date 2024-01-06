@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     provider =  Provider.of<HabitProvider>(context,listen: false);
     super.initState();
-    provider.loadHabits();
+
   }
 
   void _onItemTapped(int index) {

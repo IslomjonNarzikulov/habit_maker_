@@ -3,12 +3,12 @@ import 'package:habit_maker/data/repository/repository.dart';
 import '../models/habit_model.dart';
 
 class HabitProvider extends ChangeNotifier {
-  List<HabitModel> habits = [];
+  var habits = <HabitModel>[];
   bool isLoading = false;
   Repository repository;
 
   HabitProvider(this.repository){
-   loadHabits();  // bu constructor
+    // bu constructor
    notifyListeners();
   }
 

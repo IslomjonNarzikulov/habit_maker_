@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
-
 import '../../login/signIn.dart';
 import '../create_habit/create_habit.dart';
 import '../habit_details/habit_details.dart';
@@ -23,7 +22,7 @@ class _DailyPageState extends State<DailyPage> {
   void initState() {
     super.initState();
     provider = Provider.of<HabitProvider>(context, listen: false);
-     //provider.loadHabits();
+     provider.loadHabits();
   }
 
   @override

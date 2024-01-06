@@ -2,7 +2,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/data/database/db_helper.dart';
 import 'package:habit_maker/data/exception/unauthorized_exception.dart';
 import 'package:habit_maker/models/login_response.dart';
-
 import '../../common/constants.dart';
 import '../../models/habit_model.dart';
 import '../network_client/network_client.dart';
@@ -42,7 +41,7 @@ class Repository {
     if (token == null) return false;
     await networkClient.deleteHabits(model.id!, token);
     var databaseList = await dbHelper.getHabitList();
-    var item = databaseList.firstWhere((element) => element.id == model.id!);
+    var item = databaseList.firstWhere((element) => element.dbId == model.dbId!);
     if (item.isDeleted == false) {
       item.isDeleted == true;
       item.isSynced == false;
@@ -113,6 +112,7 @@ class Repository {
       saveUserCredentials(user);
     }
   }
+
 // bu xato chiqib qosa qayta tekshirishga
   Future<T> executeWithRetry<T>(Future<T> Function(String token) block) async {
     try {
