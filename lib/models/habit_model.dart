@@ -1,35 +1,37 @@
 import 'package:habit_maker/common/extension.dart';
+import 'package:habit_maker/models/activities_model.dart';
 
 class HabitModel {
   String? id;
   String? title;
   Repetition? repetition;
   int? dbId;
-  int ? color;
+  int? color;
   bool? isDeleted;
   bool? isSynced;
+  List<Activities>? activities;
 
   HabitModel(
-      { this.id,
-        this.title,
-        this.repetition,
-        this.dbId,
-        this.color,
-        this.isDeleted,
-        this.isSynced
-      });
+      {this.id,
+      this.activities,
+      this.title,
+      this.repetition,
+      this.dbId,
+      this.color,
+      this.isDeleted,
+      this.isSynced});
 
   factory HabitModel.fromJson(Map<String, dynamic> jsonData) {
     return HabitModel(
-      id: jsonData['id'],
-      title: jsonData['title'],
-      repetition: Repetition.fromJson(jsonData['repetition']),
-      dbId: null,
-      color: int.tryParse(jsonData['color']),
-      isDeleted: jsonData['isDeleted'],
-      isSynced: jsonData['isSynced'],
-
-    );
+        id: jsonData['id'],
+        title: jsonData['title'],
+        repetition: Repetition.fromJson(jsonData['repetition']),
+        dbId: null,
+        color: int.tryParse(jsonData['color']),
+        isDeleted: jsonData['isDeleted'],
+        isSynced: jsonData['isSynced'],
+        activities: List<Activities>.from(jsonData['activities']
+            .map((activity) => Activities.fromJson(activity))));
   }
 
   HabitModel.fromDbJson(Map<String, dynamic> jsonData)
@@ -56,13 +58,11 @@ class HabitModel {
       'habitId': id,
       'title': title,
       'color': color,
-      'isDeleted': isDeleted==true?1:0,
-      'isSynced': isSynced==true?1:0,
-
+      'isDeleted': isDeleted == true ? 1 : 0,
+      'isSynced': isSynced == true ? 1 : 0,
     };
   }
 }
-
 
 class Repetition {
   int? numberOfDays;
@@ -70,13 +70,13 @@ class Repetition {
   bool? showNotification;
   List<Day>? weekdays;
   String? id;
-
+  int? dbId;
 
   Repetition(
       {this.numberOfDays,
-        this.notifyTime,
-        this.showNotification,
-        this.weekdays});
+      this.notifyTime,
+      this.showNotification,
+      this.weekdays});
 
   Repetition.fromJson(Map<String, dynamic> json) {
     numberOfDays = json['numberOfDays'];
@@ -90,13 +90,11 @@ class Repetition {
     }
   }
 
-  Repetition.fromDbJson(Map <String, dynamic> json)
-  : id = json['habitId'],
-  numberOfDays = json['numberOfDays'],
-  notifyTime = json['notifyTime'],
-  showNotification = json['showNotification']==1;
-
-
+  Repetition.fromDbJson(Map<String, dynamic> json)
+      : dbId = json['dbId'],
+        numberOfDays = json['numberOfDays'],
+        notifyTime = json['notifyTime'],
+        showNotification = json['showNotification'] == 1;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
@@ -109,12 +107,12 @@ class Repetition {
     return data;
   }
 
-  Map<String, dynamic> toDbJson(String? habitId){
-    return{
-      'habitId': habitId,
-      'numberOfDays':numberOfDays,
-      'notifyTime':notifyTime,
-      'showNotification':showNotification==true?1:0,
+  Map<String, dynamic> toDbJson(int? habitId) {
+    return {
+      'dbId': habitId,
+      'numberOfDays': numberOfDays,
+      'notifyTime': notifyTime,
+      'showNotification': showNotification == true ? 1 : 0,
     };
   }
 }
@@ -123,18 +121,19 @@ class Day {
   WeekDay? weekday;
   bool? isSelected;
   String? id;
+  int? dbId;
 
   Day({this.weekday, this.isSelected});
 
   Day.fromJson(Map<String, dynamic> json) {
-    weekday = (json['weekday']as String).weekDayFromName();
+    weekday = (json['weekday'] as String).weekDayFromName();
     isSelected = json['isSelected'];
   }
 
-  Day.fromDbJson(Map<String,dynamic> json)
-   :  weekday = (json['weekday']as String).weekDayFromName(),
-    isSelected = json['isSelected']==1,
-    id = json['habitId'];
+  Day.fromDbJson(Map<String, dynamic> json)
+      : weekday = (json['weekday'] as String).weekDayFromName(),
+        isSelected = json['isSelected'] == 1,
+        dbId = json['dbId'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
@@ -142,11 +141,14 @@ class Day {
     data['isSelected'] = isSelected;
     return data;
   }
-  Map<String,dynamic> toDbJson(String? habitId){
+
+  Map<String, dynamic> toDbJson(int? habitId) {
     return {
-      'habitId':habitId,
-      'weekday':weekday!.name,
-      'isSelected':isSelected==true ? 1:0,
-  };
+      'dbId': habitId,
+      'weekday': weekday!.name,
+      'isSelected': isSelected == true ? 1 : 0,
+    };
   }
 }
+
+

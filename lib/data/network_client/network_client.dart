@@ -9,13 +9,15 @@ import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import '../../common/constants.dart';
+import '../../models/activities_model.dart';
 import '../../models/habit_model.dart';
 
 class NetworkClient extends ChangeNotifier {
   Future<LoginResponse?> login(String email, String password) async {
     try {
       final response = await post(
-          Uri.parse("https://api.habit.nodirbek.uz/v1/auth/login"),
+          Uri.parse("$baseUrl/v1/auth/login"),
           body: {
             "email": email,
             "password": password,
@@ -27,11 +29,11 @@ class NetworkClient extends ChangeNotifier {
     }
   }
 
-  Future<SignUpResponse?> signUp_response(String login, String password) async {
+  Future<SignUpResponse?> signUp_response(String email, String password) async {
     final response = await post(
-        Uri.parse("http://38.242.252.210:6001/v1/auth/registration/otp"),
+        Uri.parse("$baseUrl/v1/auth/registration/otp"),
         body: {
-          "email": login,
+          "email": email,
           "password": password,
         });
     return SignUpResponse.fromJson(jsonDecode(response.body));
@@ -39,7 +41,7 @@ class NetworkClient extends ChangeNotifier {
 
   Future<LoginResponse?> refreshToken(String? refreshToken) async {
     final response = await post(
-        Uri.parse("https://api.habit.nodirbek.uz/v1/auth/refresh-token"),
+        Uri.parse("$baseUrl/v1/auth/refresh-token"),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -50,7 +52,7 @@ class NetworkClient extends ChangeNotifier {
 
   Future<VerifyResponse?> verify_response(String token, String otp) async {
     final response = await post(
-        Uri.parse("http://38.242.252.210:6001/v1/auth/registration/verify"),
+        Uri.parse("$baseUrl/v1/auth/registration/verify"),
         body: {
           "token": token,
           "otp": otp,
@@ -60,7 +62,7 @@ class NetworkClient extends ChangeNotifier {
 
   Future<bool> createHabit(HabitModel habitModel, token) async {
     final response = await http.post(
-      Uri.parse("https://api.habit.nodirbek.uz/v1/habits"),
+      Uri.parse("$baseUrl/v1/habits"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
@@ -75,12 +77,11 @@ class NetworkClient extends ChangeNotifier {
 
   Future<List<HabitModel>> loadHabits(token) async {
     var list = <HabitModel>[];
-    final response = await get(
-        Uri.parse('https://api.habit.nodirbek.uz/v1/habits'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
+    final response =
+        await get(Uri.parse('$baseUrl/v1/habits'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
     if (response.statusCode == 401) {
       throw UnAuthorizedException('');
     }
@@ -96,7 +97,7 @@ class NetworkClient extends ChangeNotifier {
 
   Future<bool> deleteHabits(String id, token) async {
     final response = await delete(
-        Uri.parse('https://api.habit.nodirbek.uz/v1/habits/$id'),
+        Uri.parse('$baseUrl/v1/habits/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -106,7 +107,7 @@ class NetworkClient extends ChangeNotifier {
 
   Future<bool> updateHabits(String id, HabitModel habitModel, token) async {
     final response = await put(
-        Uri.parse('https://api.habit.nodirbek.uz/v1/habits/$id'),
+        Uri.parse('$baseUrl/v1/habits/$id'),
         body: jsonEncode(habitModel.toJson()),
         headers: {
           'Content-Type': 'application/json',
@@ -116,5 +117,21 @@ class NetworkClient extends ChangeNotifier {
       throw UnAuthorizedException('');
     }
     return response.statusCode.isSuccessFull();
+  }
+
+  Future<Activities> createActivities(String id, String date, token) async {
+    final response = await post(
+        Uri.parse('$baseUrl/v1/activities'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      body: jsonEncode({'habitId': id, 'date': date}),
+    );
+    if (response.statusCode.isSuccessFull()) {
+      return Activities.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to get activities');
+    }
   }
 }

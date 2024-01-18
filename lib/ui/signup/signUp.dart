@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/common/my_textfield.dart';
-import 'package:habit_maker/login/signIn.dart';
+import 'package:habit_maker/ui/login/signIn.dart';
 import 'package:habit_maker/ui/signup/signup_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -47,7 +47,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Center(
@@ -130,18 +130,21 @@ class _SignUpState extends State<SignUp> {
                 const SizedBox(
                   height: 30,
                 ),
-             ElevatedButton(onPressed: (){
-               Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInPage()));
-             },
-                 child:  Container(
-                     width: MediaQuery.of(context).size.width * 0.5,
-                     height: 40,
-                     child: const Center(
-                         child: Text(
-                           'Login',
-                           style: TextStyle(fontSize: 20),
-                         ))),
-             )],
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SignInPage()));
+                  },
+                  child: Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: 40,
+                      child: const Center(
+                          child: Text(
+                        'Login',
+                        style: TextStyle(fontSize: 20),
+                      ))),
+                )
+              ],
             ),
           ),
         ),

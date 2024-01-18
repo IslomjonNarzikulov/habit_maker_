@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/login/sign_in_provider.dart';
+import 'package:habit_maker/ui/login/sign_in_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../UI/home/home.dart';
-import '../ui/signup/signUp.dart';
+import '../../UI/home/home.dart';
+import '../signup/signUp.dart';
 
 class SignInPage extends StatefulWidget {
   SignInPage({super.key});

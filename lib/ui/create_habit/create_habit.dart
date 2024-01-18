@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:habit_maker/common/colors.dart';
+import 'package:habit_maker/common/constants.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
@@ -84,7 +86,6 @@ class _CreateHabitState extends State<CreateHabit>
     return Consumer<HabitProvider>(
       builder: ((context, value, child) => Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.green,
               title: Text(isEdit ? 'Update habits' : 'Create habits'),
             ),
             body: Padding(
@@ -98,6 +99,9 @@ class _CreateHabitState extends State<CreateHabit>
                         height: 85,
                         margin: const EdgeInsets.symmetric(horizontal: 12),
                         child: TextFormField(
+                          inputFormatters: <TextInputFormatter>[
+                            UpperCaseTextFormatter()
+                          ],
                           controller: titleController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -230,29 +234,26 @@ class _CreateHabitState extends State<CreateHabit>
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(350, 55),
-                                backgroundColor: Colors.green),
+                                backgroundColor: Color(0xff309d9f)),
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
                                 if (isEdit) {
                                   var item = widget.habitModel;
-                                  if (item == null) {
-                                    return;
+                                    provider.updateHabits(item!, body);
+                                    Navigator.pop(context);
+                                  } else {
+                                    provider.createHabit(body);
+                                    Navigator.pop(context);
                                   }
-                                  final id = item.id;
-                                  provider.updateHabits(id!, body);
-                                  Navigator.pop(context);
-                                } else {
-                                  provider.createHabit(body);
-                                  Navigator.pop(context);
                                 }
-                              }
                             },
                             child: Text(
                               isEdit ? 'Update data' : 'Save Data',
                               style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20),
+                                  fontSize: 20
+                              ),
                             ),
                           ),
                         ],
@@ -440,4 +441,17 @@ class _CreateHabitState extends State<CreateHabit>
       ),
     );
   }
+}
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: capitalize(newValue.text),
+      selection: newValue.selection,
+    );
+  }
+}
+String capitalize(String value) {
+  if(value.trim().isEmpty) return "";
+  return "${value[0].toUpperCase()}${value.substring(1).toLowerCase()}";
 }

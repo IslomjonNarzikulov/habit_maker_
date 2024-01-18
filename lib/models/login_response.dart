@@ -1,5 +1,5 @@
 /// user : {"id":"fd3c52fd-dc4f-499c-95b9-6294b3cb46d6","firstName":"John","lastName":"Doe","email":"user@mail.com","createdAt":"2023-11-11T08:56:00.398Z","updatedAt":"2023-11-11T08:56:00.398Z","role":"USER"}
-/// token : {"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZkM2M1MmZkLWRjNGYtNDk5Yy05NWI5LTYyOTRiM2NiNDZkNiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMTE0NzU4LCJleHAiOjE3MDAxMjU1NTh9.83v5QKKGL6Su9STkRqWIxeqjzyYQWLR_bayQfkRcuQA"}
+/// token : {"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZkM2M1MmZkLWRjNGYtNDk5Yy05NWI5LTYyOTRiM2NiNDZkNiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzA1MTQ1MzI3LCJleHAiOjE3MDUxNDg5Mjd9.mLo4xWpX7RK9nSflDkaJSAO0MAIjl0mqgfbknUSqjuY"}
 
 class LoginResponse {
   LoginResponse({
@@ -29,7 +29,7 @@ class LoginResponse {
   Token? get token => _token;
 }
 
-/// accessToken : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZkM2M1MmZkLWRjNGYtNDk5Yy05NWI5LTYyOTRiM2NiNDZkNiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMTE0NzU4LCJleHAiOjE3MDAxMjU1NTh9.83v5QKKGL6Su9STkRqWIxeqjzyYQWLR_bayQfkRcuQA"
+/// accessToken : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZkM2M1MmZkLWRjNGYtNDk5Yy05NWI5LTYyOTRiM2NiNDZkNiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzA1MTQ1MzI3LCJleHAiOjE3MDUxNDg5Mjd9.mLo4xWpX7RK9nSflDkaJSAO0MAIjl0mqgfbknUSqjuY"
 
 class Token {
   Token({

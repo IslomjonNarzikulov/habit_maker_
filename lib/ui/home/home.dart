@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/login/signIn.dart';
+import 'package:habit_maker/ui/login/signIn.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
+import '../../UI/create_habit/create_habit.dart';
 import '../analytics/analytics.dart';
 import '../daily_page/daily_page.dart';
-import '../profile/profile.dart';
 import '../settings/settings.dart';
 import '../weekly/weekly.dart';
 
@@ -27,8 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     provider =  Provider.of<HabitProvider>(context,listen: false);
+    provider.isLogged();
     super.initState();
-
   }
 
   void _onItemTapped(int index) {
@@ -40,18 +40,34 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => CreateHabit(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
+        title: const Text('Habit Tracker'),
+      ),
       drawer: Drawer(
         child: ListView(
           children: [
+
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Profile'),
+              title: const Text('Login'),
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ProfilePage()));
+                        builder: (context) =>  SignInPage()));
               },
               iconColor: Colors.blue,
             ),
@@ -77,17 +93,14 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.logout),
               title: const Text('Log out'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SignInPage(),
-                  ),
-                );
+              provider.isLoggedOut();
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
               },
             ),
           ],
         ),
       ),
+
       body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -103,6 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
       ),
     );
+
   }
 }
 

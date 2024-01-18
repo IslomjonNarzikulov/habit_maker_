@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habit_maker/common/heat_map.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
@@ -76,6 +77,7 @@ class _HabitDetailsState extends State<HabitDetails> {
               ),
               const SizedBox(height: 16),
               TableCalendar(
+                headerStyle:  HeaderStyle(formatButtonVisible: false,titleCentered: true),
                 focusedDay: selectedDay,
                 firstDay: DateTime.utc(2020, 2, 2),
                 lastDay: DateTime.utc(2030, 2, 2),
@@ -91,8 +93,7 @@ class _HabitDetailsState extends State<HabitDetails> {
               ),
               const SizedBox(
                 height: 24,
-              ),
-            ],
+              ),],
           ),
       )
     );
