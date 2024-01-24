@@ -38,7 +38,7 @@ class _SignInPageState extends State<SignInPage> {
               decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage(
-                        'assets/lottie/photo-1586191582151-f73872dfd183.avif'),
+                        'assets/lottie/hey.jpg'),
                     fit: BoxFit.cover),
               ),
               child: Column(
@@ -160,7 +160,7 @@ class _SignInPageState extends State<SignInPage> {
                 child: const Center(
                   child: Text(
                     'Sign in',
-                    style: TextStyle(fontSize: 24, color: Colors.white),
+                    style: TextStyle(fontSize: 24, color: Colors.blue),
                   ),
                 ),
               ),

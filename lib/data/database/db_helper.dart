@@ -55,7 +55,10 @@ class DBHelper {
     await db.execute("CREATE TABLE $activityTable("
         "id INTEGER "
         "PRIMARY KEY AUTOINCREMENT,"
+        "activityId TEXT,"
         "habitId INTEGER,"
+        "isDeleted INTEGER DEFAULT 0,"
+        "isSynced INTEGER DEFAULT 1,"
         "date TEXT)");
   }
 
@@ -71,6 +74,10 @@ class DBHelper {
       await Future.forEach(habitModel.repetition!.weekdays!, (element) async {
         var model = element.toDbJson(dbId);
         await dbClient?.insert(weekdayTableName, model);
+      });
+      await Future.forEach(habitModel.activities!, (element) async {
+        await dbClient?.insert(activityTable,
+            {"date": element.date, "habitId": dbId, 'activityId': element.id});
       });
     } catch (e) {
       e.toString();
@@ -102,6 +109,8 @@ class DBHelper {
         await _db!.rawQuery('SELECT * FROM $repetitionTableName');
     final List<Map<String, Object?>> weekdayList =
         await _db!.rawQuery('SELECT * FROM $weekdayTableName');
+    final List<Map<String, Object?>> activityList =
+        await _db!.rawQuery('SELECT * FROM $activityTable');
     var habits = habitList.map((habit) {
       var repetition = repetitionList
           .map((e) {
@@ -117,9 +126,12 @@ class DBHelper {
           .toList()
           .where((element) => element.dbId == habit['id'])
           .toList();
+      var activity=activityList.map((e){return Activities.fromDbJson(e);})
+          .toList().where((element) => element.habitId == habit['id']).toList();
       var model = HabitModel.fromDbJson(habit);
       repetition.weekdays = weekday;
       model.repetition = repetition;
+      model.activities=activity;
       return model;
     }).toList();
     return habits;
@@ -144,6 +156,7 @@ class DBHelper {
     await dbClient
         .delete(repetitionTableName, where: 'dbId=?', whereArgs: [id]);
     await dbClient.delete(weekdayTableName, where: 'dbId=?', whereArgs: [id]);
+    await dbClient.delete(activityTable, where: 'id=?', whereArgs: [id]);
   }
 
   Future<void> insertActivities(Activities activities) async {

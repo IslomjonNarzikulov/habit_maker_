@@ -5,17 +5,17 @@ class VerifyResponse {
   VerifyResponse({this.user, this.token});
 
   VerifyResponse.fromJson(Map<String, dynamic> json) {
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
-    token = json['token'] != null ? new Token.fromJson(json['token']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+    token = json['token'] != null ? Token.fromJson(json['token']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    if (user != null) {
+      data['user'] = user!.toJson();
     }
-    if (this.token != null) {
-      data['token'] = this.token!.toJson();
+    if (token != null) {
+      data['token'] = token!.toJson();
     }
     return data;
   }
@@ -50,14 +50,14 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['firstName'] = this.firstName;
-    data['lastName'] = this.lastName;
-    data['email'] = this.email;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['role'] = this.role;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['email'] = email;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['role'] = role;
     return data;
   }
 }
@@ -74,9 +74,9 @@ class Token {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['accessToken'] = this.accessToken;
-    data['refreshToken'] = this.refreshToken;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['accessToken'] = accessToken;
+    data['refreshToken'] = refreshToken;
     return data;
   }
 }

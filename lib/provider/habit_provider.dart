@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/data/repository/repository.dart';
+import 'package:habit_maker/models/activities_model.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import '../common/constants.dart';
 import '../models/habit_model.dart';
@@ -45,18 +47,25 @@ class HabitProvider extends ChangeNotifier {
 
   void loadHabits(bool force) async {
     isLoading = true;
-    habits = (await repository.loadHabits(force))
-        .where((element) => element.isDeleted == false)
+    var response = await repository.loadHabits(force);
+    habits = response
+        .where((element) =>
+            element.isDeleted == false &&
+            element.activities!.where((activity) {
+              var result =
+                  isSameDay(DateTime.parse(activity.date!), DateTime.now());
+              return result;
+            }).isEmpty)
         .toList();
-    weekly = habits
-        .where((element) => element.repetition!.numberOfDays == 0)
-        .toList();
+    print(habits);
+    weekly = response.where((element) => element.isDeleted == false).toList();
     isLoading = false;
     notifyListeners();
   }
 
   Future<void> deleteHabits(HabitModel model) async {
     await repository.deleteHabits(model);
+    loadHabits(true);
     notifyListeners();
   }
 
@@ -67,8 +76,30 @@ class HabitProvider extends ChangeNotifier {
   }
 
   Future<void> createActivities(HabitModel model, DateTime date) async {
-    await repository.createActivity(model, date);
+    markActivityAsSelected(model, date, true);
     notifyListeners();
+    await repository.createActivity(model, date);
+    loadHabits(true);
+    notifyListeners();
+  }
+
+  Future<void> deleteActivities(
+      HabitModel model, int index, DateTime date) async {
+    markActivityAsSelected(model, date, false);
+    notifyListeners();
+    await repository.deleteActivity(model,index, date);
+    loadHabits(true);
+    notifyListeners();
+  }
+
+  void markActivityAsSelected(HabitModel model, DateTime date, bool created) {
+    if (created) {
+      weekly
+          .where((element) => element.dbId == model.dbId)
+          .firstOrNull
+          ?.activities
+          ?.add(Activities(habitId: model.dbId));
+    }
   }
 }
 

@@ -43,12 +43,14 @@ class _DailyPageState extends State<DailyPage> {
                   if (item.color != null) {
                     _selectedIndex = item.color!;
                   }
-
                   return Dismissible(
-                    key:  UniqueKey(),
+                    key: UniqueKey(),
                     onDismissed: (direction) {
+                      if (direction == DismissDirection.endToStart ||
+                          direction == DismissDirection.startToEnd) {
                         var date = DateTime.now();
                         provider.createActivities(item, date);
+                      }
                     },
                     child: GestureDetector(
                       onTap: () {
@@ -88,7 +90,7 @@ class _DailyPageState extends State<DailyPage> {
                   child: const Text('No data added yet')),
             );
           } else {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
         }),
       ),

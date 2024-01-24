@@ -16,12 +16,10 @@ import '../../models/habit_model.dart';
 class NetworkClient extends ChangeNotifier {
   Future<LoginResponse?> login(String email, String password) async {
     try {
-      final response = await post(
-          Uri.parse("$baseUrl/v1/auth/login"),
-          body: {
-            "email": email,
-            "password": password,
-          });
+      final response = await post(Uri.parse("$baseUrl/v1/auth/login"), body: {
+        "email": email,
+        "password": password,
+      });
       return LoginResponse.fromJson(jsonDecode(response.body));
     } catch (e) {
       e.toString();
@@ -30,18 +28,19 @@ class NetworkClient extends ChangeNotifier {
   }
 
   Future<SignUpResponse?> signUp_response(String email, String password) async {
-    final response = await post(
-        Uri.parse("$baseUrl/v1/auth/registration/otp"),
-        body: {
-          "email": email,
-          "password": password,
-        });
+    final response =
+        await post(Uri.parse("$baseUrl/v1/auth/registration/otp"), body: {
+      "email": email,
+      "password": password,
+    });
+    if (response.statusCode == 401) {
+      throw UnAuthorizedException('');
+    }
     return SignUpResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<LoginResponse?> refreshToken(String? refreshToken) async {
-    final response = await post(
-        Uri.parse("$baseUrl/v1/auth/refresh-token"),
+    final response = await post(Uri.parse("$baseUrl/v1/auth/refresh-token"),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -50,14 +49,19 @@ class NetworkClient extends ChangeNotifier {
     return LoginResponse.fromJson(jsonDecode(response.body));
   }
 
-  Future<VerifyResponse?> verify_response(String token, String otp) async {
-    final response = await post(
-        Uri.parse("$baseUrl/v1/auth/registration/verify"),
-        body: {
-          "token": token,
-          "otp": otp,
-        });
-    return VerifyResponse.fromJson(jsonDecode(response.body));
+  Future<VerifyResponse> verifyResponse(String token, String otp) async {
+    final response =
+        await post(Uri.parse("$baseUrl/v1/auth/registration/verify"),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              "token": token,
+              "otp": otp,
+            }));
+    if (response.statusCode.isSuccessFull()) {
+      return VerifyResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to verify');
+    }
   }
 
   Future<bool> createHabit(HabitModel habitModel, token) async {
@@ -77,8 +81,7 @@ class NetworkClient extends ChangeNotifier {
 
   Future<List<HabitModel>> loadHabits(token) async {
     var list = <HabitModel>[];
-    final response =
-        await get(Uri.parse('$baseUrl/v1/habits'), headers: {
+    final response = await get(Uri.parse('$baseUrl/v1/habits'), headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     });
@@ -96,8 +99,7 @@ class NetworkClient extends ChangeNotifier {
   }
 
   Future<bool> deleteHabits(String id, token) async {
-    final response = await delete(
-        Uri.parse('$baseUrl/v1/habits/$id'),
+    final response = await delete(Uri.parse('$baseUrl/v1/habits/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -106,8 +108,7 @@ class NetworkClient extends ChangeNotifier {
   }
 
   Future<bool> updateHabits(String id, HabitModel habitModel, token) async {
-    final response = await put(
-        Uri.parse('$baseUrl/v1/habits/$id'),
+    final response = await put(Uri.parse('$baseUrl/v1/habits/$id'),
         body: jsonEncode(habitModel.toJson()),
         headers: {
           'Content-Type': 'application/json',
@@ -121,11 +122,11 @@ class NetworkClient extends ChangeNotifier {
 
   Future<Activities> createActivities(String id, String date, token) async {
     final response = await post(
-        Uri.parse('$baseUrl/v1/activities'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
+      Uri.parse('$baseUrl/v1/activities'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
       body: jsonEncode({'habitId': id, 'date': date}),
     );
     if (response.statusCode.isSuccessFull()) {
@@ -133,5 +134,16 @@ class NetworkClient extends ChangeNotifier {
     } else {
       throw Exception('Failed to get activities');
     }
+  }
+
+  Future<bool> deleteActivities(String id, String token) async {
+    final response = await delete(
+      Uri.parse('$baseUrl/v1/activities/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    return response.statusCode.isSuccessFull();
   }
 }

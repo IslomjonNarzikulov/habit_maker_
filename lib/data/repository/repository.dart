@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/data/database/db_helper.dart';
 import 'package:habit_maker/data/exception/unauthorized_exception.dart';
+import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/activities_model.dart';
 import 'package:habit_maker/models/login_response.dart';
 
@@ -44,7 +47,8 @@ class Repository {
       return data;
     } else {
       try {
-        return await dbHelper.getHabitList();
+        var list = await dbHelper.getHabitList();
+        return list;
       } catch (e) {
         print(e.toString());
         return [];
@@ -53,16 +57,34 @@ class Repository {
   }
 
   Future<void> createActivity(HabitModel item, DateTime date) async {
-    var isLoggedIn = await secureStorage.read(key: isUserLogged);
-    var isLogged = isLoggedIn != null ? bool.parse(isLoggedIn) : false;
+    executeTask(logged: (token) async {
+      await networkClient.createActivities(
+          item.id!, date.toIso8601String(), token);
+    }, notLogged: (e) async {
+      var model = Activities(date: date.toIso8601String(), habitId: item.dbId!);
+      await dbHelper.insertActivities(model);
+    });
+  }
+
+  Future<void> deleteActivity(
+      HabitModel model, int index, DateTime date) async {
+    var isLoggedString = await secureStorage.read(key: isUserLogged);
+    var isLogged = isLoggedString != null ? bool.parse(isLoggedString) : false;
     if (isLogged) {
       var token = await secureStorage.read(key: accessToken);
       if (token == null) return;
-      await networkClient.createActivities(
-          item.id!, date.toIso8601String(), token);
+      var activityId = model.activities?.getTheSameDay(date)?.id;
+      await networkClient.deleteActivities(activityId!, token);
     } else {
-      var model = Activities(date: date.toIso8601String(), habitId: item.dbId!);
-      await dbHelper.insertActivities(model);
+      var list = await dbHelper.getHabitList();
+      var item = list.firstWhere((element) =>
+          element.activities?[index].habitId ==
+          model.activities?[index].habitId);
+      if (item.activities?[index].isDeleted == false) {
+        item.activities?[index].isDeleted = true;
+        item.activities?[index].isSynced = false;
+        dbHelper.updateHabit(item);
+      }
     }
   }
 
@@ -129,29 +151,31 @@ class Repository {
     return true;
   }
 
-  Future<void> signUp(
+  Future<bool> signUp(
     String username,
     String password,
   ) async {
     if (username.isNotEmpty && password.isNotEmpty) {
       var user = await networkClient.signUp_response(username, password);
       secureStorage.write(key: accessToken, value: user!.token);
+      return user != null;
+    } else {
+      return false;
     }
   }
 
-  Future<void> verify(String otp) async {
+  Future<bool> verify(String otp) async {
     var token = await secureStorage.read(key: accessToken);
     if (token != null && otp.isNotEmpty) {
-      var user = await networkClient.verify_response(token, otp);
-      if (user != null) {
-        secureStorage.write(key: accessToken, value: user.token!.accessToken);
-        secureStorage.write(key: refreshToken, value: user.token!.refreshToken);
-        secureStorage.write(key: firstName, value: user.user!.firstName);
-        secureStorage.write(key: lastName, value: user.user!.lastName);
-        secureStorage.write(key: email, value: user.user!.email);
-        secureStorage.write(key: userId, value: user.user!.id);
-      }
+      var user = await networkClient.verifyResponse(token, otp);
+      secureStorage.write(key: accessToken, value: user!.token!.accessToken);
+      secureStorage.write(key: firstName, value: user.user!.firstName);
+      secureStorage.write(key: lastName, value: user.user!.lastName);
+      secureStorage.write(key: email, value: user.user!.email);
+      secureStorage.write(key: userId, value: user.user!.id);
+      return user != null;
     }
+    return false;
   }
 
   Future<void> refreshUserToken() async {
@@ -159,6 +183,23 @@ class Repository {
     var user = await networkClient.refreshToken(token!);
     if (user != null) {
       saveUserCredentials(user);
+    }
+  }
+
+  FutureOr<T> executeTask<T>(
+      {required Future<T> Function(String) logged,
+      required Future<T> Function(Object?) notLogged}) async {
+    try {
+      var isLoggedIn = await secureStorage.read(key: isUserLogged);
+      var isLogged = isLoggedIn != null ? bool.parse(isLoggedIn) : false;
+      var token = await secureStorage.read(key: accessToken);
+      if (isLogged && token != null) {
+        return executeWithRetry((token) => logged(token));
+      } else {
+        return notLogged(null);
+      }
+    } catch (e) {
+      return notLogged(e);
     }
   }
 
