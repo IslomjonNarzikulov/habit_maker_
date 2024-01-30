@@ -1,6 +1,7 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: end_on_referenced_packages
 import 'dart:io' as io;
 
+import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/activities_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,7 +28,6 @@ class DBHelper {
   }
 
   _createDatabase(Database db, int version) async {
-    //creating table in the database
     await db.execute("CREATE TABLE $habitTableName("
         "id INTEGER "
         "PRIMARY KEY AUTOINCREMENT,"
@@ -126,12 +126,17 @@ class DBHelper {
           .toList()
           .where((element) => element.dbId == habit['id'])
           .toList();
-      var activity=activityList.map((e){return Activities.fromDbJson(e);})
-          .toList().where((element) => element.habitId == habit['id']).toList();
+      var activity = activityList
+          .map((e) {
+            return Activities.fromDbJson(e);
+          })
+          .toList()
+          .where((element) => element.habitId == habit['id'])
+          .toList();
       var model = HabitModel.fromDbJson(habit);
       repetition.weekdays = weekday;
       model.repetition = repetition;
-      model.activities=activity;
+      model.activities = activity;
       return model;
     }).toList();
     return habits;
@@ -148,6 +153,12 @@ class DBHelper {
       await dbClient.update(weekdayTableName, element.toDbJson(habitModel.dbId),
           where: 'dbId=?', whereArgs: [habitModel.dbId]);
     });
+    if (habitModel.activities != null) {
+      await Future.forEach(habitModel.activities!, (element) async {
+        await dbClient.update(activityTable, element.toDbJson(),
+            where: 'id=?', whereArgs: [element.dbId]);
+      });
+    }
   }
 
   Future<void> delete(int id) async {
@@ -159,10 +170,23 @@ class DBHelper {
     await dbClient.delete(activityTable, where: 'id=?', whereArgs: [id]);
   }
 
-  Future<void> insertActivities(Activities activities) async {
+  Future<void> insertActivities(HabitModel habitModel, DateTime date) async {
     final dbClient = await db;
     try {
-      await dbClient?.insert(activityTable, activities.toDbJson());
+      var list = await getHabitList();
+      var model =
+          list.where((element) => element.dbId == habitModel.dbId).first;
+      var activity = model.activities!.getTheSameDay(date);
+      if (activity == null) {
+        await dbClient?.insert(
+            activityTable,
+            Activities(habitId: habitModel.dbId, date: date.toIso8601String())
+                .toDbJson());
+      } else {
+        model.activities!.getTheSameDay(date)!.isDeleted = false;
+        model.activities!.getTheSameDay(date)!.isSynced = false;
+        await updateHabit(model);
+      }
     } catch (e) {
       e.toString();
     }

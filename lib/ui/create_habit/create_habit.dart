@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:habit_maker/common/colors.dart';
-import 'package:habit_maker/common/constants.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/provider/habit_provider.dart';
@@ -85,185 +84,158 @@ class _CreateHabitState extends State<CreateHabit>
   Widget build(BuildContext context) {
     return Consumer<HabitProvider>(
       builder: ((context, value, child) => Scaffold(
-            appBar: AppBar(
-              title: Text(isEdit ? 'Update habits' : 'Create habits'),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 85,
-                        margin: const EdgeInsets.symmetric(horizontal: 12),
-                        child: TextFormField(
-                          inputFormatters: <TextInputFormatter>[
-                            UpperCaseTextFormatter()
-                          ],
-                          controller: titleController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.green),
-                            ),
-                            filled: true,
-                            hintText: 'Enter title',
+          appBar: AppBar(
+            title: Text(isEdit ? 'Update habits' : 'Create habits'),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 85,
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TextFormField(
+                        inputFormatters: <TextInputFormatter>[
+                          UpperCaseTextFormatter()
+                        ],
+                        controller: titleController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(color: Colors.green),
                           ),
-                          validator: (value) {
-                            if (titleController.text.trim().isEmpty ||
-                                repeat.weekdays!.isEmpty) {
-                              return 'Invalid input';
-                            }
-                            return null;
-                          },
+                          filled: true,
+                          hintText: 'Enter title',
                         ),
+                        validator: (value) {
+                          if (titleController.text.trim().isEmpty ||
+                              repeat.weekdays!.isEmpty) {
+                            return 'Invalid input';
+                          }
+                          return null;
+                        },
                       ),
-                      const SizedBox(height: 8),
-                      Column(
+                    ),
+                    const SizedBox(height: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Colors',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 14),
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List<Widget>.generate(
+                              7,
+                              (index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedIndex = index;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: CircleAvatar(
+                                      radius: 18,
+                                      backgroundColor: colorList[index],
+                                      child: _selectedIndex == index
+                                          ? const Icon(
+                                              Icons.check,
+                                              color: Colors.white,
+                                            )
+                                          : null,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 36),
+                    tabBar(),
+                    tabBarSwitch(),
+                    const SizedBox(height: 24),
+                    Container(
+                      margin: const EdgeInsets.all(12),
+                      height: 36,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Text(
-                            'Colors',
+                            'Reminder',
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                                fontSize: 24, fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 14),
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List<Widget>.generate(
-                                7,
-                                (index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = index;
-                                      });
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: CircleAvatar(
-                                        radius: 18,
-                                        backgroundColor: colorList[index],
-                                        child: _selectedIndex == index
-                                            ? const Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                              )
-                                            : null,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 36),
-                      tabBar(),
-                      tabBarSwitch(),
-                      const SizedBox(height: 24),
-                      Container(
-                        margin: const EdgeInsets.all(12),
-                        height: 36,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Reminder',
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 12),
-                            Visibility(
-                              visible: repeat.showNotification!,
-                              child: GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                      backgroundColor: Colors.white,
-                                      context: context,
-                                      builder: (context) {
-                                        return Column(
-                                          children: [hourMinute12H()],
-                                        );
-                                      });
-                                },
-                                child: Container(
-                                  height: 30,
-                                  width: 65,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.blueGrey),
-                                  child: Center(
-                                    child: Text(
-                                      repeat.notifyTime = _dateTime.hour
-                                              .toString()
-                                              .padLeft(2, '0') +
-                                          ':' +
-                                          _dateTime.minute
-                                              .toString()
-                                              .padLeft(2, '0'),
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
+                          const SizedBox(width: 12),
+                          Visibility(
+                            visible: repeat.showNotification!,
+                            child: GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.white,
+                                    context: context,
+                                    builder: (context) {
+                                      return Column(
+                                        children: [hourMinute12H()],
+                                      );
+                                    });
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 65,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.blueGrey),
+                                child: Center(
+                                  child: Text(
+                                    repeat.notifyTime = _dateTime.hour
+                                            .toString()
+                                            .padLeft(2, '0') +
+                                        ':' +
+                                        _dateTime.minute
+                                            .toString()
+                                            .padLeft(2, '0'),
+                                    style: const TextStyle(
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: SwitchListTile(
-                                  value: repeat.showNotification!,
-                                  activeColor: Colors.blueAccent,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      repeat.showNotification = value;
-                                    });
-                                  }),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Column(
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(350, 55),
-                                backgroundColor: Color(0xff309d9f)),
-                            onPressed: () {
-                              if (_formKey.currentState?.validate() ?? false) {
-                                if (isEdit) {
-                                  var item = widget.habitModel;
-                                    provider.updateHabits(item!, body);
-                                    Navigator.pop(context);
-                                  } else {
-                                    provider.createHabit(body);
-                                    Navigator.pop(context);
-                                  }
-                                }
-                            },
-                            child: Text(
-                              isEdit ? 'Update data' : 'Save Data',
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20
-                              ),
-                            ),
+                          ),
+                          Expanded(
+                            child: SwitchListTile(
+                                value: repeat.showNotification!,
+                                activeColor: Colors.blueAccent,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    repeat.showNotification = value;
+                                  });
+                                }),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
               ),
             ),
-          )),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: saveButton())),
     );
   }
 
@@ -324,6 +296,30 @@ class _CreateHabitState extends State<CreateHabit>
           ),
         ),
       ]),
+    );
+  }
+
+  Widget saveButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          minimumSize: const Size(350, 55), backgroundColor: Color(0xff309d9f)),
+      onPressed: () {
+        if (_formKey.currentState?.validate() ?? false) {
+          if (isEdit) {
+            var item = widget.habitModel;
+            provider.updateHabits(item!, body);
+            Navigator.pop(context);
+          } else {
+            provider.createHabit(body);
+            Navigator.pop(context);
+          }
+        }
+      },
+      child: Text(
+        isEdit ? 'Update data' : 'Save Data',
+        style: const TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
+      ),
     );
   }
 
@@ -442,16 +438,19 @@ class _CreateHabitState extends State<CreateHabit>
     );
   }
 }
+
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     return TextEditingValue(
       text: capitalize(newValue.text),
       selection: newValue.selection,
     );
   }
 }
+
 String capitalize(String value) {
-  if(value.trim().isEmpty) return "";
+  if (value.trim().isEmpty) return "";
   return "${value[0].toUpperCase()}${value.substring(1).toLowerCase()}";
 }

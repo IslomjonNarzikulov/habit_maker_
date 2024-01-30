@@ -4,6 +4,7 @@ import 'package:habit_maker/provider/habit_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../common/kdays.dart';
 import '../create_habit/create_habit.dart';
 
 class HabitDetails extends StatefulWidget {
@@ -25,22 +26,11 @@ class _HabitDetailsState extends State<HabitDetails> {
   }
 
   DateTime selectedDay = DateTime.now();
-  List _selectedDay = [];
   DateTime _focusedDay = DateTime.now();
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _focusedDay = focusedDay;
-      if (_selectedDay.contains(selectedDay)) {
-
-      } else {
-        provider.createActivities(widget.item, selectedDay);
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    provider.initCalendarData(widget.item);
     return Consumer<HabitProvider>(
         builder: (BuildContext context, HabitProvider value, Widget? child) =>
             SafeArea(
@@ -76,37 +66,53 @@ class _HabitDetailsState extends State<HabitDetails> {
                 body: Column(
                   children: [
                     TableCalendar(
-                      headerStyle: const HeaderStyle(
-                          formatButtonVisible: false, titleCentered: true),
-                      focusedDay: selectedDay,
-                      firstDay: DateTime.utc(2020, 2, 2),
-                      lastDay: DateTime.utc(2030, 2, 2),
-                      onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-                        setState(() {
-                          _selectedDay = _selectedDay;
-                          _focusedDay = focusedDay;
-                        });
-                      },
-                      selectedDayPredicate: (DateTime date) {
-                        return isSameDay(selectedDay, date);
-                      },
-                    ),
+                  startingDayOfWeek: StartingDayOfWeek.monday,
+                  daysOfWeekStyle: const DaysOfWeekStyle(
+                      weekendStyle: TextStyle(color: Colors.red)),
+                  calendarStyle: CalendarStyle(
+                      weekendTextStyle:
+                      const TextStyle(color: Colors.red),
+                      todayDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: const Color(
+                            0xff3939f6,
+                          ),
+                        ),
+                      ),
+                      todayTextStyle:
+                      const TextStyle(color: Colors.black)),
+                  headerStyle: const HeaderStyle(
+                      formatButtonVisible: false, titleCentered: true),
+                  selectedDayPredicate: (day) {
+                    return provider.isDaySelected(day);
+                  },
+                  onDaySelected: (selectedDay, focusedDay) {
+                    provider.onDaySelected(
+                        selectedDay, focusedDay, widget.item);
+                  },
+                  rowHeight: 60,
+                  weekNumbersVisible: false,
+                  firstDay: kFirstDay,
+                  lastDay: kLastDay,
+                  focusedDay: _focusedDay,
+                ),
                     const SizedBox(
                       height: 24,
                     ),
                   ],
                 ),
               ),
-            ));
+            )
+    );
   }
-
 
   Future<void> navigateToUpdatePage(HabitModel habitModel) async {
     final route = MaterialPageRoute(
-        builder: (context) =>
-            CreateHabit(
-              habitModel: habitModel,
-            ));
+      builder: (context) => CreateHabit(
+        habitModel: habitModel,
+      ),
+    );
     await Navigator.push(context, route);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/provider/profile_provider.dart';
+import 'package:habit_maker/ui/provider/profile_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {

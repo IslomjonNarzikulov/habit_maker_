@@ -15,7 +15,6 @@ class Weekly extends StatefulWidget {
 
 class _WeeklyState extends State<Weekly> {
   late HabitProvider provider;
-  int numberOfDays = 7;
   List text = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
   bool isDisabled = false;
 
@@ -29,22 +28,22 @@ class _WeeklyState extends State<Weekly> {
   Widget build(BuildContext context) {
     return Scaffold(body: Center(child: Consumer<HabitProvider>(
       builder: (BuildContext context, HabitProvider value, Widget? child) {
-        var habit = value.weekly;
+        var habits = value.weekly;
         if (value.weekly.isNotEmpty) {
           return Stack(children: [
             RefreshIndicator(
               onRefresh: () async {
-                provider.loadHabits(true);
+                provider.loadHabits();
                 return Future<void>.delayed(const Duration(seconds: 2));
               },
               child: Container(
                 child: ListView.builder(
-                  itemCount: habit.length,
+                  itemCount: habits.length,
                   itemBuilder: (context, index) {
-                    var item = habit[index];
-                    var _selectedIndex = 0;
+                    var item = habits[index];
+                    var selectedIndex = 0;
                     if (item.color != null) {
-                      _selectedIndex = item.color!;
+                      selectedIndex = item.color!;
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -58,13 +57,13 @@ class _WeeklyState extends State<Weekly> {
                             margin: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                color: colorList[_selectedIndex]),
+                                color: colorList[selectedIndex]),
                             height: 115,
                             width: 360,
                             child: Column(
                               children: [
                                 Text(
-                                  habit[index].title.toString(),
+                                  habits[index].title.toString(),
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white),
                                 ),
@@ -93,8 +92,7 @@ class _WeeklyState extends State<Weekly> {
                                 Expanded(
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount:
-                                        item.repetition!.weekdays!.length,
+                                    itemCount: 7,
                                     itemBuilder: (context, dayIndex) {
                                       var difference =
                                           DateTime.now().weekday - 1 - dayIndex;
@@ -103,8 +101,10 @@ class _WeeklyState extends State<Weekly> {
                                       var isDaySelected = item.activities
                                           ?.where((element) {
                                             return isSameDay(
-                                                DateTime.parse(element.date!),
-                                                date) && element.isDeleted == false;
+                                                    DateTime.parse(
+                                                        element.date!),
+                                                    date) &&
+                                                element.isDeleted == false;
                                           })
                                           .toList()
                                           .isNotEmpty;
@@ -179,16 +179,14 @@ class _WeeklyState extends State<Weekly> {
     var difference = DateTime.now().weekday - 1 - dayIndex;
     var selectedHabit = provider.weekly[index];
     var date = DateTime.now().subtract(Duration(days: difference));
-    var isDaySelected = selectedHabit.activities
-        ?.where((element) {
-          return isSameDay(DateTime.parse(element.date!), date);
-        })
-        .toList()
-        .isNotEmpty;
+    var isDaySelected = selectedHabit.activities?.where((element) {
+      return isSameDay(DateTime.parse(element.date!), date) &&
+          element.isDeleted == false;
+    }).isNotEmpty;
     if (isDaySelected == false) {
       provider.createActivities(selectedHabit, date);
     } else {
-      provider.deleteActivities(selectedHabit, index,date);
+      provider.deleteActivities(selectedHabit, date);
     }
   }
 }

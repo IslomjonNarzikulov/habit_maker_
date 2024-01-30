@@ -19,7 +19,7 @@ class _DailyPageState extends State<DailyPage> {
   void initState() {
     super.initState();
     provider = Provider.of<HabitProvider>(context, listen: false);
-    provider.loadHabits(true);
+    provider.loadHabits();
   }
 
   @override
@@ -32,7 +32,7 @@ class _DailyPageState extends State<DailyPage> {
           if (value.habits.isNotEmpty) {
             return RefreshIndicator(
               onRefresh: () async {
-                provider.loadHabits(true);
+                provider.loadHabits();
                 return Future<void>.delayed(const Duration(seconds: 2));
               },
               child: ListView.builder(

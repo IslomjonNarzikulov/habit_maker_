@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/data/repository/repository.dart';
-import 'package:habit_maker/models/activities_model.dart';
+import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../common/constants.dart';
@@ -17,6 +17,7 @@ class HabitProvider extends ChangeNotifier {
   LogOutState logOutState;
   bool isLoggedState = false;
   FlutterSecureStorage secureStorage;
+  var calendarDates = <DateTime>[];
 
   HabitProvider(this.repository, this.logOutState, this.secureStorage) {
     logOutState.logOut.stream.listen((element) {
@@ -41,71 +42,86 @@ class HabitProvider extends ChangeNotifier {
 
   void createHabit(HabitModel habitModel) async {
     await repository.createHabit(habitModel);
-    loadHabits(true);
+    loadHabits();
     notifyListeners();
   }
 
-  void loadHabits(bool force) async {
+  Future<List<HabitModel>> loadHabits() async {
     isLoading = true;
-    var response = await repository.loadHabits(force);
+    var response = await repository.loadHabits();
     habits = response
         .where((element) =>
             element.isDeleted == false &&
             element.activities!.where((activity) {
               var result =
-                  isSameDay(DateTime.parse(activity.date!), DateTime.now());
+                  isSameDay(DateTime.parse(activity.date!), DateTime.now()) &&
+                      activity.isDeleted == false;
               return result;
             }).isEmpty)
         .toList();
-    print(habits);
     weekly = response.where((element) => element.isDeleted == false).toList();
     isLoading = false;
     notifyListeners();
+    return habits;
   }
 
   Future<void> deleteHabits(HabitModel model) async {
     await repository.deleteHabits(model);
-    loadHabits(true);
+    loadHabits();
     notifyListeners();
   }
 
   Future<void> updateHabits(HabitModel model, HabitModel habitModel) async {
     await repository.updateHabits(model, habitModel);
-    loadHabits(true);
+    loadHabits();
     notifyListeners();
   }
 
   Future<void> createActivities(HabitModel model, DateTime date) async {
-    markActivityAsSelected(model, date, true);
+    isLoading = true;
     notifyListeners();
     await repository.createActivity(model, date);
-    loadHabits(true);
+    await loadHabits();
+    isLoading = false;
     notifyListeners();
   }
 
-  Future<void> deleteActivities(
-      HabitModel model, int index, DateTime date) async {
-    markActivityAsSelected(model, date, false);
+  Future<void> deleteActivities(HabitModel model, DateTime date) async {
+    isLoading = true;
     notifyListeners();
-    await repository.deleteActivity(model,index, date);
-    loadHabits(true);
+    await repository.deleteActivity(model, date);
+    await loadHabits();
+    isLoading = false;
     notifyListeners();
   }
 
-  void markActivityAsSelected(HabitModel model, DateTime date, bool created) {
-    if (created) {
-      weekly
-          .where((element) => element.dbId == model.dbId)
-          .firstOrNull
-          ?.activities
-          ?.add(Activities(habitId: model.dbId));
+  Future<void> onDaySelected(
+      DateTime selectedDay, DateTime focusedDay, HabitModel model) async {
+    if (calendarDates.isDateExist(selectedDay)) {
+      calendarDates.remove(selectedDay);
+      notifyListeners();
+      await deleteActivities(model, selectedDay);
+    } else {
+      calendarDates.add(selectedDay);
+      notifyListeners();
+      await createActivities(model, selectedDay);
     }
+    var updatedHabit = (await loadHabits())
+        .where((element) => element.id == model.id)
+        .firstOrNull;
+    if (updatedHabit != null) {
+      initCalendarData(updatedHabit);
+    }
+    notifyListeners();
+  }
+  void initCalendarData(HabitModel model) {
+    calendarDates.clear();
+    model.activities?.where((e) => e.isDeleted == false).forEach((element) {
+      calendarDates.add(DateTime.parse(element.date!));
+    });
+  }
+  bool isDaySelected(DateTime day) {
+    return calendarDates.isDateExist(day);
   }
 }
 
-extension StatusParsing on int {
-  bool isSuccessFull() {
-    var res = this >= 200 && this < 300;
-    return res;
-  }
-}

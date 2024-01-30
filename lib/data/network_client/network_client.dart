@@ -1,149 +1,172 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-import 'package:habit_maker/data/exception/unauthorized_exception.dart';
+import 'package:dio/dio.dart';
 import 'package:habit_maker/models/login_response.dart';
 import 'package:habit_maker/models/registration_response.dart';
 import 'package:habit_maker/models/verify_response.dart';
-import 'package:habit_maker/provider/habit_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 import '../../common/constants.dart';
 import '../../models/activities_model.dart';
 import '../../models/habit_model.dart';
 
-class NetworkClient extends ChangeNotifier {
+class NetworkClient {
+  final Dio dio;
+
+  NetworkClient({required this.dio});
+
   Future<LoginResponse?> login(String email, String password) async {
     try {
-      final response = await post(Uri.parse("$baseUrl/v1/auth/login"), body: {
+      final response = await dio.post("$baseUrl/v1/auth/login", data: {
         "email": email,
         "password": password,
       });
-      return LoginResponse.fromJson(jsonDecode(response.body));
+      return LoginResponse.fromJson(response.data);
     } catch (e) {
       e.toString();
       return null;
     }
   }
 
-  Future<SignUpResponse?> signUp_response(String email, String password) async {
-    final response =
-        await post(Uri.parse("$baseUrl/v1/auth/registration/otp"), body: {
+  Future<SignUpResponse?> signUpResponse(String email, String password) async {
+    final response = await dio.post("$baseUrl/v1/auth/registration/otp", data: {
       "email": email,
       "password": password,
     });
-    if (response.statusCode == 401) {
-      throw UnAuthorizedException('');
-    }
-    return SignUpResponse.fromJson(jsonDecode(response.body));
+    return SignUpResponse.fromJson(jsonDecode(response.data));
   }
 
   Future<LoginResponse?> refreshToken(String? refreshToken) async {
-    final response = await post(Uri.parse("$baseUrl/v1/auth/refresh-token"),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({'refreshToken': refreshToken}));
+    final response = await dio.post("$baseUrl/v1/auth/refresh-token",
+        options: Options(
+          validateStatus: (_) => true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {'refreshToken': refreshToken});
 
-    return LoginResponse.fromJson(jsonDecode(response.body));
+    return LoginResponse.fromJson(jsonDecode(response.data));
   }
 
   Future<VerifyResponse> verifyResponse(String token, String otp) async {
-    final response =
-        await post(Uri.parse("$baseUrl/v1/auth/registration/verify"),
-            headers: {'Content-Type': 'application/json'},
-            body: json.encode({
-              "token": token,
-              "otp": otp,
-            }));
-    if (response.statusCode.isSuccessFull()) {
-      return VerifyResponse.fromJson(jsonDecode(response.body));
+    final response = await dio.post("$baseUrl/v1/auth/registration/verify",
+        options: Options(
+            validateStatus: (_) => true,
+            headers: {'Content-Type': 'application/json'}),
+        data: {
+          "token": token,
+          "otp": otp,
+        });
+    if (response.statusCode!.isSuccessFull()) {
+      return VerifyResponse.fromJson(jsonDecode(response.data));
     } else {
       throw Exception('Failed to verify');
     }
   }
 
   Future<bool> createHabit(HabitModel habitModel, token) async {
-    final response = await http.post(
-      Uri.parse("$baseUrl/v1/habits"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
-      body: jsonEncode(habitModel.toJson()),
+    final response = await dio.post(
+      "$baseUrl/v1/habits",
+      options: Options(
+        validateStatus: (_) => true,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      ),
+      data: jsonEncode(habitModel.toJson()),
     );
-    if (response.statusCode == 401) {
-      throw UnAuthorizedException('');
-    }
-    return response.statusCode.isSuccessFull();
+    return response.statusCode!.isSuccessFull();
   }
 
-  Future<List<HabitModel>> loadHabits(token) async {
-    var list = <HabitModel>[];
-    final response = await get(Uri.parse('$baseUrl/v1/habits'), headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-    if (response.statusCode == 401) {
-      throw UnAuthorizedException('');
-    }
-    Map<String, dynamic> jsonData = jsonDecode(response.body);
-    jsonData['habits'].forEach((element) {
-      if (element['repetition']['weekdays'] != null) {
-        var item = HabitModel.fromJson(element);
-        list.add(item);
+  Future<List<HabitModel>> loadHabits(String token) async {
+    var list = <HabitModel>[]; //
+    try {
+      var response = await dio.get(
+        "$baseUrl/v1/habits",
+        options: Options(
+          validateStatus: (_) => true,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      Map<String, dynamic> jsonData = response.data;
+      if (jsonData.containsKey('habits')) {
+        for (var element in jsonData['habits']) {
+          if (element['repetition']['weekdays'] != null) {
+            var item = HabitModel.fromJson(element);
+            list.add(item);
+          }
+        }
       }
-    });
+    } catch (e) {
+      e.toString();
+    }
+
     return list;
   }
 
   Future<bool> deleteHabits(String id, token) async {
-    final response = await delete(Uri.parse('$baseUrl/v1/habits/$id'),
-        headers: {
+    final response = await dio.delete('$baseUrl/v1/habits/$id',
+        options: Options(validateStatus: (_) => true, headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
-        });
-    return response.statusCode.isSuccessFull();
+        }));
+    return response.statusCode!.isSuccessFull();
   }
 
   Future<bool> updateHabits(String id, HabitModel habitModel, token) async {
-    final response = await put(Uri.parse('$baseUrl/v1/habits/$id'),
-        body: jsonEncode(habitModel.toJson()),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        });
-    if (response.statusCode == 401) {
-      throw UnAuthorizedException('');
-    }
-    return response.statusCode.isSuccessFull();
+    final response = await dio.put(
+      '$baseUrl/v1/habits/$id',
+      options: Options(validateStatus: (_) => true, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      }),
+      data: (habitModel.toJson()),
+    );
+
+    return response.statusCode!.isSuccessFull();
   }
 
   Future<Activities> createActivities(String id, String date, token) async {
-    final response = await post(
-      Uri.parse('$baseUrl/v1/activities'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
-      body: jsonEncode({'habitId': id, 'date': date}),
+    final response = await dio.post(
+      '$baseUrl/v1/activities',
+      options: Options(
+        validateStatus: (_) => true,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      ),
+      data: {'habitId': id, 'date': date},
     );
-    if (response.statusCode.isSuccessFull()) {
-      return Activities.fromJson(json.decode(response.body));
+    if (response.statusCode!.isSuccessFull()) {
+      return Activities.fromJson(response.data);
     } else {
       throw Exception('Failed to get activities');
     }
   }
 
   Future<bool> deleteActivities(String id, String token) async {
-    final response = await delete(
-      Uri.parse('$baseUrl/v1/activities/$id'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
+    final response = await dio.delete(
+      '$baseUrl/v1/activities/$id',
+      options: Options(
+        validateStatus: (_) => true,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      ),
     );
-    return response.statusCode.isSuccessFull();
+    return response.statusCode!.isSuccessFull();
+  }
+}
+
+extension StatusParsing on int {
+  bool isSuccessFull() {
+    var res = this >= 200 && this < 300;
+    return res;
   }
 }
