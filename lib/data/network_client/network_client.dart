@@ -45,7 +45,7 @@ class NetworkClient {
         ),
         data: {'refreshToken': refreshToken});
 
-    return LoginResponse.fromJson(jsonDecode(response.data));
+    return LoginResponse.fromJson(response.data);
   }
 
   Future<VerifyResponse> verifyResponse(String token, String otp) async {

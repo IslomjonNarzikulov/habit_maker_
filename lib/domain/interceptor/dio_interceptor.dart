@@ -18,13 +18,8 @@ class CustomInterceptors extends Interceptor {
   }
 
   Future<Response> updateUserToken(RequestOptions requestOptions) async {
-    // Attempt token refresh
     final String newToken = (await habitRepository.userRefreshToken())!;
-
-    // Update Dio with the new token
     _dio.options.headers['Authorization'] = 'Bearer $newToken';
-
-    // Clone the original request with updated options and headers
     final opts = Options(
       method: requestOptions.method,
       headers: requestOptions.headers,
@@ -44,11 +39,9 @@ class CustomInterceptors extends Interceptor {
       try {
         handler.resolve(await updateUserToken(err.requestOptions));
       } catch (e) {
-        // Token refresh failed or other error occurred, pass the original error
         handler.next(err);
       }
     } else {
-      // Not a 401 error, pass it along
       handler.next(err);
     }
   }
