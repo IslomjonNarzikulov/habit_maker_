@@ -45,7 +45,7 @@ dependencies:
   flutter_riverpod: ^2.4.6
   table_calendar: ^3.0.9
   fl_chart: ^0.64.0
-  connectivity: ^3.0.6
+  connectivity_plus: ^5.0.2
   flutter_local_notifications: ^9.0.0
   flutter_heatmap_calendar: ^1.0.5
   weekday_selector: ^1.1.0

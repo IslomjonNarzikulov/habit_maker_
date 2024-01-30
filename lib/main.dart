@@ -20,7 +20,7 @@ void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
     client.findProxy = (uri) {
       // Replace localhost and 8888 with your proxy IP and port
-      return 'PROXY 192.168.100.14:8888';
+      return 'PROXY 192.168.100.3:8888';
     };
 
     // This line is important if you're using HTTPS endpoints
