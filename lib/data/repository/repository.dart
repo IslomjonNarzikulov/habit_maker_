@@ -13,35 +13,61 @@ class Repository {
   NetworkClient networkClient;
   DBHelper dbHelper;
   FlutterSecureStorage secureStorage;
+  Timer? _debounceTimer;
 
   Repository(
       {required this.dbHelper,
       required this.networkClient,
       required this.secureStorage});
 
-  Future<void> createHabit(HabitModel habitModel) async {
-    var token = await secureStorage.read(key: accessToken);
-    var isLoggedIn = await secureStorage.read(key: isUserLogged);
-    var isLogged = isLoggedIn != null ? bool.parse(isLoggedIn) : false;
-    if (isLogged) {
-      if (token == null) return;
+  Future<void> createHabits(HabitModel habitModel) async {
+    await executeTask(logged: (token) async {
+      if (habitModel.repetition!.numberOfDays == 0 &&
+          habitModel.repetition!.weekdays!
+              .any((element) => element.isSelected == false)) {
+        habitModel.repetition?.numberOfDays = 7;
+      }
+      if (habitModel.repetition!.showNotification == false) {
+        habitModel.repetition!.notifyTime = '00:00';
+      }
       await networkClient.createHabit(habitModel, token);
-    } else {
-      await dbHelper.insertHabit(habitModel);
-    }
-    if (habitModel.repetition!.numberOfDays == 0) {
-      habitModel.repetition?.numberOfDays == 7;
-    }
+    }, notLogged: (e) async {
+      var model = HabitModel(
+        title: habitModel.title,
+        color: habitModel.color,
+        repetition: habitModel.repetition,
+        isSynced: false,
+      );
+      await dbHelper.insertHabit(model);
+    });
   }
 
   Future<List<HabitModel>> loadHabits() async {
-    return await executeTask(logged: (token) async {
-      var habits = await networkClient.loadHabits(token);
-      var data = await dbHelper.insertAllHabits(habits);
-      return data;
-    }, notLogged: (e) async {
-      return await dbHelper.getHabitList();
+    _debounceTimer?.cancel();
+
+    Completer<List<HabitModel>> completer = Completer<List<HabitModel>>();
+    const Duration debounceDuration = Duration(milliseconds: 1000);
+
+    _debounceTimer = Timer(debounceDuration, () async {
+      try {
+        List<HabitModel> result = await executeTask(
+          logged: (token) async {
+            var habits = await networkClient.loadHabits(token);
+
+            return await dbHelper.insertAllHabits(habits);
+          },
+          notLogged: (e) async {
+            return await dbHelper.getHabitList();
+          },
+        );
+
+        completer.complete(result);
+      } catch (error) {
+        completer.completeError(error);
+      }
     });
+
+    return completer.future;
   }
 
   Future<void> createActivity(HabitModel item, DateTime date) async {
@@ -109,6 +135,7 @@ class Repository {
     if (email.isNotEmpty && password.isNotEmpty) {
       var user = await networkClient.login(email, password);
       saveUserCredentials(user!);
+      await secureStorage.write(key: isUserLogged, value: "true");
       return user != null;
     }
     return true;
@@ -186,5 +213,18 @@ class Repository {
   Future<bool> isLogged() async {
     var isLoggedIn = await secureStorage.read(key: isUserLogged);
     return isLoggedIn != null ? bool.parse(isLoggedIn) : false;
+  }
+
+  void logout() async {
+    await secureStorage.deleteAll();
+    await dbHelper.deleteAllHabits();
+  }
+
+  Future<bool> changePassword(String emailAddress) async {
+    if (emailAddress.isNotEmpty) {
+      var user = await networkClient.restorePassword(emailAddress);
+      return user != null;
+    }
+    return false;
   }
 }

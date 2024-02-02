@@ -4,7 +4,7 @@ import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
-import 'package:habit_maker/provider/habit_provider.dart';
+import 'package:habit_maker/ui/create_habit/create_provider.dart';
 import 'package:provider/provider.dart';
 
 class CreateHabit extends StatefulWidget {
@@ -21,53 +21,48 @@ class _CreateHabitState extends State<CreateHabit>
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TabController? _tabController;
   final titleController = TextEditingController();
-  late HabitProvider provider;
+  late CreateProvider provider;
   bool isEdit = false;
   int _selectedIndex = 0;
   bool light = true;
   bool isEnded = false;
-  int numberOfDays = 7;
-  Repetition repeat = Repetition(
-    notifyTime: '0',
-    numberOfDays: 0,
-    weekdays: defaultRepeat,
-    showNotification: false,
-  );
+  Repetition repeat = Repetition();
 
-  void add() {
-    setState(() {
-      if (numberOfDays == 7) {
-        isEnded == true;
-      } else {
-        numberOfDays++;
-      }
-      repeat.numberOfDays = numberOfDays;
-    });
-  }
 
-  void subtract() {
-    setState(() {
-      if (numberOfDays == 1) {
-        isEnded == true;
-      } else {
-        numberOfDays--;
-      }
-      repeat.numberOfDays = numberOfDays;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    provider = context.read<HabitProvider>();
+    provider = context.read<CreateProvider>();
     final habit = widget.habitModel;
     _tabController = TabController(length: 2, vsync: this);
     if (habit != null) {
+      repeat = habit.repetition!;
+      final notifyTime = repeat.notifyTime?.split(':');
+      if (notifyTime != null && notifyTime.length == 2) {
+        provider.dateTime = DateTime(
+        provider.dateTime.year,
+        provider.dateTime.month,
+        provider.dateTime.day,
+            int.parse(notifyTime[0]),
+            int.parse(notifyTime[1]));
+      }
       isEdit = true;
       final title = habit.title;
-      final color = habit.color;
-      final repetition = habit.repetition;
       titleController.text = title!;
+      final color = habit.color;
+      provider.selectedIndex = color!;
+      _tabController = TabController(
+        initialIndex: 0,
+        length: 2,
+        vsync: this,
+      );
+    } else {
+      repeat = Repetition(
+          weekdays: defaultRepeat.map((day) => Day.copy(day)).toList(),
+          numberOfDays: 0,
+          notifyTime: "0",
+          showNotification: false);
     }
   }
 
@@ -82,12 +77,13 @@ class _CreateHabitState extends State<CreateHabit>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HabitProvider>(
-      builder: ((context, value, child) => Scaffold(
-          appBar: AppBar(
-            title: Text(isEdit ? 'Update habits' : 'Create habits'),
-          ),
-          body: Padding(
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white38,
+          title: Text(isEdit ? 'Update habits' : 'Create habits'),
+        ),
+        body: Consumer<CreateProvider>(builder: ((context, createProvider, child) {
+          return Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
               child: Form(
@@ -105,7 +101,7 @@ class _CreateHabitState extends State<CreateHabit>
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(color: Colors.green),
+                            borderSide: const BorderSide(color: Colors.green),
                           ),
                           filled: true,
                           hintText: 'Enter title',
@@ -199,13 +195,11 @@ class _CreateHabitState extends State<CreateHabit>
                                     color: Colors.blueGrey),
                                 child: Center(
                                   child: Text(
-                                    repeat.notifyTime = _dateTime.hour
+                                    repeat.notifyTime = '${_dateTime.hour
                                             .toString()
-                                            .padLeft(2, '0') +
-                                        ':' +
-                                        _dateTime.minute
+                                            .padLeft(2, '0')}:${_dateTime.minute
                                             .toString()
-                                            .padLeft(2, '0'),
+                                            .padLeft(2, '0')}',
                                     style: const TextStyle(
                                       fontSize: 18,
                                     ),
@@ -232,11 +226,10 @@ class _CreateHabitState extends State<CreateHabit>
                 ),
               ),
             ),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: saveButton())),
-    );
+          );
+        })),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: saveButton());
   }
 
   Widget hourMinute12H() {
@@ -378,13 +371,13 @@ class _CreateHabitState extends State<CreateHabit>
                 children: [
                   Column(
                     children: [
-                      Text(
+                      const Text(
                         'Frequency',
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '$numberOfDays times a week',
+                        '${provider.numberOfDays} times a week',
                         style: TextStyle(
                           fontSize: 20,
                         ),
@@ -399,7 +392,7 @@ class _CreateHabitState extends State<CreateHabit>
                         child: Row(children: [
                           GestureDetector(
                             onTap: () {
-                              subtract();
+                              provider.subtract(repeat);
                             },
                             child: Container(
                               height: 26,
@@ -408,19 +401,19 @@ class _CreateHabitState extends State<CreateHabit>
                               child: Icon(Icons.remove),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                           Text(
-                            "$numberOfDays",
+                            "${provider.numberOfDays}",
                             style: TextStyle(fontSize: 20),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 12,
                           ),
                           GestureDetector(
                             onTap: () {
-                              add();
+                              provider.add(repeat);
                             },
                             child: Container(
                               height: 26,

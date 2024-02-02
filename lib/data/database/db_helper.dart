@@ -1,12 +1,9 @@
-// ignore_for_file: end_on_referenced_packages
 import 'dart:io' as io;
-
 import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/activities_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-
 import '../../models/habit_model.dart';
 
 class DBHelper {
@@ -139,7 +136,9 @@ class DBHelper {
       model.activities = activity;
       return model;
     }).toList();
+    print('DbHelper:${habits.length}');
     return habits;
+
   }
 
   Future<void> updateHabit(HabitModel habitModel) async {

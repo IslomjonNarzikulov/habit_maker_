@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:habit_maker/domain/restore_model/restore_response.dart';
 import 'package:habit_maker/models/login_response.dart';
 import 'package:habit_maker/models/registration_response.dart';
 import 'package:habit_maker/models/verify_response.dart';
@@ -161,6 +162,22 @@ class NetworkClient {
       ),
     );
     return response.statusCode!.isSuccessFull();
+  }
+
+  Future<RestorePassword> restorePassword(String emailAddress) async {
+    var response = await dio.post(
+      '$baseUrl/v1/auth/restore/generate-link',
+      options: Options(
+        validateStatus: (_) => true,
+        headers: {'Content-Type': 'application/json'},
+      ),
+      data: {'email': emailAddress},
+    );
+    if (response.statusCode!.isSuccessFull()) {
+      return RestorePassword.fromJson(response.data);
+    } else {
+      throw Exception('Request failed');
+    }
   }
 }
 

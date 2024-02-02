@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/ui/login/signIn.dart';
-import 'package:habit_maker/provider/habit_provider.dart';
+import 'package:habit_maker/ui/login/login.dart';
+import 'package:habit_maker/ui/main_provider.dart';
 import 'package:provider/provider.dart';
+
 import '../../UI/create_habit/create_habit.dart';
 import '../analytics/analytics.dart';
 import '../daily_page/daily_page.dart';
@@ -16,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late HabitProvider provider;
+  late MainProvider provider;
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     DailyPage(),
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    provider =  Provider.of<HabitProvider>(context,listen: false);
+    provider = Provider.of<MainProvider>(context, listen: false);
     provider.isLogged();
     super.initState();
   }
@@ -59,18 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: Drawer(
         child: ListView(
           children: [
-
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Login'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>  SignInPage()));
-              },
-              iconColor: Colors.blue,
-            ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
@@ -78,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const SettingPage(),
+                    builder: (context) =>  SettingPage(),
                   ),
                 );
               },
@@ -89,18 +78,53 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {},
               iconColor: Colors.blue,
             ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Log out'),
-              onTap: () {
-              provider.isLoggedOut();
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+
+            Consumer<MainProvider>(
+              builder: (context, value, child) {
+                if(!provider.isLoggedState){
+                  return Visibility(
+                    visible: true,
+                    child: ListTile(
+                      leading: const Icon(Icons.person),
+                      title: const Text('Login'),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SignInPage()));
+                      },
+                      iconColor: Colors.blue,
+                    ),
+                  );
+                }else{
+                  return Container();
+                }
+
               },
             ),
+            Consumer<MainProvider>(
+              builder: (context, value, child) {
+                if(provider.isLoggedState){
+                  return Visibility(
+                    visible: true,
+                    child: ListTile(
+                      leading: const Icon(Icons.logout),
+                      title: const Text('Log out'),
+                      onTap: () {
+                        provider.isLoggedOut();
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => HomeScreen()));
+                      },
+                    ),
+                  );
+                }else{
+                  return Container();
+                }
+
+              },
+            ),
+
           ],
         ),
       ),
-
       body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -116,7 +140,5 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
       ),
     );
-
   }
 }
-

@@ -125,6 +125,10 @@ class Day {
 
   Day({this.weekday, this.isSelected});
 
+  Day.copy(Day other)
+      : weekday = other.weekday,
+        isSelected = other.isSelected;
+
   Day.fromJson(Map<String, dynamic> json) {
     weekday = (json['weekday'] as String).weekDayFromName();
     isSelected = json['isSelected'];
@@ -150,5 +154,3 @@ class Day {
     };
   }
 }
-
-

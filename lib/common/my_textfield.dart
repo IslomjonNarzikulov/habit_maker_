@@ -20,9 +20,8 @@ class MyTextField extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         decoration:  InputDecoration(
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey),
-            ),
+            border: OutlineInputBorder(borderRadius:
+            BorderRadius.circular(18)),
             hintText: hintText,
             focusedBorder:const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black))),

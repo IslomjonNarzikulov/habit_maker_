@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/common/my_textfield.dart';
-import 'package:habit_maker/ui/login/signIn.dart';
+import 'package:habit_maker/ui/login/login.dart';
+import 'package:habit_maker/ui/signup/restore_password.dart';
 import 'package:habit_maker/ui/signup/signup_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,6 @@ class _SignUpState extends State<SignUp> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   late SignUpProvider signUpProvider;
-
 
   @override
   void initState() {
@@ -45,7 +45,6 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
@@ -62,8 +61,7 @@ class _SignUpState extends State<SignUp> {
                 height: h * 0.3,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage(
-                          'assets/lottie/hey.jpg'),
+                      image: AssetImage('assets/lottie/hey.jpg'),
                       fit: BoxFit.cover),
                 ),
                 child: Column(
@@ -94,6 +92,7 @@ class _SignUpState extends State<SignUp> {
                 height: 24,
               ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.blue),
                 onPressed: () {
                   var username = usernameController.text;
                   var password = passwordController.text;
@@ -110,6 +109,31 @@ class _SignUpState extends State<SignUp> {
                       'Register',
                       style: TextStyle(fontSize: 20),
                     ))),
+              ),
+              const SizedBox(
+                height: 18,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RestorePassword()));
+                        },
+                        child: const Text('Forget password?',style: TextStyle(color: Colors.blue,fontSize: 16),)),
+                  ),
+                  SizedBox(width: 36),
+                  Container(
+                    child: TextButton(
+                      onPressed: (){},
+                      child: const Text('Remember me',style: TextStyle(color: Colors.blue,fontSize: 16),),
+                    ),
+                  )
+                ],
               ),
               const SizedBox(
                 height: 20,
@@ -141,6 +165,7 @@ class _SignUpState extends State<SignUp> {
                 height: 30,
               ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.blue),
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => SignInPage()));

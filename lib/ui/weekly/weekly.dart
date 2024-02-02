@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/UI/habit_details/habit_details.dart';
-import 'package:habit_maker/provider/habit_provider.dart';
+import 'package:habit_maker/ui/main_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../common/colors.dart';
 
 class Weekly extends StatefulWidget {
-  const Weekly({Key? key}) : super(key: key);
+  const Weekly({super.key});
 
   @override
   State<Weekly> createState() => _WeeklyState();
 }
 
 class _WeeklyState extends State<Weekly> {
-  late HabitProvider provider;
+  late MainProvider provider;
   List text = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
   bool isDisabled = false;
 
   @override
   void initState() {
     super.initState();
-    provider = Provider.of<HabitProvider>(context, listen: false);
+    provider = Provider.of<MainProvider>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Consumer<HabitProvider>(
-      builder: (BuildContext context, HabitProvider value, Widget? child) {
+    return Scaffold(body: Center(child: Consumer<MainProvider>(
+      builder: (BuildContext context, MainProvider value, Widget? child) {
         var habits = value.weekly;
         if (value.weekly.isNotEmpty) {
           return Stack(children: [
@@ -64,7 +64,7 @@ class _WeeklyState extends State<Weekly> {
                               children: [
                                 Text(
                                   habits[index].title.toString(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 20, color: Colors.white),
                                 ),
                                 Container(
@@ -162,10 +162,10 @@ class _WeeklyState extends State<Weekly> {
                 ),
               ),
             ),
-            if (provider.isLoading)
+            if (provider.isLoadingState())
               Container(
                 color: Colors.transparent.withOpacity(0.5),
-                child: Center(child: CircularProgressIndicator()),
+                child: const Center(child: CircularProgressIndicator()),
               )
           ]);
         } else {

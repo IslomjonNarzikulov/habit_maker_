@@ -1,0 +1,82 @@
+import 'package:flutter/cupertino.dart';
+import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
+
+import '../data/repository/repository.dart';
+import '../models/habit_model.dart';
+import '../models/log_out_state.dart';
+
+class BaseProvider extends ChangeNotifier {
+  HabitStateKeeper keeper;
+  Repository habitRepository;
+  LogOutState logoutState;
+  var habits = <HabitModel>[];
+  var weekly = <HabitModel>[];
+  bool isLoggedState = false;
+
+  BaseProvider(
+    this.keeper,
+    this.logoutState,
+    this.habitRepository,
+  ) {
+    logoutState.logOut.stream.listen((element) {
+      if (element) {
+        habitRepository.logout();
+      }
+    });
+    loadHabits();
+  }
+
+  bool isLoadingState() {
+    return keeper.isLoading;
+  }
+
+  Future<List<HabitModel>> loadHabits() async {
+    print('Base Provider getHabits');
+    await executeWithLoading(() async {
+      var habitList = await habitRepository.loadHabits();
+      keeper.updateHabits(habitList);
+      habits = keeper.habits;
+      weekly = keeper.weekly;
+    });
+    notifyListeners();
+    return habits;
+  }
+
+  Future<T> executeWithLoading<T>(Future<T> Function() block) async {
+    keeper.isLoading = true;
+    notifyListeners();
+    try {
+      return await block();
+    } finally {
+      keeper.isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<List<HabitModel>> createActivities(
+      HabitModel model, DateTime dateTime) async {
+    return await executeWithLoading(() async {
+      await habitRepository.createActivity(model, dateTime);
+      return await loadHabits();
+    });
+  }
+
+  Future<List<HabitModel>> deleteActivities(
+      HabitModel model, DateTime date) async {
+    return await executeWithLoading(() async {
+      await habitRepository.deleteActivity(model, date);
+      return await loadHabits();
+    });
+  }
+
+  void isLogged() async {
+    var result = await habitRepository.isLogged();
+    isLoggedState = result;
+    print(isLoggedState.toString());
+  }
+
+  void isLoggedOut() {
+    logoutState.logOut.add(true);
+    notifyListeners();
+  }
+}

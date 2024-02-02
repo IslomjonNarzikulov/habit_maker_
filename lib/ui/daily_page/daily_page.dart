@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/common/colors.dart';
-import 'package:habit_maker/provider/habit_provider.dart';
+import 'package:habit_maker/ui/main_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../habit_details/habit_details.dart';
 
 class DailyPage extends StatefulWidget {
-  const DailyPage({Key? key});
+  const DailyPage({super.key});
 
   @override
   State<DailyPage> createState() => _DailyPageState();
 }
 
 class _DailyPageState extends State<DailyPage> {
-  late HabitProvider provider;
+  late MainProvider provider;
 
   @override
   void initState() {
     super.initState();
-    provider = Provider.of<HabitProvider>(context, listen: false);
-    provider.loadHabits();
+    provider = Provider.of<MainProvider>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Consumer<HabitProvider>(builder:
-            (BuildContext context, HabitProvider value, Widget? child) {
+        child: Consumer<MainProvider>(builder:
+            (BuildContext context, MainProvider value, Widget? child) {
           var habit = value.habits;
           if (value.habits.isNotEmpty) {
             return RefreshIndicator(

@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/data/network_client/network_client.dart';
+
 import '../../data/repository/repository.dart';
 
 class SignUpProvider extends ChangeNotifier {
   Repository repository;
+
   SignUpProvider(this.repository);
 
   void signUp(String username, String password, void Function() success,
       void Function() failure) async {
-    if(await repository.signUp(username,password)){
+    if (await repository.signUp(username, password)) {
       success();
-    }else{
+    } else {
       failure();
     }
   }
 
   void verify(
       String otp, void Function() success, void Function() failure) async {
-   if( await repository.verify(otp)){
-     success();
-   }else{
-     failure();
-   }
+    if (await repository.verify(otp)) {
+      success();
+    } else {
+      failure();
+    }
   }
 }

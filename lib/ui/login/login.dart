@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/ui/login/sign_in_provider.dart';
+import 'package:habit_maker/ui/login/login_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../UI/home/home.dart';
@@ -37,8 +37,7 @@ class _SignInPageState extends State<SignInPage> {
               height: h * 0.3,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage(
-                        'assets/lottie/hey.jpg'),
+                    image: AssetImage('assets/lottie/hey.jpg'),
                     fit: BoxFit.cover),
               ),
               child: Column(
@@ -80,11 +79,13 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 1.0),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 1.0),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -92,7 +93,6 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                   ),
-
                   const SizedBox(
                     height: 20,
                   ),
@@ -143,6 +143,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.blue),
               onPressed: () {
                 var username = emailController.text;
                 var password = passwordController.text;
@@ -159,8 +160,8 @@ class _SignInPageState extends State<SignInPage> {
                 height: 60,
                 child: const Center(
                   child: Text(
-                    'Sign in',
-                    style: TextStyle(fontSize: 24, color: Colors.blue),
+                    'Log in',
+                    style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                 ),
               ),
@@ -168,7 +169,9 @@ class _SignInPageState extends State<SignInPage> {
             const SizedBox(
               height: 12,
             ),
-            TextButton(
+            Divider(thickness: 0.7),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.blue),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -176,9 +179,14 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 );
               },
-              child: const Text(
-                'Register now',
-                style: TextStyle(color: Colors.blueAccent, fontSize: 20),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: const Center(
+                  child: Text(
+                    'Register now',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ),
               ),
             ),
             const SizedBox(
