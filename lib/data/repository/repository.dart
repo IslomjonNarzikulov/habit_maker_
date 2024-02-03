@@ -70,26 +70,32 @@ class Repository {
     return completer.future;
   }
 
-  Future<void> createActivity(HabitModel item, DateTime date) async {
+  Future<void> createActivity(HabitModel item, List<DateTime> date) async {
     await executeTask(logged: (token) async {
-      await networkClient.createActivities(
-          item.id!, date.toIso8601String(), token);
+      await Future.forEach(date, (dateTime)  async{
+        await networkClient.createActivities(
+          item.id!, dateTime.toIso8601String(), token);
+      });
     }, notLogged: (e) async {
       await dbHelper.insertActivities(item, date);
     });
   }
 
-  Future<void> deleteActivity(HabitModel model, DateTime date) async {
+  Future<void> deleteActivity(HabitModel model, List<DateTime> date) async {
     await executeTask(logged: (token) async {
-      var activityId = model.activities!.getTheSameDay(date)?.id;
-      if (activityId == null) return;
-      await networkClient.deleteActivities(activityId, token);
+      await Future.forEach(date, (dateTime) async {
+        var activityId = model.activities!.getTheSameDay(dateTime)?.id;
+        if (activityId == null) return;
+        await networkClient.deleteActivities(activityId, token);
+      });
     }, notLogged: (e) async {
-      if (model.activities?.isEmpty == true) return;
-      var activity = model.activities!.getTheSameDay(date);
-      if (activity == null) return;
-      model.activities!.getTheSameDay(date)!.isDeleted = true;
-      model.activities!.getTheSameDay(date)!.isSynced = false;
+      await Future.forEach(date, (dateTime) {
+        if (model.activities?.isEmpty == true) return;
+        var activity = model.activities!.getTheSameDay(dateTime);
+        if (activity == null) return;
+        model.activities!.getTheSameDay(dateTime)!.isDeleted = true;
+        model.activities!.getTheSameDay(dateTime)!.isSynced = false;
+      });
       await dbHelper.updateHabit(model);
     });
   }

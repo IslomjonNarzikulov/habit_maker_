@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/ui/login/login.dart';
-import 'package:habit_maker/ui/theme_data_provider/theme_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../theme_data/theme_provider.dart';
 
 class SettingPage extends StatelessWidget {
   SettingPage({super.key});

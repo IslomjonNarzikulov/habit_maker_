@@ -54,15 +54,15 @@ class BaseProvider extends ChangeNotifier {
   }
 
   Future<List<HabitModel>> createActivities(
-      HabitModel model, DateTime dateTime) async {
+      HabitModel model, List <DateTime> date) async {
     return await executeWithLoading(() async {
-      await habitRepository.createActivity(model, dateTime);
+      await habitRepository.createActivity(model, date);
       return await loadHabits();
     });
   }
 
   Future<List<HabitModel>> deleteActivities(
-      HabitModel model, DateTime date) async {
+      HabitModel model, List<DateTime> date) async {
     return await executeWithLoading(() async {
       await habitRepository.deleteActivity(model, date);
       return await loadHabits();

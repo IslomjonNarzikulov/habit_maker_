@@ -18,8 +18,8 @@ import 'package:habit_maker/ui/main_provider.dart';
 import 'package:habit_maker/ui/profile/profile_provider.dart';
 import 'package:habit_maker/ui/signup/restore_provider.dart';
 import 'package:habit_maker/ui/signup/signup_provider.dart';
-import 'package:habit_maker/ui/theme_data_provider/theme_data.dart';
-import 'package:habit_maker/ui/theme_data_provider/theme_provider.dart';
+import 'package:habit_maker/ui/theme_data/theme_provider.dart';
+
 import 'package:provider/provider.dart';
 
 import 'UI/splash_screen/splash_screen.dart';

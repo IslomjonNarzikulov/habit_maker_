@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:habit_maker/arch_provider/arch_provider.dart';
 import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
@@ -11,6 +13,7 @@ import '../../models/habit_model.dart';
 class HabitPage extends BaseProvider {
   var calendarDates = <DateTime>[];
   HabitModel? selectedHabit;
+  var activityState = <Activity>[];
 
   HabitPage(LogOutState logOutState, Repository habitRepository,
       HabitStateKeeper keeper)
@@ -26,31 +29,58 @@ class HabitPage extends BaseProvider {
     notifyListeners();
   }
 
-  // void initSelectedHabit(HabitModel habitModel) {
-  //   selectedHabit = habitModel;
-  // }
-
-  Future<void> onDaySelected(
-      DateTime selectedDay, DateTime focusedDay, HabitModel model) async {
-    var habits = [];
+  Future<void> onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     if (selectedHabit?.dbId == null) return;
-    var dates = getActivitiesDate(selectedHabit!.dbId!);
-    if (dates.isDateExist(selectedDay)) {
+    if (calendarDates.isDateExist(selectedDay)) {
       calendarDates.remove(selectedDay);
       notifyListeners();
-      habits = await deleteActivities(selectedHabit!, selectedDay);
+      activityState.add(Activity(selectedDay, true));
     } else {
       calendarDates.add(selectedDay);
       notifyListeners();
-      habits = await createActivities(selectedHabit!, selectedDay);
+      activityState.add(Activity(selectedDay, false));
     }
-    var updatedHabit = habits
-        .where((element) => element.dbId == selectedHabit!.dbId)
-        .firstOrNull;
-    if (updatedHabit != null) {
-      initCalendarData(updatedHabit);
-    }
+    debounceActivityHandling();
     notifyListeners();
+  }
+
+  Timer? _debounce;
+
+  void debounceActivityHandling() {
+    if (_debounce?.isActive ?? false) {
+      _debounce!.cancel();
+    }
+    _debounce = Timer(const Duration(seconds: 3), () async {
+      var lastStateByDate = <String, bool>{};
+      for (var activity in activityState) {
+        String dateKey = activity.date.toIso8601String().split('T')[0];
+        lastStateByDate[dateKey] = activity.isDeleted;
+      }
+      List<Activity> filteredActivities = [];
+      lastStateByDate.forEach((dateKey, isDeleted) {
+        Activity? lastActivity = activityState.lastWhere((activity) {
+          String activityDateKey =
+              activity.date.toIso8601String().split('T')[0];
+          return activityDateKey == dateKey && activity.isDeleted == isDeleted;
+        });
+          filteredActivities.add(lastActivity);
+      });
+
+      activityState.clear();
+      activityState.addAll(filteredActivities);
+      var datesCreated = activityState
+          .where((element) => element.isDeleted == false)
+          .map((e) => e.date)
+          .toList();
+      await createActivities(selectedHabit!, datesCreated);
+      var datesDeleted = activityState
+          .where((element) => element.isDeleted == true)
+          .map((e) => e.date)
+          .toList();
+      await deleteActivities(selectedHabit!, datesDeleted);
+      activityState.clear();
+      notifyListeners();
+    });
   }
 
   List<DateTime> getActivitiesDate(int dbId) {
@@ -84,4 +114,11 @@ class HabitPage extends BaseProvider {
     );
     Navigator.push(context, route);
   }
+}
+
+class Activity {
+  late DateTime date;
+  late bool isDeleted;
+
+  Activity(this.date, this.isDeleted);
 }

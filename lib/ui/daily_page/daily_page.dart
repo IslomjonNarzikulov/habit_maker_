@@ -48,7 +48,7 @@ class _DailyPageState extends State<DailyPage> {
                       if (direction == DismissDirection.endToStart ||
                           direction == DismissDirection.startToEnd) {
                         var date = DateTime.now();
-                        provider.createActivities(item, date);
+                        provider.createActivities(item, [date]);
                       }
                     },
                     child: GestureDetector(

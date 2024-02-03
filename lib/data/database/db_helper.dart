@@ -169,23 +169,23 @@ class DBHelper {
     await dbClient.delete(activityTable, where: 'id=?', whereArgs: [id]);
   }
 
-  Future<void> insertActivities(HabitModel habitModel, DateTime date) async {
+  Future<void> insertActivities(HabitModel model, List<DateTime> dates) async {
     final dbClient = await db;
     try {
-      var list = await getHabitList();
-      var model =
-          list.where((element) => element.dbId == habitModel.dbId).first;
-      var activity = model.activities!.getTheSameDay(date);
-      if (activity == null) {
-        await dbClient?.insert(
-            activityTable,
-            Activities(habitId: habitModel.dbId, date: date.toIso8601String())
-                .toDbJson());
-      } else {
-        model.activities!.getTheSameDay(date)!.isDeleted = false;
-        model.activities!.getTheSameDay(date)!.isSynced = false;
-        await updateHabit(model);
-      }
+      await Future.forEach(dates, (dateTime) async {
+        var activity = model.activities?.getTheSameDay(dateTime);
+        if (activity == null) {
+          await dbClient?.insert(
+              activityTable,
+              Activities(
+                  date: dateTime.toIso8601String(), habitId: model.dbId)
+                  .toDbJson());
+        } else {
+          model.activities!.getTheSameDay(dateTime)!.isDeleted = false;
+          model.activities!.getTheSameDay(dateTime)!.isSynced = false;
+          await updateHabit(model);
+        }
+      });
     } catch (e) {
       e.toString();
     }

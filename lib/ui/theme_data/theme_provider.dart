@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:habit_maker/ui/theme_data_provider/theme_data.dart';
+import 'package:habit_maker/ui/theme_data/theme_data.dart';
 
 class ThemeProvider with ChangeNotifier{
   ThemeData _themeData = lightMode;

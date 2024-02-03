@@ -89,7 +89,7 @@ class _HabitDetailsState extends State<HabitDetails> {
                 },
                 onDaySelected: (selectedDay, focusedDay) {
                   provider.onDaySelected(
-                      selectedDay, focusedDay,widget.item);
+                      selectedDay, focusedDay);
                 },
                     onPageChanged: (focusedDay){
                   _focusedDay=focusedDay;

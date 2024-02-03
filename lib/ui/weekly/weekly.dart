@@ -184,9 +184,9 @@ class _WeeklyState extends State<Weekly> {
           element.isDeleted == false;
     }).isNotEmpty;
     if (isDaySelected == false) {
-      provider.createActivities(selectedHabit, date);
+      provider.createActivities(selectedHabit, [date]);
     } else {
-      provider.deleteActivities(selectedHabit, date);
+      provider.deleteActivities(selectedHabit, [date]);
     }
   }
 }
