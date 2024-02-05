@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/data/database/db_helper.dart';
 import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/login_response.dart';
-
 import '../../common/constants.dart';
 import '../../models/habit_model.dart';
 import '../network_client/network_client.dart';
@@ -72,9 +70,9 @@ class Repository {
 
   Future<void> createActivity(HabitModel item, List<DateTime> date) async {
     await executeTask(logged: (token) async {
-      await Future.forEach(date, (dateTime)  async{
+      await Future.forEach(date, (dateTime) async {
         await networkClient.createActivities(
-          item.id!, dateTime.toIso8601String(), token);
+            item.id!, dateTime.toIso8601String(), token);
       });
     }, notLogged: (e) async {
       await dbHelper.insertActivities(item, date);
@@ -115,20 +113,14 @@ class Repository {
     });
   }
 
-  Future<bool> updateHabits(HabitModel item, HabitModel habitModel) async {
+  Future<bool> updateHabits(HabitModel item) async {
     executeTask(
       logged: (token) async {
-        networkClient.updateHabits(item.id!, habitModel, token);
+        networkClient.updateHabits(item, token);
       },
       notLogged: (e) async {
-        var model = HabitModel(
-          dbId: item.dbId,
-          title: habitModel.title,
-          color: habitModel.color,
-          repetition: habitModel.repetition,
-          isSynced: false,
-        );
-        await dbHelper.updateHabit(model);
+        item.isSynced = false;
+        await dbHelper.updateHabit(item);
       },
     );
     return true;

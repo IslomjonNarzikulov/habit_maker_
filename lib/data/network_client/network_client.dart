@@ -118,9 +118,9 @@ class NetworkClient {
     return response.statusCode!.isSuccessFull();
   }
 
-  Future<bool> updateHabits(String id, HabitModel habitModel, token) async {
+  Future<bool> updateHabits( HabitModel habitModel, token) async {
     final response = await dio.put(
-      '$baseUrl/v1/habits/$id',
+      '$baseUrl/v1/habits/${habitModel.id}',
       options: Options(validateStatus: (_) => true, headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'

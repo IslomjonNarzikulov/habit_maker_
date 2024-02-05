@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/arch_provider/arch_provider.dart';
 import 'package:habit_maker/common/constants.dart';
 import 'package:habit_maker/data/database/db_helper.dart';
 import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
@@ -11,18 +9,16 @@ import 'package:habit_maker/data/network_client/network_client.dart';
 import 'package:habit_maker/data/repository/repository.dart';
 import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
 import 'package:habit_maker/models/log_out_state.dart';
-import 'package:habit_maker/ui/create_habit/create_provider.dart';
-import 'package:habit_maker/ui/habit_details/habit_screen_provider.dart';
-import 'package:habit_maker/ui/login/login_provider.dart';
-import 'package:habit_maker/ui/main_provider.dart';
-import 'package:habit_maker/ui/profile/profile_provider.dart';
-import 'package:habit_maker/ui/signup/restore_provider.dart';
-import 'package:habit_maker/ui/signup/signup_provider.dart';
-import 'package:habit_maker/ui/theme_data/theme_provider.dart';
-
+import 'package:habit_maker/presentation/create_screen/create_provider.dart';
+import 'package:habit_maker/presentation/habit_screen/habit_screen_provider.dart';
+import 'package:habit_maker/presentation/home/home.dart';
+import 'package:habit_maker/presentation/login/login_provider.dart';
+import 'package:habit_maker/presentation/main_provider.dart';
+import 'package:habit_maker/presentation/profile/profile_provider.dart';
+import 'package:habit_maker/presentation/signup/restore_provider.dart';
+import 'package:habit_maker/presentation/signup/signup_provider.dart';
+import 'package:habit_maker/presentation/theme_data/theme_provider.dart';
 import 'package:provider/provider.dart';
-
-import 'UI/splash_screen/splash_screen.dart';
 
 void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
@@ -70,7 +66,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create:(_)=> HabitPage(logOutState,repository,keeper)),
         ChangeNotifierProvider(create: (_) => ProfileProvider(secureStorage)),
         ChangeNotifierProvider(
-            create: (_) => SignInProvider(logOutState,repository,keeper)),
+            create: (_) => LogInProvider(logOutState,repository,keeper)),
         ChangeNotifierProvider(create: (_) => SignUpProvider(repository)),
         ChangeNotifierProvider(create: (_)=> ThemeProvider()),
       ],
@@ -87,7 +83,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme:Provider.of<ThemeProvider>(context).themeData,
-      home: const SplashScreen(),
+      home:  HomeScreen(),
     );
   }
 }
