@@ -145,7 +145,7 @@ class Repository {
   ) async {
     if (username.isNotEmpty && password.isNotEmpty) {
       var user = await networkClient.signUpResponse(username, password);
-      secureStorage.write(key: accessToken, value: user!.token);
+      secureStorage.write(key: accessToken, value: user?.token);
       return user != null;
     } else {
       return false;

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:habit_maker/presentation/home/home.dart';
 import 'package:habit_maker/presentation/login/loginScreen.dart';
 import 'package:habit_maker/presentation/main_provider.dart';
+import 'package:habit_maker/presentation/profile/profile.dart';
 import 'package:habit_maker/presentation/settings/settings.dart';
 import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({Key? key}) : super(key: key);
+  const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,14 @@ class CustomDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: [
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Profile'),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()));
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),

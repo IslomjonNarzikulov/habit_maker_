@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/common/my_textfield.dart';
-import 'package:habit_maker/presentation/signup/restore_provider.dart';
+import 'package:habit_maker/presentation/restore_password/restore_provider.dart';
 import 'package:provider/provider.dart';
 
 class RestorePassword extends StatelessWidget {
@@ -51,7 +51,7 @@ class RestorePassword extends StatelessWidget {
                   var restoredPassword = emailController.text;
                   provider.newPassword(restoredPassword, () {}, () {});
                 },
-                child: const Text('Send the link'),
+                child: const Text('Send the link',style: TextStyle(color: Colors.blue),),
               ),
             )
           ],

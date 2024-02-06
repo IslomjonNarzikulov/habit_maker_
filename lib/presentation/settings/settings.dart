@@ -100,19 +100,6 @@ class SettingPage extends StatelessWidget {
               ],
             ),
           ),
-          // const SizedBox(
-          //   height: 90,
-          // ),
-          // Container(
-          //   width: 250,
-          //   child: ElevatedButton(
-          //       style: ElevatedButton.styleFrom(primary: Colors.blue),
-          //       onPressed: () {
-          //         Navigator.push(context,
-          //             MaterialPageRoute(builder: (context) => SignInPage()));
-          //       },
-          //       child: const Text('Sign Out',style: TextStyle(fontSize: 22),)),
-          // )
         ],
       ),
     );

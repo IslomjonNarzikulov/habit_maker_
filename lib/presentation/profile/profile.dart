@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/presentation/profile/profile_provider.dart';
+import 'package:habit_maker/presentation/profile/widgets_profile/widget.content.dart';
+import 'package:habit_maker/presentation/profile/widgets_profile/widget_avatar.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -14,23 +16,17 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-      body: Center(
-        child: Consumer<ProfileProvider>(
-          builder:
-              (BuildContext context, ProfileProvider value, Widget? child) {
-            if (value.name != null && value.surname != null) {
-              return Text(
-                "${value.name} ${value.surname}",
-                style: const TextStyle(fontSize: 36, color: Colors.white),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
-      ),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          Center(
+            child: Positioned(
+                top: 33,
+                child: userAvatar()),
+          ),
+          buildContent(),
+        ],
+      )
     );
   }
 }

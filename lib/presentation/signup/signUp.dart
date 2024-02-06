@@ -1,40 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/common/my_textfield.dart';
 import 'package:habit_maker/presentation/login/loginScreen.dart';
-import 'package:habit_maker/presentation/signup/restore_password.dart';
+import 'package:habit_maker/presentation/otp_screen/otp_screen.dart';
+import 'package:habit_maker/presentation/restore_password/restore_password.dart';
 import 'package:habit_maker/presentation/signup/signup_provider.dart';
+import 'package:habit_maker/presentation/signup/widget_signup/signup_text_field_item.dart';
 import 'package:provider/provider.dart';
-
-import '../otp_screen/otp_screen.dart';
-
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
 
-
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   late SignUpProvider signUpProvider;
-
-  void _showAlert(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Incorrect input. '),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,38 +25,7 @@ class SignUp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: w,
-                height: h * 0.3,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/lottie/hey.jpg'),
-                      fit: BoxFit.cover),
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(height: h * 0.16),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 50),
-              const Text(
-                "Let's register now",
-                style: TextStyle(fontSize: 20, color: Colors.black),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              MyTextField(
-                  controller: usernameController,
-                  hintText: 'Enter your email',
-                  obscureText: false),
-              const SizedBox(height: 25),
-              MyTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-              ),
+              texItem(w, h, usernameController, passwordController),
               const SizedBox(
                 height: 24,
               ),
@@ -90,10 +36,10 @@ class SignUp extends StatelessWidget {
                   var password = passwordController.text;
                   signUpProvider.signUp(username, password, () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OtpPage()));
+                        MaterialPageRoute(builder: (context) =>  OtpPage()));
                   }, () {});
                 },
-                child: Container(
+                child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     height: 60,
                     child: const Center(

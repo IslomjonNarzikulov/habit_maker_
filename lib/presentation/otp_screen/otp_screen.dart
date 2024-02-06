@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habit_maker/presentation/otp_screen/widget_otp_screen/widget_input_box.dart';
 import 'package:provider/provider.dart';
 import '../home/home.dart';
 import '../signup/signup_provider.dart';
@@ -80,7 +81,7 @@ class OtpPage extends StatelessWidget {
                   width: 90,
                   child: const Text(
                     'Verify',
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24,color: Colors.blue),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -98,27 +99,3 @@ class OtpPage extends StatelessWidget {
   }
 }
 
-Widget myInputBox(BuildContext context, TextEditingController controller) {
-  return Container(
-    height: 70,
-    width: 50,
-    decoration: BoxDecoration(
-        border: Border.all(width: 1),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(20),
-        )),
-    child: TextField(
-      controller: controller,
-      maxLength: 1,
-      textAlign: TextAlign.center,
-      keyboardType: TextInputType.number,
-      style: const TextStyle(fontSize: 42),
-      decoration: const InputDecoration(counterText: ''),
-      onChanged: (value) {
-        if (value.length == 1) {
-          FocusScope.of(context).nextFocus();
-        }
-      },
-    ),
-  );
-}

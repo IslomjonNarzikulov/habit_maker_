@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
-import 'package:habit_maker/presentation/create_screen/create_provider.dart';
-import 'package:habit_maker/presentation/habit_screen/habit_screen.dart';
 import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
+import 'package:habit_maker/presentation/create_screen/create_provider.dart';
+import 'package:habit_maker/presentation/create_screen/widget_create_item/create_item.dart';
+import 'package:habit_maker/presentation/habit_screen/habit_screen.dart';
 import 'package:habit_maker/presentation/home/home.dart';
 import 'package:provider/provider.dart';
 
@@ -21,10 +22,10 @@ class CreateScreen extends StatefulWidget {
 class _CreateScreenState extends State<CreateScreen>
     with TickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TabController? _tabController;
   final titleController = TextEditingController();
-  late CreateProvider provider;
   bool isEdit = false;
+  late CreateProvider provider;
+  TabController? _tabController;
   int _selectedIndex = 0;
   bool light = true;
   bool isEnded = false;
@@ -33,7 +34,7 @@ class _CreateScreenState extends State<CreateScreen>
   @override
   void initState() {
     super.initState();
-    provider = Provider.of<CreateProvider>(context,listen: false);
+    provider = Provider.of<CreateProvider>(context, listen: false);
     final habit = widget.habitModel;
     _tabController = TabController(length: 2, vsync: this);
     if (habit != null) {
@@ -156,8 +157,8 @@ class _CreateScreenState extends State<CreateScreen>
                       ],
                     ),
                     const SizedBox(height: 36),
-                    tabBar(),
-                    tabBarSwitch(),
+                    tabBar(_tabController),
+                    tabBarSwitch(_tabController!),
                     const SizedBox(height: 24),
                     Container(
                       margin: const EdgeInsets.all(12),
@@ -208,15 +209,13 @@ class _CreateScreenState extends State<CreateScreen>
                                 value: provider.isReminderEnabled,
                                 activeColor: Colors.blueAccent,
                                 onChanged: (bool value) {
-                                   provider.changeReminderState(value);
-                                    repeat.showNotification = value;
-
+                                  provider.changeReminderState(value);
+                                  repeat.showNotification = value;
                                 }),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
                   ],
                 ),
               ),
@@ -225,15 +224,6 @@ class _CreateScreenState extends State<CreateScreen>
         })),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: saveButton());
-  }
-
-  Widget hourMinute12H() {
-    return TimePickerSpinner(
-      is24HourMode: false,
-      onTimeChange: (time) {
-        provider.selectTime(time);
-      },
-    );
   }
 
   HabitModel get body {
@@ -247,34 +237,6 @@ class _CreateScreenState extends State<CreateScreen>
         color: _selectedIndex);
   }
 
-  Widget tabBar() {
-    return SizedBox(
-      width: 600,
-      child:
-          TabBar(labelColor: Colors.black, controller: _tabController, tabs: [
-        Container(
-          width: 300,
-          color: Colors.blue,
-          child: const Tab(
-            child: Text(
-              'Daily',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-          ),
-        ), Container(
-          width: 300,
-          color: Colors.lightBlue,
-          child: const Tab(
-            child: Text(
-              'Weekly',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-          ),
-        ),
-      ]),
-    );
-  }
-
   Widget saveButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -285,14 +247,16 @@ class _CreateScreenState extends State<CreateScreen>
           if (isEdit) {
             // var item = widget.habitModel;
             provider.updateHabits(body);
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HabitScreen(habitModel: body)));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HabitScreen(habitModel: body)));
           } else {
             provider.createHabit(body);
-            var route = MaterialPageRoute(builder: (context)=>const HomeScreen());
-            Navigator.pushReplacement(
-                context,route);
+            var route =
+                MaterialPageRoute(builder: (context) => const HomeScreen());
+            Navigator.pushReplacement(context, route);
           }
-
         }
       },
       child: Text(
@@ -303,7 +267,9 @@ class _CreateScreenState extends State<CreateScreen>
     );
   }
 
-  Widget tabBarSwitch() {
+  Widget tabBarSwitch(
+      TabController? _tabController
+      ) {
     return Container(
       height: 110,
       child: TabBarView(
@@ -321,7 +287,7 @@ class _CreateScreenState extends State<CreateScreen>
                   child: Row(
                     children: List<Widget>.generate(
                       7,
-                      (index) {
+                          (index) {
                         var item = repeat.weekdays![index];
                         return GestureDetector(
                           onTap: () {
@@ -358,8 +324,8 @@ class _CreateScreenState extends State<CreateScreen>
                     children: [
                       const Text(
                         'Frequency',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                        style:
+                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '${provider.numberOfDays} times a week',
@@ -415,7 +381,18 @@ class _CreateScreenState extends State<CreateScreen>
       ),
     );
   }
+
+  Widget hourMinute12H() {
+    return TimePickerSpinner(
+      is24HourMode: false,
+      onTimeChange: (time) {
+        provider.selectTime(time);
+      },
+    );
+  }
 }
+
+
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override

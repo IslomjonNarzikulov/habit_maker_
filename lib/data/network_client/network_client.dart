@@ -29,11 +29,17 @@ class NetworkClient {
   }
 
   Future<SignUpResponse?> signUpResponse(String email, String password) async {
-    final response = await dio.post("$baseUrl/v1/auth/registration/otp", data: {
-      "email": email,
-      "password": password,
-    });
-    return SignUpResponse.fromJson(jsonDecode(response.data));
+    try {
+      final response =
+          await dio.post("$baseUrl/v1/auth/registration/otp", data: {
+        "email": email,
+        "password": password,
+      });
+      return SignUpResponse.fromJson(response.data);
+    } catch (e) {
+      e.toString();
+      return null;
+    }
   }
 
   Future<LoginResponse?> refreshToken(String? refreshToken) async {
@@ -118,7 +124,7 @@ class NetworkClient {
     return response.statusCode!.isSuccessFull();
   }
 
-  Future<bool> updateHabits( HabitModel habitModel, token) async {
+  Future<bool> updateHabits(HabitModel habitModel, token) async {
     final response = await dio.put(
       '$baseUrl/v1/habits/${habitModel.id}',
       options: Options(validateStatus: (_) => true, headers: {

@@ -5,24 +5,21 @@ import 'package:habit_maker/presentation/main_provider.dart';
 import 'package:provider/provider.dart';
 
 class DailyScreen extends StatelessWidget {
-   DailyScreen({super.key});
-   late MainProvider provider;
+  DailyScreen({super.key});
+  late MainProvider provider;
 
-
-   @override
-
+  @override
   Widget build(BuildContext context) {
-     provider = Provider.of<MainProvider>(context, listen: false);
-     return Scaffold(
+    provider = Provider.of<MainProvider>(context, listen: false);
+    return Scaffold(
       body: Center(
-        child: Consumer<MainProvider>(builder:
-            (BuildContext context, MainProvider value, Widget? child) {
+        child: Consumer<MainProvider>(
+            builder: (BuildContext context, MainProvider value, Widget? child) {
           var habit = value.habits;
           if (value.habits.isNotEmpty) {
             return RefreshIndicator(
               onRefresh: () async {
-                provider.loadHabits();
-                return Future<void>.delayed(const Duration(seconds: 2));
+                await provider.loadHabits();
               },
               child: ListView.builder(
                 itemCount: habit.length,
@@ -35,12 +32,12 @@ class DailyScreen extends StatelessWidget {
                   return Dismissible(
                     key: UniqueKey(),
                     onDismissed: (direction) {
-                      if (direction == DismissDirection.endToStart ||
-                          direction == DismissDirection.startToEnd) {
-                        var date = DateTime.now();
-                        provider.createActivities(item, [date]);
-                      }
+                      var date = DateTime.now();
+                      provider.createActivities(item, [date]);
                     },
+                    movementDuration: Duration(milliseconds: 0),
+                    // Disable movement duration
+                    direction: DismissDirection.horizontal,
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -85,5 +82,4 @@ class DailyScreen extends StatelessWidget {
       ),
     );
   }
-
 }

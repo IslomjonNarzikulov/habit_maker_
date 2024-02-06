@@ -15,7 +15,7 @@ import 'package:habit_maker/presentation/home/home.dart';
 import 'package:habit_maker/presentation/login/login_provider.dart';
 import 'package:habit_maker/presentation/main_provider.dart';
 import 'package:habit_maker/presentation/profile/profile_provider.dart';
-import 'package:habit_maker/presentation/signup/restore_provider.dart';
+import 'package:habit_maker/presentation/restore_password/restore_provider.dart';
 import 'package:habit_maker/presentation/signup/signup_provider.dart';
 import 'package:habit_maker/presentation/theme_data/theme_provider.dart';
 import 'package:provider/provider.dart';
