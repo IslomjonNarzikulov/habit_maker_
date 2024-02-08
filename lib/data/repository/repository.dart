@@ -213,7 +213,7 @@ class Repository {
     return isLoggedIn != null ? bool.parse(isLoggedIn) : false;
   }
 
-  void logout() async {
+  Future<void> logout() async {
     await secureStorage.deleteAll();
     await dbHelper.deleteAllHabits();
   }

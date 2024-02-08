@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:go_router/go_router.dart';
 import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider.dart';
-import 'package:habit_maker/presentation/create_screen/widget_create_item/create_item.dart';
-import 'package:habit_maker/presentation/habit_screen/habit_screen.dart';
-import 'package:habit_maker/presentation/home/home.dart';
+import 'package:habit_maker/presentation/create_screen/widgets/tab_bar_item.dart';
+import 'package:habit_maker/presentation/create_screen/widgets/save_item.dart';
+import 'package:habit_maker/presentation/create_screen/widgets/tab_bar_switch.dart';
 import 'package:provider/provider.dart';
 
 class CreateScreen extends StatefulWidget {
-  HabitModel? habitModel;
-
   CreateScreen({super.key, this.habitModel});
+  HabitModel? habitModel;
 
   @override
   State<CreateScreen> createState() => _CreateScreenState();
@@ -26,7 +26,7 @@ class _CreateScreenState extends State<CreateScreen>
   bool isEdit = false;
   late CreateProvider provider;
   TabController? _tabController;
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
   bool light = true;
   bool isEnded = false;
   Repetition repeat = Repetition();
@@ -134,7 +134,8 @@ class _CreateScreenState extends State<CreateScreen>
                               (index) {
                                 return GestureDetector(
                                   onTap: () {
-                                    provider.selectColor(_selectedIndex);
+                                    provider.selectColor(index);
+
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -158,7 +159,7 @@ class _CreateScreenState extends State<CreateScreen>
                     ),
                     const SizedBox(height: 36),
                     tabBar(_tabController),
-                    tabBarSwitch(_tabController!),
+                    tabBarSwitch( provider,_tabController, repeat),
                     const SizedBox(height: 24),
                     Container(
                       margin: const EdgeInsets.all(12),
@@ -182,7 +183,14 @@ class _CreateScreenState extends State<CreateScreen>
                                     context: context,
                                     builder: (context) {
                                       return Column(
-                                        children: [hourMinute12H()],
+                                        children: [
+                                          TimePickerSpinner(
+                                            is24HourMode: false,
+                                            onTimeChange: (time) {
+                                              provider.selectTime(time);
+                                            },
+                                          )
+                                        ],
                                       );
                                     });
                               },
@@ -223,7 +231,14 @@ class _CreateScreenState extends State<CreateScreen>
           );
         })),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: saveButton());
+        floatingActionButton:
+            saveButton(isEdit, provider, body, context, _formKey, () {
+          provider.updateHabits(body);
+         context.replace('/home/calendar', extra: body);
+        }, () {
+          provider.createHabit(body);
+          Navigator.pop(context);
+        }));
   }
 
   HabitModel get body {
@@ -234,165 +249,9 @@ class _CreateScreenState extends State<CreateScreen>
         title: habitTitle,
         isSynced: true,
         repetition: repeat,
-        color: _selectedIndex);
-  }
-
-  Widget saveButton() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          minimumSize: const Size(350, 55),
-          backgroundColor: const Color(0xff309d9f)),
-      onPressed: () {
-        if (_formKey.currentState?.validate() ?? false) {
-          if (isEdit) {
-            // var item = widget.habitModel;
-            provider.updateHabits(body);
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HabitScreen(habitModel: body)));
-          } else {
-            provider.createHabit(body);
-            var route =
-                MaterialPageRoute(builder: (context) => const HomeScreen());
-            Navigator.pushReplacement(context, route);
-          }
-        }
-      },
-      child: Text(
-        isEdit ? 'Update data' : 'Save Data',
-        style: const TextStyle(
-            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
-      ),
-    );
-  }
-
-  Widget tabBarSwitch(
-      TabController? _tabController
-      ) {
-    return Container(
-      height: 110,
-      child: TabBarView(
-        controller: _tabController,
-        children: [
-          Column(
-            children: [
-              const Text(
-                'Repeat in these days',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: Center(
-                  child: Row(
-                    children: List<Widget>.generate(
-                      7,
-                          (index) {
-                        var item = repeat.weekdays![index];
-                        return GestureDetector(
-                          onTap: () {
-                            provider.changeButtonColors(index);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CircleAvatar(
-                              backgroundColor: item.isSelected == true
-                                  ? Colors.amberAccent
-                                  : Colors.blueGrey,
-                              radius: 18,
-                              child: Text(
-                                '${repeat.weekdays![index].weekday?.name[0]}',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.all(12),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      const Text(
-                        'Frequency',
-                        style:
-                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '${provider.numberOfDays} times a week',
-                        style: const TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Container(
-                        margin: const EdgeInsets.only(left: 30),
-                        padding: const EdgeInsets.only(left: 90),
-                        width: 240,
-                        child: Row(children: [
-                          GestureDetector(
-                            onTap: () {
-                              provider.subtract(repeat);
-                            },
-                            child: Container(
-                              height: 26,
-                              width: 28,
-                              color: Colors.blue,
-                              child: const Icon(Icons.remove),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          Text(
-                            "${provider.numberOfDays}",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              provider.add(repeat);
-                            },
-                            child: Container(
-                              height: 26,
-                              width: 28,
-                              color: Colors.blue,
-                              child: const Icon(Icons.add),
-                            ),
-                          )
-                        ])),
-                  ),
-                ]),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget hourMinute12H() {
-    return TimePickerSpinner(
-      is24HourMode: false,
-      onTimeChange: (time) {
-        provider.selectTime(time);
-      },
-    );
+        color: selectedIndex);
   }
 }
-
-
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override

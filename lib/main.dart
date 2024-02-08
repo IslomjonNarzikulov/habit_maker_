@@ -11,13 +11,14 @@ import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
 import 'package:habit_maker/models/log_out_state.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider.dart';
 import 'package:habit_maker/presentation/habit_screen/habit_screen_provider.dart';
-import 'package:habit_maker/presentation/home/home.dart';
+import 'package:habit_maker/presentation/home/provider/logout_provider.dart';
 import 'package:habit_maker/presentation/login/login_provider.dart';
 import 'package:habit_maker/presentation/main_provider.dart';
 import 'package:habit_maker/presentation/profile/profile_provider.dart';
 import 'package:habit_maker/presentation/restore_password/restore_provider.dart';
 import 'package:habit_maker/presentation/signup/signup_provider.dart';
 import 'package:habit_maker/presentation/theme_data/theme_provider.dart';
+import 'package:habit_maker/router.dart';
 import 'package:provider/provider.dart';
 
 void configureDioForProxy(Dio dio) {
@@ -41,7 +42,7 @@ Future<void> main() async {
   await secureStorage.write(
       key: isUserLogged, value: token == null ? "false" : "true");
   final dbHelper = DBHelper();
-  final keeper=HabitStateKeeper();
+  final keeper = HabitStateKeeper();
   final dio = Dio();
   dio.options.connectTimeout = const Duration(seconds: 5);
   dio.options.receiveTimeout = const Duration(seconds: 5);
@@ -58,17 +59,26 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_)=>RestoreProvider(repository: repository)),
         ChangeNotifierProvider(
-            create: (_) => MainProvider(keeper,logOutState,repository,)),
+            create: (_) => RestoreProvider(repository: repository)),
         ChangeNotifierProvider(
-            create: (_) => CreateProvider(logOutState,repository,keeper)),
-        ChangeNotifierProvider(create:(_)=> HabitPage(logOutState,repository,keeper)),
+            create: (_) => MainProvider(
+                  keeper,
+                  logOutState,
+                  repository,
+                )),
+        ChangeNotifierProvider(
+            create: (_) => CreateProvider(logOutState, repository, keeper)),
+        ChangeNotifierProvider(
+            create: (_) => HabitPage(logOutState, repository, keeper)),
         ChangeNotifierProvider(create: (_) => ProfileProvider(secureStorage)),
         ChangeNotifierProvider(
-            create: (_) => LogInProvider(logOutState,repository,keeper)),
+            create: (_) => LogInProvider(logOutState, repository, keeper)),
         ChangeNotifierProvider(create: (_) => SignUpProvider(repository)),
-        ChangeNotifierProvider(create: (_)=> ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(
+          create: (_) => LogoutProvider(logOutState, repository, keeper),
+        )
       ],
       child: const MyApp(),
     ),
@@ -80,10 +90,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
+      theme: Provider.of<ThemeProvider>(context).themeData,
       debugShowCheckedModeBanner: false,
-      theme:Provider.of<ThemeProvider>(context).themeData,
-      home:  HomeScreen(),
     );
   }
 }

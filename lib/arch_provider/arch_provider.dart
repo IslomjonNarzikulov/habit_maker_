@@ -17,7 +17,7 @@ class BaseProvider extends ChangeNotifier {
     this.logoutState,
     this.habitRepository,
   ) {
-    logoutState.logOut.stream.listen((element) {
+    logoutState.logOutEvent.stream.listen((element) {
       if (element) {
         habitRepository.logout();
       }
@@ -67,14 +67,4 @@ class BaseProvider extends ChangeNotifier {
     });
   }
 
-  void isLogged() async {
-    var result = await habitRepository.isLogged();
-    isLoggedState = result;
-    print(isLoggedState.toString());
-  }
-
-  void isLoggedOut() {
-    logoutState.logOut.add(true);
-    notifyListeners();
-  }
 }

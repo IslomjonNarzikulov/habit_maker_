@@ -33,7 +33,7 @@ Widget weeklyDate(HabitModel habitModel,
         child: Column(
           children: [
             Text(
-              habitModel.title!.toString(),
+              habitModel.title!,
               style: const TextStyle(
                   fontSize: 20, color: Colors.white),
             ),

@@ -17,7 +17,7 @@ class CreateProvider extends BaseProvider {
   bool isEnded = false;
   DateTime dateTime = DateTime.now();
   int selectedIndex = 0;
-  Repetition repeat = Repetition();
+
 
   void selectColor(int index) {
     selectedIndex = index;
@@ -60,13 +60,14 @@ class CreateProvider extends BaseProvider {
     dateTime = time;
     notifyListeners();
   }
-  void changeButtonColors(int index) {
+  void changeButtonColors(int index,Repetition repeat) {
 
       if (repeat.weekdays![index].isSelected == false) {
         repeat.weekdays![index].isSelected = true;
       } else {
         repeat.weekdays![index].isSelected = false;
       }
+      notifyListeners();
   }
 
   void changeReminderState(bool isChecked) {

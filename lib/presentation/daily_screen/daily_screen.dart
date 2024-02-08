@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/presentation/habit_screen/habit_screen.dart';
 import 'package:habit_maker/presentation/main_provider.dart';
@@ -36,15 +37,10 @@ class DailyScreen extends StatelessWidget {
                       provider.createActivities(item, [date]);
                     },
                     movementDuration: Duration(milliseconds: 0),
-                    // Disable movement duration
                     direction: DismissDirection.horizontal,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => HabitScreen(habitModel: item),
-                          ),
-                        );
+                        context.push('/home/calendar',extra: item);
                       },
                       child: Container(
                         width: 140,

@@ -22,4 +22,9 @@ void updateHabits(List<HabitModel> list){
    weekly= list.where((element) => element.isDeleted == false).toList();
     habitEvent.add(true);
 }
+  void clear() {
+    habits.clear();
+    weekly.clear();
+    habitEvent.add(true);
+  }
 }

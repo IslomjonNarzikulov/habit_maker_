@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:habit_maker/presentation/login/loginScreen.dart';
 import 'package:habit_maker/presentation/otp_screen/otp_screen.dart';
 import 'package:habit_maker/presentation/restore_password/restore_password.dart';
@@ -35,8 +36,7 @@ class SignUp extends StatelessWidget {
                   var username = usernameController.text;
                   var password = passwordController.text;
                   signUpProvider.signUp(username, password, () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) =>  OtpPage()));
+                   context.go('/login/verify');
                   }, () {});
                 },
                 child: SizedBox(
@@ -57,10 +57,7 @@ class SignUp extends StatelessWidget {
                   Container(
                     child: TextButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RestorePassword()));
+                         context.push('/login/restore');
                         },
                         child: const Text('Forget password?',style: TextStyle(color: Colors.blue,fontSize: 16),)),
                   ),

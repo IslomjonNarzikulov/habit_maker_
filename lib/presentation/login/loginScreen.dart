@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:habit_maker/presentation/home/home.dart';
 import 'package:habit_maker/presentation/login/login_provider.dart';
 import 'package:habit_maker/presentation/login/login_widget_item/text_field_item.dart';
@@ -46,11 +47,7 @@ class LogInScreen extends StatelessWidget {
                 var username = emailController.text;
                 var password = passwordController.text;
                 logInProvider.signIn(username, password, () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(),
-                    ),
-                  );
+                 context.push('/home');
                 }, () {});
               },
               child: Container(
@@ -71,11 +68,7 @@ class LogInScreen extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(primary: Colors.blue),
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => SignUp(),
-                  ),
-                );
+               context.push('/login/signUp');
               },
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.5,
