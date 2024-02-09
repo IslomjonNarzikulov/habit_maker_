@@ -102,8 +102,7 @@ class SignUp extends StatelessWidget {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(primary: Colors.blue),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LogInScreen()));
+                 context.push('/login');
                 },
                 child: Container(
                     width: MediaQuery.of(context).size.width * 0.5,

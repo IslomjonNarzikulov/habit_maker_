@@ -7,6 +7,7 @@ import 'package:habit_maker/presentation/home/home.dart';
 import 'package:habit_maker/presentation/home/provider/logout_provider.dart';
 import 'package:habit_maker/presentation/login/loginScreen.dart';
 import 'package:habit_maker/presentation/otp_screen/otp_screen.dart';
+import 'package:habit_maker/presentation/profile/profile.dart';
 import 'package:habit_maker/presentation/restore_password/restore_password.dart';
 import 'package:habit_maker/presentation/settings/settings.dart';
 import 'package:habit_maker/presentation/signup/signUp.dart';
@@ -27,10 +28,14 @@ final GoRouter router =
   GoRoute(
       path: '/home',
       builder: (BuildContext context, GoRouterState state) {
-        return HomeScreen(
-        );
+        return HomeScreen();
       },
       routes: <RouteBase>[
+        GoRoute(
+            path: 'profile',
+            builder: (BuildContext context, GoRouterState state) {
+              return ProfilePage();
+            }),
         GoRoute(
             path: 'settings',
             builder: (BuildContext context, GoRouterState state) {

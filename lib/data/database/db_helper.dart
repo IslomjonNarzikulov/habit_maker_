@@ -136,7 +136,6 @@ class DBHelper {
       model.activities = activity;
       return model;
     }).toList();
-    print('DbHelper:${habits.length}');
     return habits;
 
   }
@@ -150,7 +149,7 @@ class DBHelper {
         where: 'dbId=?', whereArgs: [habitModel.dbId]);
     habitModel.repetition!.weekdays!.forEach((element) async {
       await dbClient.update(weekdayTableName, element.toDbJson(habitModel.dbId),
-          where: 'dbId=?', whereArgs: [habitModel.dbId]);
+          where: 'dbId=?', whereArgs: [habitModel.id]);
     });
     if (habitModel.activities != null) {
       await Future.forEach(habitModel.activities!, (element) async {

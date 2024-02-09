@@ -2,7 +2,8 @@ import 'package:habit_maker/arch_provider/arch_provider.dart';
 import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/data/repository/repository.dart';
 import 'package:habit_maker/models/log_out_state.dart';
-import '../../models/habit_model.dart';
+
+import '../../../models/habit_model.dart';
 
 class CreateProvider extends BaseProvider {
   CreateProvider(LogOutState logOutState, Repository habitRepository,
@@ -12,12 +13,12 @@ class CreateProvider extends BaseProvider {
           logOutState,
           habitRepository,
         );
-  bool isReminderEnabled =  false;
+  bool isReminderEnabled = false;
   int numberOfDays = 7;
   bool isEnded = false;
   DateTime dateTime = DateTime.now();
   int selectedIndex = 0;
-
+  var isDailySelected = false;
 
   void selectColor(int index) {
     selectedIndex = index;
@@ -31,7 +32,7 @@ class CreateProvider extends BaseProvider {
   }
 
   void updateHabits(HabitModel model) async {
-    await habitRepository.updateHabits(model );
+    await habitRepository.updateHabits(model);
     await loadHabits();
     notifyListeners();
   }
@@ -60,14 +61,19 @@ class CreateProvider extends BaseProvider {
     dateTime = time;
     notifyListeners();
   }
-  void changeButtonColors(int index,Repetition repeat) {
 
-      if (repeat.weekdays![index].isSelected == false) {
-        repeat.weekdays![index].isSelected = true;
-      } else {
-        repeat.weekdays![index].isSelected = false;
-      }
-      notifyListeners();
+  void tabBarChanging(int index) {
+    isDailySelected = index == 0;
+    notifyListeners();
+  }
+
+  void changeButtonColors(int index, Repetition repeat) {
+    if (repeat.weekdays![index].isSelected == false) {
+      repeat.weekdays![index].isSelected = true;
+    } else {
+      repeat.weekdays![index].isSelected = false;
+    }
+    notifyListeners();
   }
 
   void changeReminderState(bool isChecked) {

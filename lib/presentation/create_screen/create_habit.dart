@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
-import 'package:habit_maker/presentation/create_screen/create_provider.dart';
-import 'package:habit_maker/presentation/create_screen/widgets/tab_bar_item.dart';
+import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
+import 'package:habit_maker/presentation/create_screen/widgets/change_color.dart';
 import 'package:habit_maker/presentation/create_screen/widgets/save_item.dart';
+import 'package:habit_maker/presentation/create_screen/widgets/tab_bar_item.dart';
 import 'package:habit_maker/presentation/create_screen/widgets/tab_bar_switch.dart';
+import 'package:habit_maker/presentation/create_screen/widgets/text_form_field.dart';
 import 'package:provider/provider.dart';
 
 class CreateScreen extends StatefulWidget {
   CreateScreen({super.key, this.habitModel});
+
   HabitModel? habitModel;
 
   @override
@@ -24,9 +24,8 @@ class _CreateScreenState extends State<CreateScreen>
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   bool isEdit = false;
-  late CreateProvider provider;
+  late CreateProvider createProvider;
   TabController? _tabController;
-  int selectedIndex = 0;
   bool light = true;
   bool isEnded = false;
   Repetition repeat = Repetition();
@@ -34,25 +33,23 @@ class _CreateScreenState extends State<CreateScreen>
   @override
   void initState() {
     super.initState();
-    provider = Provider.of<CreateProvider>(context, listen: false);
+    createProvider = Provider.of<CreateProvider>(context, listen: false);
     final habit = widget.habitModel;
     _tabController = TabController(length: 2, vsync: this);
     if (habit != null) {
       repeat = habit.repetition!;
       final notifyTime = repeat.notifyTime?.split(':');
       if (notifyTime != null && notifyTime.length == 2) {
-        provider.dateTime = DateTime(
-            provider.dateTime.year,
-            provider.dateTime.month,
-            provider.dateTime.day,
+        createProvider.dateTime = DateTime(
+            createProvider.dateTime.year,
+            createProvider.dateTime.month,
+            createProvider.dateTime.day,
             int.parse(notifyTime[0]),
             int.parse(notifyTime[1]));
       }
       isEdit = true;
-      final title = habit.title;
-      titleController.text = title!;
-      final color = habit.color;
-      provider.selectedIndex = color!;
+      titleController.text = habit.title!;
+      createProvider.selectedIndex = habit.color!;
       _tabController = TabController(
         initialIndex: 0,
         length: 2,
@@ -92,74 +89,14 @@ class _CreateScreenState extends State<CreateScreen>
                 key: _formKey,
                 child: Column(
                   children: [
-                    Container(
-                      height: 85,
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      child: TextFormField(
-                        inputFormatters: <TextInputFormatter>[
-                          UpperCaseTextFormatter()
-                        ],
-                        controller: titleController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(color: Colors.green),
-                          ),
-                          filled: true,
-                          hintText: 'Enter title',
-                        ),
-                        validator: (value) {
-                          if (titleController.text.trim().isEmpty) {
-                            return 'Invalid input';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
+                    textForm(),
                     const SizedBox(height: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Colors',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 14),
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List<Widget>.generate(
-                              7,
-                              (index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    provider.selectColor(index);
-
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: CircleAvatar(
-                                      radius: 18,
-                                      backgroundColor: colorList[index],
-                                      child: provider.selectedIndex == index
-                                          ? const Icon(
-                                              Icons.check,
-                                              color: Colors.white,
-                                            )
-                                          : null,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                   changingColor(createProvider),
                     const SizedBox(height: 36),
-                    tabBar(_tabController),
-                    tabBarSwitch( provider,_tabController, repeat),
+                    tabBar(_tabController, (index) {
+                      createProvider.tabBarChanging(index);
+                    }),
+                    tabBarSwitch(createProvider, _tabController, repeat),
                     const SizedBox(height: 24),
                     Container(
                       margin: const EdgeInsets.all(12),
@@ -175,23 +112,14 @@ class _CreateScreenState extends State<CreateScreen>
                           ),
                           const SizedBox(width: 12),
                           Visibility(
-                            visible: provider.isReminderEnabled,
+                            visible: createProvider.isReminderEnabled,
                             child: GestureDetector(
                               onTap: () {
                                 showModalBottomSheet(
                                     backgroundColor: Colors.white,
                                     context: context,
                                     builder: (context) {
-                                      return Column(
-                                        children: [
-                                          TimePickerSpinner(
-                                            is24HourMode: false,
-                                            onTimeChange: (time) {
-                                              provider.selectTime(time);
-                                            },
-                                          )
-                                        ],
-                                      );
+                                      return timeSpinner(createProvider);
                                     });
                               },
                               child: Container(
@@ -214,10 +142,10 @@ class _CreateScreenState extends State<CreateScreen>
                           ),
                           Expanded(
                             child: SwitchListTile(
-                                value: provider.isReminderEnabled,
+                                value: createProvider.isReminderEnabled,
                                 activeColor: Colors.blueAccent,
                                 onChanged: (bool value) {
-                                  provider.changeReminderState(value);
+                                  createProvider.changeReminderState(value);
                                   repeat.showNotification = value;
                                 }),
                           ),
@@ -232,12 +160,12 @@ class _CreateScreenState extends State<CreateScreen>
         })),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton:
-            saveButton(isEdit, provider, body, context, _formKey, () {
-          provider.updateHabits(body);
-         context.replace('/home/calendar', extra: body);
+            saveButton(isEdit, createProvider, body, context, _formKey, () {
+              createProvider.updateHabits(body);
+          context.replace('/home/calendar', extra: body);
         }, () {
-          provider.createHabit(body);
-          Navigator.pop(context);
+              createProvider.createHabit(body);
+          context.pop();
         }));
   }
 
@@ -249,22 +177,7 @@ class _CreateScreenState extends State<CreateScreen>
         title: habitTitle,
         isSynced: true,
         repetition: repeat,
-        color: selectedIndex);
+        color: createProvider.selectedIndex);
   }
 }
 
-class UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    return TextEditingValue(
-      text: capitalize(newValue.text),
-      selection: newValue.selection,
-    );
-  }
-}
-
-String capitalize(String value) {
-  if (value.trim().isEmpty) return "";
-  return "${value[0].toUpperCase()}${value.substring(1).toLowerCase()}";
-}

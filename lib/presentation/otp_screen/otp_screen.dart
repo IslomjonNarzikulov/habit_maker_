@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:habit_maker/presentation/home/provider/logout_provider.dart';
 import 'package:habit_maker/presentation/otp_screen/widget_otp_screen/widget_input_box.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,7 @@ import '../home/home.dart';
 import '../signup/signup_provider.dart';
 
 class OtpPage extends StatelessWidget {
-   OtpPage({super.key});
+  OtpPage({super.key});
 
   TextEditingController txt1 = TextEditingController();
   TextEditingController txt2 = TextEditingController();
@@ -28,8 +29,7 @@ class OtpPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context)
-                .pop(); // Navigate back when the back button is pressed
+           context.pop();// Navigate back when the back button is pressed
           },
         ),
       ),
@@ -74,15 +74,16 @@ class OtpPage extends StatelessWidget {
                       txt5.text +
                       txt6.text;
                   signUpController.verify(otp, () {
-                   if (otp.isNotEmpty){ Navigator.push(context,
-                        MaterialPageRoute(builder: (context) =>  HomeScreen())); }
+                    if (otp.isNotEmpty) {
+                     context.push('/home');
+                    }
                   }, () {});
                 },
                 child: Container(
                   width: 90,
                   child: const Text(
                     'Verify',
-                    style: TextStyle(fontSize: 24,color: Colors.blue),
+                    style: TextStyle(fontSize: 24, color: Colors.blue),
                     textAlign: TextAlign.center,
                   ),
                 ),

@@ -30,7 +30,7 @@ class HabitScreen extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       provider.deleteHabits(habitModel);
-                      Navigator.pop(context);
+                      context.pop();
                     },
                     icon: const Icon(Icons.delete),
                   ),
@@ -84,12 +84,12 @@ class HabitScreen extends StatelessWidget {
             ));
   }
 
-  // Future<void> navigateToUpdatePage(
-  //     BuildContext context, HabitModel habitModel) async {
-  //   final route = MaterialPageRoute(
-  //       builder: (context) => CreateScreen(
-  //             habitModel: habitModel,
-  //           ));
-  //   await Navigator.pushReplacement(context, route);
-  // }
+// Future<void> navigateToUpdatePage(
+//     BuildContext context, HabitModel habitModel) async {
+//   final route = MaterialPageRoute(
+//       builder: (context) => CreateScreen(
+//             habitModel: habitModel,
+//           ));
+//   await Navigator.pushReplacement(context, route);
+// }
 }

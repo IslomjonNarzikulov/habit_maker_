@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/models/habit_model.dart';
-import 'package:habit_maker/presentation/habit_screen/habit_screen.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 
@@ -17,11 +17,7 @@ Widget weeklyDate(HabitModel habitModel,
   }
   return GestureDetector(
     onTap: () {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  HabitScreen(habitModel: habitModel)));
+    context.push('/home/calendar',extra: habitModel);
     },
     child: Container(
         margin: const EdgeInsets.all(12),

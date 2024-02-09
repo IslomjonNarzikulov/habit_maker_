@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habit_maker/presentation/home/home.dart';
 import 'package:habit_maker/presentation/login/login_provider.dart';
 import 'package:habit_maker/presentation/login/login_widget_item/text_field_item.dart';
-import 'package:habit_maker/presentation/signup/signUp.dart';
 import 'package:provider/provider.dart';
-
 
 class LogInScreen extends StatelessWidget {
   LogInScreen({super.key});
-
 
   late LogInProvider logInProvider;
 

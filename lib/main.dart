@@ -9,7 +9,7 @@ import 'package:habit_maker/data/network_client/network_client.dart';
 import 'package:habit_maker/data/repository/repository.dart';
 import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
 import 'package:habit_maker/models/log_out_state.dart';
-import 'package:habit_maker/presentation/create_screen/create_provider.dart';
+import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 import 'package:habit_maker/presentation/habit_screen/habit_screen_provider.dart';
 import 'package:habit_maker/presentation/home/provider/logout_provider.dart';
 import 'package:habit_maker/presentation/login/login_provider.dart';
@@ -77,7 +77,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SignUpProvider(repository)),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(
-          create: (_) => LogoutProvider(logOutState, repository, keeper),
+          create: (_) => HomeProvider(logOutState, repository, keeper),
         )
       ],
       child: const MyApp(),

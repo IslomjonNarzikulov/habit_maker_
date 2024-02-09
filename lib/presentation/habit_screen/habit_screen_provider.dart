@@ -54,7 +54,6 @@ class HabitPage extends BaseProvider {
     notifyListeners();
   }
 
-
   Timer? _debounce;
 
   void debounceActivityHandling() {
@@ -74,7 +73,7 @@ class HabitPage extends BaseProvider {
               activity.date.toIso8601String().split('T')[0];
           return activityDateKey == dateKey && activity.isDeleted == isDeleted;
         });
-          filteredActivities.add(lastActivity);
+        filteredActivities.add(lastActivity);
       });
 
       activityState.clear();
@@ -94,9 +93,8 @@ class HabitPage extends BaseProvider {
     });
   }
 
-
-
-  List<DateTime> getActivitiesDate(int dbId) { //here too some more explanation
+  List<DateTime> getActivitiesDate(int dbId) {
+    //here too some more explanation
     var result = (keeper.weekly
                 .where((element) => element.dbId == dbId)
                 .firstOrNull
@@ -108,11 +106,12 @@ class HabitPage extends BaseProvider {
     return result;
   }
 
-  String getHabitsTitle(int dbId) {  // need some explanation
+  String getHabitsTitle(int dbId) {
+    // need some explanation
     var title = keeper.weekly
-        .where((element) => element.dbId == dbId)
-        .firstOrNull
-        ?.title ??
+            .where((element) => element.dbId == dbId)
+            .firstOrNull
+            ?.title ??
         "";
     print(title);
     return title;

@@ -1,5 +1,4 @@
 import '../arch_provider/arch_provider.dart';
-import '../models/habit_model.dart';
 
 class MainProvider extends BaseProvider {
   MainProvider(
