@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/models/habit_model.dart';
-import 'package:habit_maker/presentation/habit_screen/habit_screen_provider.dart';
+import 'package:habit_maker/presentation/habit_screen/habit_provider/habit_screen_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 

@@ -43,7 +43,7 @@ class LogInScreen extends StatelessWidget {
                 var username = emailController.text;
                 var password = passwordController.text;
                 logInProvider.signIn(username, password, () {
-                 context.push('/home');
+                 context.replace('/home');
                 }, () {});
               },
               child: Container(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/data/database/db_helper.dart';
 import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/login_response.dart';
@@ -13,61 +14,74 @@ class Repository {
   NetworkClient networkClient;
   DBHelper dbHelper;
   FlutterSecureStorage secureStorage;
-  Timer? _debounceTimer;
 
   Repository(
       {required this.dbHelper,
       required this.networkClient,
       required this.secureStorage});
 
-  Future<void> createHabits(HabitModel habitModel) async {
-    await executeTask(logged: (token) async {
-      if (habitModel.repetition!.numberOfDays == 0 &&
-          habitModel.repetition!.weekdays!
-              .any((element) => element.isSelected == false)) {
+  Future<void> createHabits(HabitModel habitModel, bool isDailySelected) async {
+    if (isDailySelected) {
+      if (habitModel.repetition?.weekdays
+              ?.every((element) => element.isSelected == false) ??
+          false) {
+        habitModel.repetition?.numberOfDays = 7;
+      } else {
+        habitModel.repetition?.numberOfDays = 0;
+      }
+    } else {
+      if (habitModel.repetition?.numberOfDays == 0) {
         habitModel.repetition?.numberOfDays = 7;
       }
-      if (habitModel.repetition!.showNotification == false) {
-        habitModel.repetition!.notifyTime = '00:00';
-      }
+      habitModel.repetition?.weekdays =
+          defaultRepeat.map((day) => Day.copy(day)).toList();
+    }
+    await executeTask(logged: (token) async {
       await networkClient.createHabit(habitModel, token);
     }, notLogged: (e) async {
-      var model = HabitModel(
-        title: habitModel.title,
-        color: habitModel.color,
-        repetition: habitModel.repetition,
-        isSynced: false,
-      );
-      await dbHelper.insertHabit(model);
+      habitModel.isSynced == false;
+      await dbHelper.insertHabit(habitModel);
     });
   }
+  Future<bool> updateHabits(HabitModel habitModel,bool isDailySelected) async {
+    if (isDailySelected) {
+      if (habitModel.repetition?.weekdays
+          ?.every((element) => element.isSelected == false) ??
+          false) {
+        habitModel.repetition?.numberOfDays = 7;
+      } else {
+        habitModel.repetition?.numberOfDays = 0;
+      }
+    } else {
+      if (habitModel.repetition?.numberOfDays == 0) {
+        habitModel.repetition?.numberOfDays = 7;
+      }
+      habitModel.repetition?.weekdays =
+          defaultRepeat.map((day) => Day.copy(day)).toList();
+    }
+    executeTask(
+      logged: (token) async {
+        networkClient.updateHabits(habitModel, token);
+      },
+      notLogged: (e) async {
+        habitModel.isSynced = false;
+        await dbHelper.updateHabit(habitModel);
+      },
+    );
+    return true;
+  }
+
 
   Future<List<HabitModel>> loadHabits() async {
-    _debounceTimer?.cancel();
-
-    Completer<List<HabitModel>> completer = Completer<List<HabitModel>>();
-    const Duration debounceDuration = Duration(milliseconds: 1000);
-
-    _debounceTimer = Timer(debounceDuration, () async {
-      try {
-        List<HabitModel> result = await executeTask(
-          logged: (token) async {
-            var habits = await networkClient.loadHabits(token);
-
-            return await dbHelper.insertAllHabits(habits);
-          },
-          notLogged: (e) async {
-            return await dbHelper.getHabitList();
-          },
-        );
-
-        completer.complete(result);
-      } catch (error) {
-        completer.completeError(error);
-      }
-    });
-
-    return completer.future;
+    return await executeTask(
+      logged: (token) async {
+        var habits = await networkClient.loadHabits(token);
+        return await dbHelper.insertAllHabits(habits);
+      },
+      notLogged: (e) async {
+        return await dbHelper.getHabitList();
+      },
+    );
   }
 
   Future<void> createActivity(HabitModel item, List<DateTime> date) async {
@@ -115,18 +129,6 @@ class Repository {
     });
   }
 
-  Future<bool> updateHabits(HabitModel item) async {
-    executeTask(
-      logged: (token) async {
-        networkClient.updateHabits(item, token);
-      },
-      notLogged: (e) async {
-        item.isSynced = false;
-        await dbHelper.updateHabit(item);
-      },
-    );
-    return true;
-  }
 
   Future<bool> signIn(
     String email,

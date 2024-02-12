@@ -1,21 +1,20 @@
-
 import 'package:habit_maker/models/habit_model.dart';
 
-enum WeekDay{MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY}
+enum WeekDay { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY }
 
- final  defaultRepeat=[
-Day( weekday: WeekDay.MONDAY,isSelected: false),
-Day( weekday: WeekDay.TUESDAY,isSelected: false),
-Day( weekday: WeekDay.WEDNESDAY,isSelected: false),
-Day( weekday: WeekDay.THURSDAY,isSelected: false),
-Day( weekday: WeekDay.FRIDAY,isSelected: false),
-Day( weekday: WeekDay.SATURDAY,isSelected: false),
-Day( weekday: WeekDay.SUNDAY,isSelected: false),
+final defaultRepeat = [
+  Day(weekday: WeekDay.MONDAY, isSelected: false),
+  Day(weekday: WeekDay.TUESDAY, isSelected: false),
+  Day(weekday: WeekDay.WEDNESDAY, isSelected: false),
+  Day(weekday: WeekDay.THURSDAY, isSelected: false),
+  Day(weekday: WeekDay.FRIDAY, isSelected: false),
+  Day(weekday: WeekDay.SATURDAY, isSelected: false),
+  Day(weekday: WeekDay.SUNDAY, isSelected: false),
 ];
 
-extension NormalDay on WeekDay{
+extension NormalDay on WeekDay {
   String get name {
-    switch(this) {
+    switch (this) {
       case WeekDay.MONDAY:
         return 'MONDAY';
       case WeekDay.TUESDAY:
@@ -30,15 +29,15 @@ extension NormalDay on WeekDay{
         return 'SATURDAY';
       case WeekDay.SUNDAY:
         return 'SUNDAY';
-        default:
-          return 'Unknown';
+      default:
+        return 'Unknown';
     }
   }
 }
 
-extension ReverseDay on String{
-  WeekDay weekDayFromName(){
-    switch(this){
+extension ReverseDay on String {
+  WeekDay weekDayFromName() {
+    switch (this) {
       case 'MONDAY':
         return WeekDay.MONDAY;
       case 'TUESDAY':
@@ -55,7 +54,14 @@ extension ReverseDay on String{
         return WeekDay.SUNDAY;
       default:
         return WeekDay.MONDAY;
-
     }
+  }
+}
+
+extension DisplayDateFormat on DateTime {
+  String toHHMM() {
+    String hours = this.hour.toString().padLeft(2, '0');
+    String minutes = this.minute.toString().padLeft(2, '0');
+    return "$hours:$minutes";
   }
 }

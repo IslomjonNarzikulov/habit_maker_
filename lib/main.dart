@@ -10,7 +10,7 @@ import 'package:habit_maker/data/repository/repository.dart';
 import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
 import 'package:habit_maker/models/log_out_state.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
-import 'package:habit_maker/presentation/habit_screen/habit_screen_provider.dart';
+import 'package:habit_maker/presentation/habit_screen/habit_provider/habit_screen_provider.dart';
 import 'package:habit_maker/presentation/home/provider/logout_provider.dart';
 import 'package:habit_maker/presentation/login/login_provider.dart';
 import 'package:habit_maker/presentation/main_provider.dart';
@@ -19,13 +19,13 @@ import 'package:habit_maker/presentation/restore_password/restore_provider.dart'
 import 'package:habit_maker/presentation/signup/signup_provider.dart';
 import 'package:habit_maker/presentation/theme_data/theme_provider.dart';
 import 'package:habit_maker/router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-void configureDioForProxy(Dio dio) {
+ void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
       (client) {
     client.findProxy = (uri) {
-      // Replace localhost and 8888 with your proxy IP and port
       return 'PROXY 192.168.100.3:8888';
     };
     return client;
@@ -37,6 +37,9 @@ Future<void> main() async {
   AndroidOptions _getAndroidOptions() => const AndroidOptions(
         encryptedSharedPreferences: true,
       );
+  await Hive.initFlutter;
+  await Hive.openBox('Habit_box');
+
   var secureStorage = FlutterSecureStorage(aOptions: _getAndroidOptions());
   var token = await secureStorage.read(key: accessToken);
   await secureStorage.write(

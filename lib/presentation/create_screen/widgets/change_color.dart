@@ -27,7 +27,7 @@ Widget changingColor(CreateProvider createProvider){
                   child: CircleAvatar(
                     radius: 18,
                     backgroundColor: colorList[index],
-                    child: createProvider.selectedIndex == index
+                    child: createProvider.selectedColorIndex == index
                         ? const Icon(
                       Icons.check,
                       color: Colors.white,

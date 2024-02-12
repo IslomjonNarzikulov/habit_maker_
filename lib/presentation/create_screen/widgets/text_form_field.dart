@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-final TextEditingController titleController = TextEditingController();
 
-Widget textForm(){
+Widget textForm(TextEditingController titleController){
   return Container(
     height: 85,
     margin: const EdgeInsets.symmetric(horizontal: 12),

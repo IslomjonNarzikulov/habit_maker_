@@ -1,9 +1,11 @@
 import 'dart:io' as io;
+
 import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/activities_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+
 import '../../models/habit_model.dart';
 
 class DBHelper {
@@ -137,7 +139,6 @@ class DBHelper {
       return model;
     }).toList();
     return habits;
-
   }
 
   Future<void> updateHabit(HabitModel habitModel) async {
@@ -176,8 +177,7 @@ class DBHelper {
         if (activity == null) {
           await dbClient?.insert(
               activityTable,
-              Activities(
-                  date: dateTime.toIso8601String(), habitId: model.dbId)
+              Activities(date: dateTime.toIso8601String(), habitId: model.dbId)
                   .toDbJson());
         } else {
           model.activities!.getTheSameDay(dateTime)!.isDeleted = false;

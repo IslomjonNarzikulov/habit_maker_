@@ -5,8 +5,8 @@ import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/log_out_state.dart';
 
-import '../../data/repository/repository.dart';
-import '../../models/habit_model.dart';
+import '../../../data/repository/repository.dart';
+import '../../../models/habit_model.dart';
 
 class HabitPage extends BaseProvider {
   var activityState = <Activity>[];

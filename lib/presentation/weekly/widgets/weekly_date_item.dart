@@ -4,12 +4,9 @@ import 'package:habit_maker/common/colors.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-
 List text = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
-Widget weeklyDate(HabitModel habitModel,
-    BuildContext context,
-    int index,
+Widget weeklyDate(HabitModel habitModel, BuildContext context, int index,
     void Function(int, int) changeActivityState) {
   var selectedIndex = 0;
   if (habitModel.color != null) {
@@ -17,7 +14,7 @@ Widget weeklyDate(HabitModel habitModel,
   }
   return GestureDetector(
     onTap: () {
-    context.push('/home/calendar',extra: habitModel);
+      context.push('/home/calendar', extra: habitModel);
     },
     child: Container(
         margin: const EdgeInsets.all(12),
@@ -30,8 +27,7 @@ Widget weeklyDate(HabitModel habitModel,
           children: [
             Text(
               habitModel.title!,
-              style: const TextStyle(
-                  fontSize: 20, color: Colors.white),
+              style: const TextStyle(fontSize: 20, color: Colors.white),
             ),
             Container(
               width: 350,
@@ -39,8 +35,7 @@ Widget weeklyDate(HabitModel habitModel,
               alignment: Alignment.topRight,
               child: Text(
                 '${habitModel.repetition!.numberOfDays} times a week',
-                style:
-                const TextStyle(color: Colors.white54),
+                style: const TextStyle(color: Colors.white54),
               ),
             ),
             Expanded(
@@ -50,8 +45,7 @@ Widget weeklyDate(HabitModel habitModel,
                   itemCount: text.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                        padding: const EdgeInsets.only(
-                            right: 27),
+                        padding: const EdgeInsets.only(right: 27),
                         child: Text(text[index]));
                   }),
             ),
@@ -60,57 +54,45 @@ Widget weeklyDate(HabitModel habitModel,
                 scrollDirection: Axis.horizontal,
                 itemCount: 7,
                 itemBuilder: (context, dayIndex) {
-                  var difference =
-                      DateTime
-                          .now()
-                          .weekday - 1 - dayIndex;
-                  var date = DateTime.now()
-                      .subtract(Duration(days: difference));
+                  var difference = DateTime.now().weekday - 1 - dayIndex;
+                  var date =
+                      DateTime.now().subtract(Duration(days: difference));
                   var isDaySelected = habitModel.activities
                       ?.where((element) {
-                    return isSameDay(
-                        DateTime.parse(
-                            element.date!),
-                        date) &&
-                        element.isDeleted == false;
-                  })
+                        return isSameDay(DateTime.parse(element.date!), date) &&
+                            element.isDeleted == false;
+                      })
                       .toList()
                       .isNotEmpty;
                   bool isDisabled = difference < 0;
                   return Padding(
-                    padding:
-                    const EdgeInsets.only(right: 15),
+                    padding: const EdgeInsets.only(right: 15),
                     child: GestureDetector(
                       onTap: isDisabled
                           ? null
                           : () {
-                        changeActivityState(
-                            index, dayIndex);
-                      },
+                              changeActivityState(index, dayIndex);
+                            },
                       child: CircleAvatar(
-                        backgroundColor:
-                        isDaySelected == true
+                        backgroundColor: isDaySelected == true
                             ? Colors.white
                             : Colors.black54,
                         child: CircleAvatar(
                           radius: 20,
-                          backgroundColor:
-                          isDaySelected == true
+                          backgroundColor: isDaySelected == true
                               ? Colors.white
                               : Colors.transparent,
                           child: isDaySelected == true
                               ? const Icon(
-                            Icons.check,
-                            color: Colors.black,
-                            size: 16,
-                          )
+                                  Icons.check,
+                                  color: Colors.black,
+                                  size: 16,
+                                )
                               : CircleAvatar(
-                            backgroundColor:
-                            isDisabled
-                                ? Colors.grey[100]
-                                : const Color(
-                                0x0fffffff),
-                          ),
+                                  backgroundColor: isDisabled
+                                      ? Colors.grey[100]
+                                      : const Color(0x0fffffff),
+                                ),
                         ),
                       ),
                     ),

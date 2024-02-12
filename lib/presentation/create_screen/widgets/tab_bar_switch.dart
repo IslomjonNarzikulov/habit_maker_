@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 
 Widget tabBarSwitch(
-    CreateProvider provider, TabController? _tabController, Repetition repeat) {
-  return Container(
+    CreateProvider provider, TabController? tabController, Repetition repeat) {
+  return SizedBox(
     height: 110,
     child: TabBarView(
-      controller: _tabController,
+      controller: tabController,
       children: [
         Column(
           children: [
@@ -63,7 +62,7 @@ Widget tabBarSwitch(
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${provider.numberOfDays} times a week',
+                      '${provider.repetition.numberOfDays} times a week',
                       style: const TextStyle(
                         fontSize: 20,
                       ),
@@ -79,7 +78,7 @@ Widget tabBarSwitch(
                       children: [
                         GestureDetector(
                           onTap: () {
-                            provider.subtract(repeat);
+                            provider.subtract();
                           },
                           child: Container(
                             height: 26,
@@ -92,7 +91,7 @@ Widget tabBarSwitch(
                           width: 12,
                         ),
                         Text(
-                          "${provider.numberOfDays}",
+                          "${provider.repetition.numberOfDays}",
                           style: const TextStyle(fontSize: 20),
                         ),
                         const SizedBox(
@@ -100,7 +99,7 @@ Widget tabBarSwitch(
                         ),
                         GestureDetector(
                           onTap: () {
-                            provider.add(repeat);
+                            provider.add();
                           },
                           child: Container(
                             height: 26,
@@ -114,21 +113,9 @@ Widget tabBarSwitch(
                   ),
                 ),
               ]),
-        )
+        ),
       ],
     ),
   );
 }
 
-Widget timeSpinner(CreateProvider createProvider){
-  return Column(
-    children: [
-      TimePickerSpinner(
-        is24HourMode: false,
-        onTimeChange: (time) {
-          createProvider.selectTime(time);
-        },
-      )
-    ],
-  );
-}

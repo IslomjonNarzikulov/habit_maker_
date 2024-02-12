@@ -1,11 +1,15 @@
 import 'package:habit_maker/arch_provider/arch_provider.dart';
 import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/data/repository/repository.dart';
+import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/models/log_out_state.dart';
 
-import '../../../models/habit_model.dart';
 
 class CreateProvider extends BaseProvider {
+  int selectedColorIndex = 0;
+  late Repetition repetition;
+  var isDailySelected = false;
+
   CreateProvider(LogOutState logOutState, Repository habitRepository,
       HabitStateKeeper keeper)
       : super(
@@ -13,52 +17,40 @@ class CreateProvider extends BaseProvider {
           logOutState,
           habitRepository,
         );
-  bool isReminderEnabled = false;
-  int numberOfDays = 7;
-  bool isEnded = false;
-  DateTime dateTime = DateTime.now();
-  int selectedIndex = 0;
-  var isDailySelected = false;
 
   void selectColor(int index) {
-    selectedIndex = index;
+    selectedColorIndex = index;
     notifyListeners();
   }
 
   void createHabit(HabitModel habitModel) async {
-    await habitRepository.createHabits(habitModel);
+    await habitRepository.createHabits(habitModel, isDailySelected);
     await loadHabits();
     notifyListeners();
   }
 
   void updateHabits(HabitModel model) async {
-    await habitRepository.updateHabits(model);
+    await habitRepository.updateHabits(model, isDailySelected);
     await loadHabits();
     notifyListeners();
   }
 
-  void add(Repetition repeat) {
-    if (numberOfDays == 7) {
-      isEnded == true;
-    } else {
-      numberOfDays++;
+  void add() {
+    if (repetition.numberOfDays != 7 && repetition.numberOfDays != null) {
+      repetition.numberOfDays = repetition.numberOfDays! + 1;
     }
-    repeat.numberOfDays = numberOfDays;
     notifyListeners();
   }
 
-  void subtract(Repetition repeat) {
-    if (numberOfDays == 1) {
-      isEnded == true;
-    } else {
-      numberOfDays--;
+  void subtract() {
+    if (repetition.numberOfDays != 0 && repetition.numberOfDays != null) {
+      repetition.numberOfDays = repetition.numberOfDays! - 1;
     }
-    repeat.numberOfDays = numberOfDays;
     notifyListeners();
   }
 
   void selectTime(DateTime time) {
-    dateTime = time;
+    repetition.notifyTime = time;
     notifyListeners();
   }
 
@@ -77,7 +69,7 @@ class CreateProvider extends BaseProvider {
   }
 
   void changeReminderState(bool isChecked) {
-    isReminderEnabled = isChecked;
+    repetition.showNotification = isChecked;
     notifyListeners();
   }
 }

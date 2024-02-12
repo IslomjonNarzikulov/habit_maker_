@@ -50,6 +50,8 @@ dependencies:
   dio: ^5.4.0
   flutter_verification_code: ^1.1.7
   go_router: ^13.1.0
+  hive: ^2.2.3
+  hive_flutter:
 flutter_local_notifications: ^16.2.0
 flutter_datetime_picker:
 

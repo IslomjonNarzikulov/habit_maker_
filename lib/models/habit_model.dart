@@ -43,7 +43,7 @@ class HabitModel {
         isSynced = jsonData['isSynced'] == 1;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> jsonData = Map<String, dynamic>();
+    final Map<String, dynamic> jsonData = <String, dynamic>{};
     jsonData['id'] = id;
     jsonData['title'] = title;
     jsonData['color'] = "$color";
@@ -66,7 +66,7 @@ class HabitModel {
 
 class Repetition {
   int? numberOfDays;
-  String? notifyTime;
+  DateTime? notifyTime;
   bool? showNotification;
   List<Day>? weekdays;
   String? id;
@@ -80,7 +80,6 @@ class Repetition {
 
   Repetition.fromJson(Map<String, dynamic> json) {
     numberOfDays = json['numberOfDays'];
-    notifyTime = json['notifyTime'];
     showNotification = json['showNotification'];
     if (json['weekdays'] != null) {
       weekdays = <Day>[];
@@ -88,30 +87,60 @@ class Repetition {
         weekdays!.add(Day.fromJson(v));
       });
     }
+    numberOfDays = json['numberOfDays'];
+    var time = json['notifyTime'] as String?;
+    if (time?.contains(':') ?? false) {
+      notifyTime = _formatHHMMtoDateTime(time!);
+    }
+    showNotification = json['showNotification'];
   }
 
-  Repetition.fromDbJson(Map<String, dynamic> json)
-      : dbId = json['dbId'],
-        numberOfDays = json['numberOfDays'],
-        notifyTime = json['notifyTime'],
-        showNotification = json['showNotification'] == 1;
+  DateTime _formatHHMMtoDateTime(String date) {
+    List<String> parts = date.split(':');
+    int hour = int.parse(parts[0]);
+    int minute = int.parse(parts[1]);
+
+    DateTime now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hour, minute);
+  }
+
+  String _formatDateTimeToHHMM(DateTime dateTime) {
+    String hour = dateTime.hour.toString().padLeft(2, '0');
+    String minute = dateTime.minute.toString().padLeft(2, '0');
+    return "$hour:$minute";
+  }
+
+  Repetition.fromDbJson(Map<String, dynamic> json) {
+    numberOfDays = json['numberOfDays'];
+    var time = json['notifyTime'] as String?;
+    if (time?.contains(":") ?? false) {
+      notifyTime = _formatHHMMtoDateTime(time!);
+    }
+    showNotification = json['showNotification'] == 1;
+    dbId = json['dbId'];
+  }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['numberOfDays'] = numberOfDays;
-    data['notifyTime'] = notifyTime;
-    data['showNotification'] = showNotification;
+    final map = <String, dynamic>{};
     if (weekdays != null) {
-      data['weekdays'] = weekdays?.map((v) => v.toJson()).toList();
+      map['weekdays'] = weekdays?.map((v) => v.toJson()).toList();
     }
-    return data;
+    map['numberOfDays'] = numberOfDays;
+    if (notifyTime != null) {
+      map['notifyTime'] = _formatDateTimeToHHMM(notifyTime!);
+    } else {
+      map['notifyTime'] = "";
+    }
+    map['showNotification'] = showNotification;
+    return map;
   }
 
   Map<String, dynamic> toDbJson(int? habitId) {
     return {
       'dbId': habitId,
       'numberOfDays': numberOfDays,
-      'notifyTime': notifyTime,
+      'notifyTime':
+          notifyTime != null ? _formatDateTimeToHHMM(notifyTime!) : null,
       'showNotification': showNotification == true ? 1 : 0,
     };
   }
