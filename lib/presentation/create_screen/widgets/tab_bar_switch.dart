@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/models/habit_model.dart';
+import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 
 Widget tabBarSwitch(
-    CreateProvider provider, TabController? tabController, Repetition repeat) {
+    CreateProvider provider, TabController? tabController, HiveRepetition hiveRepetition) {
   return SizedBox(
     height: 110,
     child: TabBarView(
@@ -22,10 +22,10 @@ Widget tabBarSwitch(
                   children: List<Widget>.generate(
                     7,
                     (index) {
-                      var item = repeat.weekdays![index];
+                      var item = hiveRepetition.weekdays![index];
                       return GestureDetector(
                         onTap: () {
-                          provider.changeButtonColors(index, repeat);
+                          provider.changeButtonColors(index, hiveRepetition);
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -35,7 +35,7 @@ Widget tabBarSwitch(
                                 : Colors.blueGrey,
                             radius: 18,
                             child: Text(
-                              '${repeat.weekdays![index].weekday?.name[0]}',
+                              '${hiveRepetition.weekdays![index].weekday?.name[0]}',
                               style: const TextStyle(color: Colors.white),
                             ),
                           ),
@@ -62,7 +62,7 @@ Widget tabBarSwitch(
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${provider.repetition.numberOfDays} times a week',
+                      '${provider.hiveRepetition.numberOfDays} times a week',
                       style: const TextStyle(
                         fontSize: 20,
                       ),
@@ -91,7 +91,7 @@ Widget tabBarSwitch(
                           width: 12,
                         ),
                         Text(
-                          "${provider.repetition.numberOfDays}",
+                          "${provider.hiveRepetition.numberOfDays}",
                           style: const TextStyle(fontSize: 20),
                         ),
                         const SizedBox(

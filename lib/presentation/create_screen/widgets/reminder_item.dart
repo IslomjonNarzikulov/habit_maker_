@@ -18,7 +18,7 @@ Widget reminder(
         ),
         const SizedBox(width: 12),
         Visibility(
-          visible: createProvider.repetition.showNotification!,
+          visible: createProvider.hiveRepetition.showNotification!,
           child: GestureDetector(
             onTap: () {
               showModalBottomSheet(
@@ -50,11 +50,11 @@ Widget reminder(
         ),
         Expanded(
           child: SwitchListTile(
-              value: createProvider.repetition.showNotification!,
+              value: createProvider.hiveRepetition.showNotification!,
               activeColor: Colors.blueAccent,
               onChanged: (bool value) {
                 createProvider.changeReminderState(value);
-                createProvider.repetition.showNotification = value;
+                createProvider.hiveRepetition.showNotification = value;
               }),
         ),
       ],

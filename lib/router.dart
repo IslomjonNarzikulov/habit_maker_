@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/models/habit_model.dart';
+import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_habit.dart';
 import 'package:habit_maker/presentation/habit_screen/habit_screen.dart';
 import 'package:habit_maker/presentation/home/home.dart';
@@ -50,8 +51,8 @@ final GoRouter router =
         GoRoute(
           path: 'create',
           builder: (BuildContext context, GoRouterState state) {
-            final habitModel = state.extra as HabitModel?;
-            return CreateScreen(habitModel: habitModel);
+            final habitModel = state.extra as HiveHabitModel?;
+            return CreateScreen(hiveHabitModel: habitModel);
           },
         ),
       ]),

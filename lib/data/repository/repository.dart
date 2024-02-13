@@ -1,71 +1,72 @@
 import 'dart:async';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/data/database/db_helper.dart';
 import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
+import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/models/login_response.dart';
-
+import 'package:hive/hive.dart';
 import '../../common/constants.dart';
 import '../../models/habit_model.dart';
 import '../network_client/network_client.dart';
 
 class Repository {
   NetworkClient networkClient;
-  DBHelper dbHelper;
   FlutterSecureStorage secureStorage;
-
+ DBHelper dbHelper;
   Repository(
-      {required this.dbHelper,
+      {
+        required this.dbHelper,
       required this.networkClient,
       required this.secureStorage});
 
-  Future<void> createHabits(HabitModel habitModel, bool isDailySelected) async {
+  Future<void> createHabits(HiveHabitModel hiveHabitModel, bool isDailySelected) async {
     if (isDailySelected) {
-      if (habitModel.repetition?.weekdays
+      if (hiveHabitModel.hiveRepetition?.weekdays
               ?.every((element) => element.isSelected == false) ??
           false) {
-        habitModel.repetition?.numberOfDays = 7;
+        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
       } else {
-        habitModel.repetition?.numberOfDays = 0;
+        hiveHabitModel.hiveRepetition?.numberOfDays = 0;
       }
     } else {
-      if (habitModel.repetition?.numberOfDays == 0) {
-        habitModel.repetition?.numberOfDays = 7;
+      if (hiveHabitModel.hiveRepetition?.numberOfDays == 0) {
+        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
       }
-      habitModel.repetition?.weekdays =
+      hiveHabitModel.hiveRepetition?.weekdays =
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
     await executeTask(logged: (token) async {
-      await networkClient.createHabit(habitModel, token);
+      await networkClient.createHabit(hiveHabitModel, token);
     }, notLogged: (e) async {
-      habitModel.isSynced == false;
-      await dbHelper.insertHabit(habitModel);
+      hiveHabitModel.isSynced == false;
+     await Hive.openBox('habitBox');
     });
   }
-  Future<bool> updateHabits(HabitModel habitModel,bool isDailySelected) async {
+  Future<bool> updateHabits(HiveHabitModel hiveHabitModel,bool isDailySelected) async {
     if (isDailySelected) {
-      if (habitModel.repetition?.weekdays
+      if (hiveHabitModel.hiveRepetition?.weekdays
           ?.every((element) => element.isSelected == false) ??
           false) {
-        habitModel.repetition?.numberOfDays = 7;
+        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
       } else {
-        habitModel.repetition?.numberOfDays = 0;
+        hiveHabitModel.hiveRepetition?.numberOfDays = 0;
       }
     } else {
-      if (habitModel.repetition?.numberOfDays == 0) {
-        habitModel.repetition?.numberOfDays = 7;
+      if (hiveHabitModel.hiveRepetition?.numberOfDays == 0) {
+        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
       }
-      habitModel.repetition?.weekdays =
+      hiveHabitModel.hiveRepetition?.weekdays =
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
     executeTask(
       logged: (token) async {
-        networkClient.updateHabits(habitModel, token);
+        networkClient.updateHabits(hiveHabitModel, token);
       },
       notLogged: (e) async {
-        habitModel.isSynced = false;
-        await dbHelper.updateHabit(habitModel);
+        hiveHabitModel.isSynced = false;
+     var box = await Hive.openBox('habitBox');
+      await box.put(hiveHabitModel.id,hiveHabitModel);
       },
     );
     return true;

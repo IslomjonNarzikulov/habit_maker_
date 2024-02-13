@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:habit_maker/models/habit_model.dart';
+import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 
 Widget saveButton(
     bool isEdit,
     CreateProvider provider,
-    HabitModel body,
+    HiveHabitModel body,
     BuildContext context,
     GlobalKey<FormState> formKey,
     void Function() updateHabits,

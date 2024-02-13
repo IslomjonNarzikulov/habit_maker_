@@ -8,6 +8,7 @@ import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/data/network_client/network_client.dart';
 import 'package:habit_maker/data/repository/repository.dart';
 import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
+import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/models/log_out_state.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 import 'package:habit_maker/presentation/habit_screen/habit_provider/habit_screen_provider.dart';
@@ -20,9 +21,10 @@ import 'package:habit_maker/presentation/signup/signup_provider.dart';
 import 'package:habit_maker/presentation/theme_data/theme_provider.dart';
 import 'package:habit_maker/router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
 
- void configureDioForProxy(Dio dio) {
+void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
       (client) {
     client.findProxy = (uri) {
@@ -37,8 +39,14 @@ Future<void> main() async {
   AndroidOptions _getAndroidOptions() => const AndroidOptions(
         encryptedSharedPreferences: true,
       );
+  final dbDir = await path_provider.getApplicationDocumentsDirectory();
+  await Hive.initFlutter(dbDir.path);
   await Hive.initFlutter;
-  await Hive.openBox('Habit_box');
+  Hive.registerAdapter(HiveHabitModelAdapter());
+  Hive.registerAdapter(HiveRepetitionAdapter());
+  Hive.registerAdapter(HiveDayAdapter());
+  Hive.registerAdapter(HiveActivitiesAdapter());
+  await Hive.openBox('habitBox');
 
   var secureStorage = FlutterSecureStorage(aOptions: _getAndroidOptions());
   var token = await secureStorage.read(key: accessToken);

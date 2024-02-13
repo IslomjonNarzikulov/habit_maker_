@@ -3,6 +3,7 @@ import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
+import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 import 'package:habit_maker/presentation/create_screen/widgets/change_color.dart';
 import 'package:habit_maker/presentation/create_screen/widgets/save_item.dart';
@@ -12,9 +13,9 @@ import 'package:habit_maker/presentation/create_screen/widgets/text_form_field.d
 import 'package:provider/provider.dart';
 
 class CreateScreen extends StatefulWidget {
-  CreateScreen({super.key, this.habitModel});
+  CreateScreen({super.key, this.hiveHabitModel});
 
-  HabitModel? habitModel;
+  HiveHabitModel? hiveHabitModel;
 
   @override
   State<CreateScreen> createState() => _CreateScreenState();
@@ -33,9 +34,9 @@ class _CreateScreenState extends State<CreateScreen>
   void initState() {
     super.initState();
     createProvider = Provider.of<CreateProvider>(context, listen: false);
-    final habit = widget.habitModel;
+    final habit = widget.hiveHabitModel;
     if (habit != null) {
-      createProvider.repetition = habit.repetition!;
+      createProvider.hiveRepetition = habit.hiveRepetition!;
       isEdit = true;
       titleController.text = habit.title!;
       createProvider.selectedColorIndex = habit.color!;
@@ -45,7 +46,7 @@ class _CreateScreenState extends State<CreateScreen>
         vsync: this,
       );
     } else {
-      createProvider.repetition = Repetition(
+      createProvider.hiveRepetition = HiveRepetition(
           weekdays: defaultRepeat.map((day) => Day.copy(day)).toList(),
           numberOfDays: 0,
           notifyTime: null,
@@ -87,7 +88,7 @@ class _CreateScreenState extends State<CreateScreen>
                       tabBar(_tabController, (index) {
                         createProvider.tabBarChanging(index);
                       }),
-                      tabBarSwitch(createProvider, _tabController, createProvider.repetition),
+                      tabBarSwitch(createProvider, _tabController, createProvider.hiveRepetition),
                       const SizedBox(height: 24),
                    Container(
                     margin: const EdgeInsets.all(12),
@@ -102,7 +103,7 @@ class _CreateScreenState extends State<CreateScreen>
                         ),
                         const SizedBox(width: 12),
                         Visibility(
-                          visible: createProvider.repetition.showNotification!,
+                          visible: createProvider.hiveRepetition.showNotification!,
                           child: GestureDetector(
                             onTap: () {
                               showModalBottomSheet(
@@ -134,11 +135,11 @@ class _CreateScreenState extends State<CreateScreen>
                         ),
                         Expanded(
                           child: SwitchListTile(
-                              value: createProvider.repetition.showNotification!,
+                              value: createProvider.hiveRepetition.showNotification!,
                               activeColor: Colors.blueAccent,
                               onChanged: (bool value) {
                                 createProvider.changeReminderState(value);
-                                createProvider.repetition.showNotification = value;
+                                createProvider.hiveRepetition.showNotification = value;
                               }),
                         ),
                       ],
@@ -162,13 +163,12 @@ class _CreateScreenState extends State<CreateScreen>
         }));
   }
 
-  HabitModel get body {
-    return HabitModel(
-        id: widget.habitModel?.id,
-        dbId: widget.habitModel?.dbId,
+  HiveHabitModel get body {
+    return HiveHabitModel(
+        id: widget.hiveHabitModel?.id,
         title: titleController.text,
         isSynced: true,
-        repetition: createProvider.repetition,
+        hiveRepetition: createProvider.hiveRepetition,
         color: createProvider.selectedColorIndex);
   }
 }
