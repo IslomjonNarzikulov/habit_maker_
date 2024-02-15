@@ -3,8 +3,8 @@ import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/common/constants.dart';
-import 'package:habit_maker/data/database/db_helper.dart';
 import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
+import 'package:habit_maker/data/hive/hive.box.dart';
 import 'package:habit_maker/data/network_client/network_client.dart';
 import 'package:habit_maker/data/repository/repository.dart';
 import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
@@ -46,21 +46,21 @@ Future<void> main() async {
   Hive.registerAdapter(HiveRepetitionAdapter());
   Hive.registerAdapter(HiveDayAdapter());
   Hive.registerAdapter(HiveActivitiesAdapter());
-  await Hive.openBox('habitBox');
+  var habitBox = await Hive.openBox<HiveHabitModel>('habitBox');
 
   var secureStorage = FlutterSecureStorage(aOptions: _getAndroidOptions());
   var token = await secureStorage.read(key: accessToken);
   await secureStorage.write(
       key: isUserLogged, value: token == null ? "false" : "true");
-  final dbHelper = DBHelper();
   final keeper = HabitStateKeeper();
   final dio = Dio();
+  final database = Database(habitBox);
   dio.options.connectTimeout = const Duration(seconds: 5);
   dio.options.receiveTimeout = const Duration(seconds: 5);
 
   final networkClient = NetworkClient(dio: dio);
   final repository = Repository(
-      dbHelper: dbHelper,
+    database: database,
       networkClient: networkClient,
       secureStorage: secureStorage);
 

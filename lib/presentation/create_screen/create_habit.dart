@@ -3,7 +3,6 @@ import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
-import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 import 'package:habit_maker/presentation/create_screen/widgets/change_color.dart';
 import 'package:habit_maker/presentation/create_screen/widgets/save_item.dart';
@@ -13,9 +12,9 @@ import 'package:habit_maker/presentation/create_screen/widgets/text_form_field.d
 import 'package:provider/provider.dart';
 
 class CreateScreen extends StatefulWidget {
-  CreateScreen({super.key, this.hiveHabitModel});
+  CreateScreen({super.key, this.habitModel});
 
-  HiveHabitModel? hiveHabitModel;
+  HabitModel? habitModel;
 
   @override
   State<CreateScreen> createState() => _CreateScreenState();
@@ -34,9 +33,9 @@ class _CreateScreenState extends State<CreateScreen>
   void initState() {
     super.initState();
     createProvider = Provider.of<CreateProvider>(context, listen: false);
-    final habit = widget.hiveHabitModel;
+    final habit = widget.habitModel;
     if (habit != null) {
-      createProvider.hiveRepetition = habit.hiveRepetition!;
+      createProvider.repetition = habit.repetition!;
       isEdit = true;
       titleController.text = habit.title!;
       createProvider.selectedColorIndex = habit.color!;
@@ -46,7 +45,7 @@ class _CreateScreenState extends State<CreateScreen>
         vsync: this,
       );
     } else {
-      createProvider.hiveRepetition = HiveRepetition(
+      createProvider.repetition = Repetition(
           weekdays: defaultRepeat.map((day) => Day.copy(day)).toList(),
           numberOfDays: 0,
           notifyTime: null,
@@ -88,63 +87,68 @@ class _CreateScreenState extends State<CreateScreen>
                       tabBar(_tabController, (index) {
                         createProvider.tabBarChanging(index);
                       }),
-                      tabBarSwitch(createProvider, _tabController, createProvider.hiveRepetition),
+                      tabBarSwitch(createProvider, _tabController,
+                          createProvider.repetition),
                       const SizedBox(height: 24),
-                   Container(
-                    margin: const EdgeInsets.all(12),
-                    height: 36,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Reminder',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 12),
-                        Visibility(
-                          visible: createProvider.hiveRepetition.showNotification!,
-                          child: GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-                                  backgroundColor: Colors.white,
-                                  context: context,
-                                  builder: (context) {
-                                    return TimePickerSpinner(
-                                      is24HourMode: false,
-                                      onTimeChange: (time) {
-                                        createProvider.selectTime(time);
-                                      },
-                                    );
-                                  });
-                            },
-                            child: Container(
-                              height: 30,
-                              width: 65,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.blueGrey),
-                              child: Center(
-                                child: Text(
-                                  dateTime.toHHMM(),
-                                  style: const TextStyle(fontSize: 16),
+                      Container(
+                        margin: const EdgeInsets.all(12),
+                        height: 36,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Reminder',
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 12),
+                            Visibility(
+                              visible:
+                                  createProvider.repetition.showNotification!,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                      backgroundColor: Colors.white,
+                                      context: context,
+                                      builder: (context) {
+                                        return TimePickerSpinner(
+                                          is24HourMode: false,
+                                          onTimeChange: (time) {
+                                            createProvider.selectTime(time);
+                                          },
+                                        );
+                                      });
+                                },
+                                child: Container(
+                                  height: 30,
+                                  width: 65,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.blueGrey),
+                                  child: Center(
+                                    child: Text(
+                                      dateTime.toHHMM(),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                            Expanded(
+                              child: SwitchListTile(
+                                  value: createProvider
+                                      .repetition.showNotification!,
+                                  activeColor: Colors.blueAccent,
+                                  onChanged: (bool value) {
+                                    createProvider.changeReminderState(value);
+                                    createProvider.repetition.showNotification =
+                                        value;
+                                  }),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: SwitchListTile(
-                              value: createProvider.hiveRepetition.showNotification!,
-                              activeColor: Colors.blueAccent,
-                              onChanged: (bool value) {
-                                createProvider.changeReminderState(value);
-                                createProvider.hiveRepetition.showNotification = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
                     ],
                   ),
                 ),
@@ -163,12 +167,13 @@ class _CreateScreenState extends State<CreateScreen>
         }));
   }
 
-  HiveHabitModel get body {
-    return HiveHabitModel(
-        id: widget.hiveHabitModel?.id,
+  HabitModel get body {
+    return HabitModel(
+        id: widget.habitModel?.id,
         title: titleController.text,
+        dbKey: widget.habitModel?.dbKey,
         isSynced: true,
-        hiveRepetition: createProvider.hiveRepetition,
+        repetition: createProvider.repetition,
         color: createProvider.selectedColorIndex);
   }
 }

@@ -27,9 +27,9 @@ class Weekly extends StatelessWidget {
                   itemCount: habits.length,
                   itemBuilder: (context, habitIndex) {
                     var item = habits[habitIndex];
-                    return weeklyDate(item, context, habitIndex,
+                    return weeklyDate(item, context,habitIndex,
                         (habitIndex, dayIndex) {
-                      _changeButtonColor(habitIndex, dayIndex);
+                      _changeButtonColor(habitIndex,dayIndex);
                     });
                   }),
             ),

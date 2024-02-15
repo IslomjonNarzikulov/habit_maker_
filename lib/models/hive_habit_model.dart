@@ -1,7 +1,4 @@
-import 'package:habit_maker/common/extension.dart';
-import 'package:habit_maker/models/habit_model.dart';
 import 'package:hive/hive.dart';
-
 part 'hive_habit_model.g.dart';
 
 @HiveType(typeId: 0)
@@ -40,12 +37,13 @@ class HiveRepetition {
   @HiveField(2)
   bool? showNotification;
   @HiveField(3)
-  List<Day>? weekdays;
+  List<HiveDay>? weekdays;
   @HiveField(4)
   String? id;
 
   HiveRepetition(
-      {this.numberOfDays,
+      {this.id,
+      this.numberOfDays,
       this.notifyTime,
       this.showNotification,
       this.weekdays});
@@ -54,17 +52,13 @@ class HiveRepetition {
 @HiveType(typeId: 2)
 class HiveDay {
   @HiveField(0)
-  WeekDay? weekday;
+  int? weekday;
   @HiveField(1)
   bool? isSelected;
   @HiveField(2)
   String? id;
 
   HiveDay({this.weekday, this.isSelected});
-
-  HiveDay.copy(Day other)
-      : weekday = other.weekday,
-        isSelected = other.isSelected;
 }
 
 @HiveType(typeId: 3)
@@ -74,12 +68,9 @@ class HiveActivities extends HiveObject {
   @HiveField(1)
   String? date;
   @HiveField(2)
-  int? habitId;
-  @HiveField(3)
   bool? isDeleted;
-  @HiveField(4)
+  @HiveField(3)
   bool? isSynced;
 
-  HiveActivities(
-      {this.id, this.date, this.habitId, this.isDeleted, this.isSynced});
+  HiveActivities({this.id, this.date, this.isDeleted, this.isSynced});
 }

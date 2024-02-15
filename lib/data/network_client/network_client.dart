@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:habit_maker/common/constants.dart';
 import 'package:habit_maker/domain/restore_model/restore_response.dart';
+import 'package:habit_maker/models/habit_model.dart';
 import 'package:habit_maker/models/login_response.dart';
 import 'package:habit_maker/models/registration_response.dart';
 import 'package:habit_maker/models/verify_response.dart';
 
-import '../../common/constants.dart';
-import '../../models/activities_model.dart';
-import '../../models/habit_model.dart';
 
 class NetworkClient {
   final Dio dio;

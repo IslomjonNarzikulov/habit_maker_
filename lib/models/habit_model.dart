@@ -1,22 +1,21 @@
 import 'package:habit_maker/common/extension.dart';
-import 'package:habit_maker/models/activities_model.dart';
 
 class HabitModel {
   String? id;
   String? title;
   Repetition? repetition;
-  int? dbId;
   int? color;
   bool? isDeleted;
   bool? isSynced;
   List<Activities>? activities;
+  dynamic dbKey;
 
   HabitModel(
       {this.id,
+      this.dbKey,
       this.activities,
       this.title,
       this.repetition,
-      this.dbId,
       this.color,
       this.isDeleted,
       this.isSynced});
@@ -26,21 +25,12 @@ class HabitModel {
         id: jsonData['id'],
         title: jsonData['title'],
         repetition: Repetition.fromJson(jsonData['repetition']),
-        dbId: null,
         color: int.tryParse(jsonData['color']),
         isDeleted: jsonData['isDeleted'],
         isSynced: jsonData['isSynced'],
         activities: List<Activities>.from(jsonData['activities']
             .map((activity) => Activities.fromJson(activity))));
   }
-
-  HabitModel.fromDbJson(Map<String, dynamic> jsonData)
-      : id = jsonData['habitId'],
-        dbId = jsonData['id'],
-        title = jsonData['title'],
-        color = jsonData['color'],
-        isDeleted = jsonData['isDeleted'] != 0,
-        isSynced = jsonData['isSynced'] == 1;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> jsonData = <String, dynamic>{};
@@ -52,16 +42,6 @@ class HabitModel {
     }
     return jsonData;
   }
-
-  Map<String, Object?> toDbJson() {
-    return {
-      'habitId': id,
-      'title': title,
-      'color': color,
-      'isDeleted': isDeleted == true ? 1 : 0,
-      'isSynced': isSynced == true ? 1 : 0,
-    };
-  }
 }
 
 class Repetition {
@@ -70,10 +50,11 @@ class Repetition {
   bool? showNotification;
   List<Day>? weekdays;
   String? id;
-  int? dbId;
+  dynamic dbKey;
 
   Repetition(
       {this.numberOfDays,
+      this.dbKey,
       this.notifyTime,
       this.showNotification,
       this.weekdays});
@@ -110,16 +91,6 @@ class Repetition {
     return "$hour:$minute";
   }
 
-  Repetition.fromDbJson(Map<String, dynamic> json) {
-    numberOfDays = json['numberOfDays'];
-    var time = json['notifyTime'] as String?;
-    if (time?.contains(":") ?? false) {
-      notifyTime = _formatHHMMtoDateTime(time!);
-    }
-    showNotification = json['showNotification'] == 1;
-    dbId = json['dbId'];
-  }
-
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     if (weekdays != null) {
@@ -134,25 +105,15 @@ class Repetition {
     map['showNotification'] = showNotification;
     return map;
   }
-
-  Map<String, dynamic> toDbJson(int? habitId) {
-    return {
-      'dbId': habitId,
-      'numberOfDays': numberOfDays,
-      'notifyTime':
-          notifyTime != null ? _formatDateTimeToHHMM(notifyTime!) : null,
-      'showNotification': showNotification == true ? 1 : 0,
-    };
-  }
 }
 
 class Day {
   WeekDay? weekday;
   bool? isSelected;
   String? id;
-  int? dbId;
+  dynamic dbKey;
 
-  Day({this.weekday, this.isSelected});
+  Day({this.weekday, this.isSelected, this.dbKey});
 
   Day.copy(Day other)
       : weekday = other.weekday,
@@ -163,23 +124,52 @@ class Day {
     isSelected = json['isSelected'];
   }
 
-  Day.fromDbJson(Map<String, dynamic> json)
-      : weekday = (json['weekday'] as String).weekDayFromName(),
-        isSelected = json['isSelected'] == 1,
-        dbId = json['dbId'];
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['weekday'] = weekday!.name;
     data['isSelected'] = isSelected;
     return data;
   }
+}
+class Activities {
+  String? id;
+  String? date;
+  int? habitId;
+  bool? isDeleted;
+  bool? isSynced;
+  dynamic dbKey;
 
-  Map<String, dynamic> toDbJson(int? habitId) {
+  Activities(
+      {this.id,
+        this.date,
+        this.habitId,
+        this.isDeleted,
+        this.dbKey,
+        this.isSynced});
+
+  factory Activities.fromJson(Map<String, dynamic> json) {
+    return Activities(
+      id: json['id'],
+      date: json['date'],
+      habitId: null,
+    );
+  }
+
+  Activities.fromDbJson(Map<String, dynamic> json)
+      : date = json['date'],
+        habitId = json['habitId'],
+        id = json['activityId'],
+        isDeleted = json['isDeleted'] != 0,
+        isSynced = json['isSynced'] == 1;
+
+  Map<String, dynamic> toDbJson() {
     return {
-      'dbId': habitId,
-      'weekday': weekday!.name,
-      'isSelected': isSelected == true ? 1 : 0,
+      'activityId': id,
+      'habitId': habitId,
+      'date': date,
+      'isDeleted': isDeleted == true ? 1 : 0,
+      'isSynced': isSynced == true ? 1 : 0,
     };
   }
 }
+

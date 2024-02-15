@@ -1,11 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/common/extension.dart';
-import 'package:habit_maker/data/database/db_helper.dart';
-import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
-import 'package:habit_maker/models/hive_habit_model.dart';
+import 'package:habit_maker/common/hive_extention.dart';
+import 'package:habit_maker/data/hive/hive.box.dart';
 import 'package:habit_maker/models/login_response.dart';
-import 'package:hive/hive.dart';
+
 import '../../common/constants.dart';
 import '../../models/habit_model.dart';
 import '../network_client/network_client.dart';
@@ -13,74 +13,75 @@ import '../network_client/network_client.dart';
 class Repository {
   NetworkClient networkClient;
   FlutterSecureStorage secureStorage;
- DBHelper dbHelper;
+
+  //DBHelper dbHelper;
+  Database database;
+
   Repository(
-      {
-        required this.dbHelper,
+      {required this.database,
       required this.networkClient,
       required this.secureStorage});
 
-  Future<void> createHabits(HiveHabitModel hiveHabitModel, bool isDailySelected) async {
+  Future<void> createHabits(HabitModel habitModel, bool isDailySelected) async {
     if (isDailySelected) {
-      if (hiveHabitModel.hiveRepetition?.weekdays
+      if (habitModel.repetition?.weekdays
               ?.every((element) => element.isSelected == false) ??
           false) {
-        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
+        habitModel.repetition?.numberOfDays = 7;
       } else {
-        hiveHabitModel.hiveRepetition?.numberOfDays = 0;
+        habitModel.repetition?.numberOfDays = 0;
       }
     } else {
-      if (hiveHabitModel.hiveRepetition?.numberOfDays == 0) {
-        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
+      if (habitModel.repetition?.numberOfDays == 0) {
+        habitModel.repetition?.numberOfDays = 7;
       }
-      hiveHabitModel.hiveRepetition?.weekdays =
+      habitModel.repetition?.weekdays =
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
     await executeTask(logged: (token) async {
-      await networkClient.createHabit(hiveHabitModel, token);
+      await networkClient.createHabit(habitModel, token);
     }, notLogged: (e) async {
-      hiveHabitModel.isSynced == false;
-     await Hive.openBox('habitBox');
+      habitModel.isSynced == false;
+      await database.insertHabit(habitModel);
     });
   }
-  Future<bool> updateHabits(HiveHabitModel hiveHabitModel,bool isDailySelected) async {
+
+  Future<bool> updateHabits(HabitModel habitModel, bool isDailySelected) async {
     if (isDailySelected) {
-      if (hiveHabitModel.hiveRepetition?.weekdays
-          ?.every((element) => element.isSelected == false) ??
+      if (habitModel.repetition?.weekdays
+              ?.every((element) => element.isSelected == false) ??
           false) {
-        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
+        habitModel.repetition?.numberOfDays = 7;
       } else {
-        hiveHabitModel.hiveRepetition?.numberOfDays = 0;
+        habitModel.repetition?.numberOfDays = 0;
       }
     } else {
-      if (hiveHabitModel.hiveRepetition?.numberOfDays == 0) {
-        hiveHabitModel.hiveRepetition?.numberOfDays = 7;
+      if (habitModel.repetition?.numberOfDays == 0) {
+        habitModel.repetition?.numberOfDays = 7;
       }
-      hiveHabitModel.hiveRepetition?.weekdays =
+      habitModel.repetition?.weekdays =
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
     executeTask(
       logged: (token) async {
-        networkClient.updateHabits(hiveHabitModel, token);
+        networkClient.updateHabits(habitModel, token);
       },
       notLogged: (e) async {
-        hiveHabitModel.isSynced = false;
-     var box = await Hive.openBox('habitBox');
-      await box.put(hiveHabitModel.id,hiveHabitModel);
+        habitModel.isSynced = false;
+        await database.updateHabit(habitModel);
       },
     );
     return true;
   }
 
-
   Future<List<HabitModel>> loadHabits() async {
     return await executeTask(
       logged: (token) async {
         var habits = await networkClient.loadHabits(token);
-        return await dbHelper.insertAllHabits(habits);
+        return await database.insertAllHabits(habits);
       },
       notLogged: (e) async {
-        return await dbHelper.getHabitList();
+        return await database.getHabitList();
       },
     );
   }
@@ -92,44 +93,37 @@ class Repository {
             item.id!, dateTime.toIso8601String(), token);
       });
     }, notLogged: (e) async {
-      await dbHelper.insertActivities(item, date);
+      await database.createActivity(item, date);
     });
   }
 
-  Future<void> deleteActivity(HabitModel model, List<DateTime> date) async {
-    await executeTask(logged: (token) async {
-      await Future.forEach(date, (dateTime) async {
-        var activityId = model.activities!.getTheSameDay(dateTime)?.id;
-        if (activityId == null) return;
-        await networkClient.deleteActivities(activityId, token);
-      });
-    }, notLogged: (e) async {
-      await Future.forEach(date, (dateTime) {
-        if (model.activities?.isEmpty == true) return;
-        var activity = model.activities!.getTheSameDay(dateTime);
-        if (activity == null) return;
-        model.activities!.getTheSameDay(dateTime)!.isDeleted = true;
-        model.activities!.getTheSameDay(dateTime)!.isSynced = false;
-      });
-      await dbHelper.updateHabit(model);
-    });
-  }
+  // Future<void> deleteActivity(HabitModel model, List<DateTime> date) async {
+  //   await executeTask(logged: (token) async {
+  //     await Future.forEach(date, (dateTime) async {
+  //       var activityId = model.activities!.getTheSameDay(dateTime)?.id;
+  //       if (activityId == null) return;
+  //       await networkClient.deleteActivities(activityId, token);
+  //     });
+  //   }, notLogged: (e) async {
+  //     await Future.forEach(date, (dateTime) {
+  //       if (model.activities?.isEmpty == true) return;
+  //       var activity = model.activities!.getTheSameDay(dateTime);
+  //       if (activity == null) return;
+  //       model.activities!.getTheSameDay(dateTime)!.isDeleted = true;
+  //       model.activities!.getTheSameDay(dateTime)!.isSynced = false;
+  //     });
+  //     await database.updateHabit(model);
+  //   });
+  // }
 
   Future<void> deleteHabits(HabitModel model) async {
     executeTask(logged: (token) async {
       await networkClient.deleteHabits(model.id!, token);
     }, notLogged: (e) async {
-      var databaseList = await dbHelper.getHabitList();
-      var item =
-          databaseList.firstWhere((element) => element.dbId == model.dbId!);
-      if (item.isDeleted == false) {
-        item.isDeleted = true;
-        item.isSynced = false;
-        await dbHelper.updateHabit(item);
-      }
+      await database.deleteHabit(model);
+
     });
   }
-
 
   Future<bool> signIn(
     String email,
@@ -220,7 +214,7 @@ class Repository {
 
   Future<void> logout() async {
     await secureStorage.deleteAll();
-    await dbHelper.deleteAllHabits();
+    await database.deleteAllHabits();
   }
 
   Future<bool> changePassword(String emailAddress) async {

@@ -51,8 +51,8 @@ final GoRouter router =
         GoRoute(
           path: 'create',
           builder: (BuildContext context, GoRouterState state) {
-            final habitModel = state.extra as HiveHabitModel?;
-            return CreateScreen(hiveHabitModel: habitModel);
+            final habitModel = state.extra as HabitModel?;
+            return CreateScreen(habitModel: habitModel);
           },
         ),
       ]),

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 class DailyScreen extends StatelessWidget {
   DailyScreen({super.key});
+
   late MainProvider provider;
 
   @override
@@ -15,23 +16,32 @@ class DailyScreen extends StatelessWidget {
         child: Consumer<MainProvider>(
             builder: (BuildContext context, MainProvider value, Widget? child) {
           if (provider.habits.isNotEmpty) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                await provider.loadHabits();
-              },
-              child: ListView.builder(
-                itemCount: provider.habits.length,
-                itemBuilder: (context, int index) {
-                  var hiveHabitModel = provider.habits[index];
-                  var selectedIndex = 0;
-                  if (hiveHabitModel.color != null) {
-                    selectedIndex = hiveHabitModel.color!;
-                  }
-                  return dismissItem(provider, hiveHabitModel, context);
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () async {
+                    await provider.loadHabits();
                   },
-              ),
+                  child: ListView.builder(
+                    itemCount: provider.habits.length,
+                    itemBuilder: (context, int index) {
+                      var habitModel = provider.habits[index];
+                      return dismissItem(provider, habitModel, context);
+                    },
+                  ),
+                ),
+                if (provider.isLoadingState())
+                  Container(
+                    color: Colors.transparent.withOpacity(0.5),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
             );
-          } else if (value.habits.isEmpty) {
+          } else if (provider.weekly.isEmpty && !provider.isLoadingState()) {
             return Center(
               child: Container(
                   alignment: Alignment.center,

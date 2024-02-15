@@ -28,19 +28,14 @@ class HabitPage extends BaseProvider {
     notifyListeners();
   }
 
-  void updateTitle(int dbId) {
-    title = getHabitsTitle(dbId);
-  }
-
   void initSelectedHabit(HabitModel model) {
-    selectedHabit = model;
-    calendarDates = getActivitiesDate(model.dbId!);
+    calendarDates = getActivitiesDate(model.dbKey!);
     title = model.title ?? "";
     notifyListeners();
   }
 
   Future<void> onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
-    if (selectedHabit?.dbId == null) return;
+    if (selectedHabit?.dbKey == null) return;
     if (calendarDates.isDateExist(selectedDay)) {
       calendarDates.remove(selectedDay);
       notifyListeners();
@@ -93,10 +88,10 @@ class HabitPage extends BaseProvider {
     });
   }
 
-  List<DateTime> getActivitiesDate(int dbId) {
+  List<DateTime> getActivitiesDate(int dbKey) {
     //here too some more explanation
     var result = (keeper.weekly
-                .where((element) => element.dbId == dbId)
+                .where((element) => element.dbKey == dbKey)
                 .firstOrNull
                 ?.activities
                 ?.where((element) => element.isDeleted == false) ??
@@ -106,18 +101,7 @@ class HabitPage extends BaseProvider {
     return result;
   }
 
-  String getHabitsTitle(int dbId) {
-    // need some explanation
-    var title = keeper.weekly
-            .where((element) => element.dbId == dbId)
-            .firstOrNull
-            ?.title ??
-        "";
-    print(title);
-    return title;
-  }
-
-  bool isDaySelected(int dbId, DateTime day) {
+  bool isDaySelected( DateTime day) {
     return calendarDates.isDateExist(day);
   }
 }

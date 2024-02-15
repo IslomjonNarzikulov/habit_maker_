@@ -7,10 +7,10 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../../common/kdays.dart';
 
-class HabitScreen extends StatelessWidget {
-  HabitScreen({super.key, required this.habitModel});
 
+class HabitScreen extends StatelessWidget {
   HabitModel habitModel;
+  HabitScreen({super.key, required this.habitModel});
 
   late HabitPage provider;
   DateTime selectedDay = DateTime.now();
@@ -62,7 +62,7 @@ class HabitScreen extends StatelessWidget {
                     headerStyle: const HeaderStyle(
                         formatButtonVisible: false, titleCentered: true),
                     selectedDayPredicate: (day) {
-                      return provider.isDaySelected(habitModel.dbId!, day);
+                      return provider.isDaySelected( day);
                     },
                     onDaySelected: (selectedDay, focusedDay) {
                       provider.onDaySelected(selectedDay, focusedDay);

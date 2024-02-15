@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
+
 import '../data/repository/repository.dart';
 import '../models/habit_model.dart';
 import '../models/log_out_state.dart';
@@ -53,7 +54,7 @@ class BaseProvider extends ChangeNotifier {
 
   Future<List<HabitModel>> createActivities(
       HabitModel model, List<DateTime> date) async {
-      return await executeWithLoading(() async {
+    return await executeWithLoading(() async {
       await habitRepository.createActivity(model, date);
       return await loadHabits();
     });
@@ -61,10 +62,9 @@ class BaseProvider extends ChangeNotifier {
 
   Future<List<HabitModel>> deleteActivities(
       HabitModel model, List<DateTime> date) async {
-      return await executeWithLoading(() async {
-      await habitRepository.deleteActivity(model, date);
+    return await executeWithLoading(() async {
+     // await habitRepository.deleteActivity(model, date);
       return await loadHabits();
     });
   }
-
 }

@@ -8,9 +8,8 @@ import 'package:habit_maker/models/log_out_state.dart';
 
 class CreateProvider extends BaseProvider {
   int selectedColorIndex = 0;
-  late HiveRepetition hiveRepetition;
   var isDailySelected = false;
-
+ late Repetition repetition;
   CreateProvider(LogOutState logOutState, Repository habitRepository,
       HabitStateKeeper keeper)
       : super(
@@ -24,34 +23,34 @@ class CreateProvider extends BaseProvider {
     notifyListeners();
   }
 
-  void createHabit(HiveHabitModel hiveHabitModel) async {
-    await habitRepository.createHabits(hiveHabitModel, isDailySelected);
+  void createHabit(HabitModel habitModel) async {
+    await habitRepository.createHabits(habitModel, isDailySelected);
     await loadHabits();
     notifyListeners();
   }
 
-  void updateHabits(HiveHabitModel model) async {
+  void updateHabits(HabitModel model) async {
     await habitRepository.updateHabits(model, isDailySelected);
     await loadHabits();
     notifyListeners();
   }
 
   void add() {
-    if (hiveRepetition.numberOfDays != 7 && hiveRepetition.numberOfDays != null) {
-      hiveRepetition.numberOfDays = hiveRepetition.numberOfDays! + 1;
+    if (repetition.numberOfDays != 7 && repetition.numberOfDays != null) {
+      repetition.numberOfDays = repetition.numberOfDays! + 1;
     }
     notifyListeners();
   }
 
   void subtract() {
-    if (hiveRepetition.numberOfDays != 0 && hiveRepetition.numberOfDays != null) {
-      hiveRepetition.numberOfDays = hiveRepetition.numberOfDays! - 1;
+    if (repetition.numberOfDays != 0 && repetition.numberOfDays != null) {
+      repetition.numberOfDays = repetition.numberOfDays! - 1;
     }
     notifyListeners();
   }
 
   void selectTime(DateTime time) {
-    hiveRepetition.notifyTime = time;
+    repetition.notifyTime = time;
     notifyListeners();
   }
 
@@ -60,7 +59,7 @@ class CreateProvider extends BaseProvider {
     notifyListeners();
   }
 
-  void changeButtonColors(int index, HiveRepetition repeat) {
+  void changeButtonColors(int index, Repetition repeat) {
     if (repeat.weekdays![index].isSelected == false) {
       repeat.weekdays![index].isSelected = true;
     } else {
@@ -70,7 +69,7 @@ class CreateProvider extends BaseProvider {
   }
 
   void changeReminderState(bool isChecked) {
-    hiveRepetition.showNotification = isChecked;
+    repetition.showNotification = isChecked;
     notifyListeners();
   }
 }
