@@ -8,7 +8,6 @@ import 'package:habit_maker/models/login_response.dart';
 import 'package:habit_maker/models/registration_response.dart';
 import 'package:habit_maker/models/verify_response.dart';
 
-
 class NetworkClient {
   final Dio dio;
 

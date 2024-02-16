@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/common/extension.dart';
-import 'package:habit_maker/common/hive_extention.dart';
-import 'package:habit_maker/data/hive/hive.box.dart';
+import 'package:habit_maker/data/hive_database/hive.box.dart';
+import 'package:habit_maker/domain/activity_extention/activity_extention.dart';
 import 'package:habit_maker/models/login_response.dart';
 
 import '../../common/constants.dart';
@@ -86,42 +86,34 @@ class Repository {
     );
   }
 
-  Future<void> createActivity(HabitModel item, List<DateTime> date) async {
+  Future<void> createActivity(HabitModel model, List<DateTime> date) async {
     await executeTask(logged: (token) async {
       await Future.forEach(date, (dateTime) async {
         await networkClient.createActivities(
-            item.id!, dateTime.toIso8601String(), token);
+            model.id!, dateTime.toIso8601String(), token);
       });
     }, notLogged: (e) async {
-      await database.createActivity(item, date);
+      await database.createActivity(model, date);
     });
   }
 
-  // Future<void> deleteActivity(HabitModel model, List<DateTime> date) async {
-  //   await executeTask(logged: (token) async {
-  //     await Future.forEach(date, (dateTime) async {
-  //       var activityId = model.activities!.getTheSameDay(dateTime)?.id;
-  //       if (activityId == null) return;
-  //       await networkClient.deleteActivities(activityId, token);
-  //     });
-  //   }, notLogged: (e) async {
-  //     await Future.forEach(date, (dateTime) {
-  //       if (model.activities?.isEmpty == true) return;
-  //       var activity = model.activities!.getTheSameDay(dateTime);
-  //       if (activity == null) return;
-  //       model.activities!.getTheSameDay(dateTime)!.isDeleted = true;
-  //       model.activities!.getTheSameDay(dateTime)!.isSynced = false;
-  //     });
-  //     await database.updateHabit(model);
-  //   });
-  // }
+  Future<void> deleteActivity(HabitModel model, List<DateTime> date) async {
+    await executeTask(logged: (token) async {
+      await Future.forEach(date, (dateTime) async {
+        var activityId = model.activities!.getTheSameDay(dateTime)?.id;
+        if (activityId == null) return;
+        await networkClient.deleteActivities(activityId, token);
+      });
+    }, notLogged: (e) async {
+      await database.deleteActivities(model,date);
+    });
+  }
 
   Future<void> deleteHabits(HabitModel model) async {
     executeTask(logged: (token) async {
       await networkClient.deleteHabits(model.id!, token);
     }, notLogged: (e) async {
       await database.deleteHabit(model);
-
     });
   }
 

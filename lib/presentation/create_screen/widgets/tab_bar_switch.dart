@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:habit_maker/models/habit_model.dart';
-import 'package:habit_maker/models/hive_habit_model.dart';
 import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
 
 Widget tabBarSwitch(
@@ -16,7 +16,7 @@ Widget tabBarSwitch(
               'Repeat in these days',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-            const SizedBox(height: 16),
+            Gap(10),
             Expanded(
               child: Center(
                 child: Row(
@@ -88,9 +88,7 @@ Widget tabBarSwitch(
                             child: const Icon(Icons.remove),
                           ),
                         ),
-                        const SizedBox(
-                          width: 12,
-                        ),
+                       const MaxGap(8),
                         Text(
                           "${provider.repetition.numberOfDays}",
                           style: const TextStyle(fontSize: 20),

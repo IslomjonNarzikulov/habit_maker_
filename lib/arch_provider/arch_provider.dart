@@ -41,7 +41,7 @@ class BaseProvider extends ChangeNotifier {
     return habits;
   }
 
-  Future<T> executeWithLoading<T>(Future<T> Function() block) async {
+  Future<T> executeWithLoading<T>(Future<T> Function() block) async { //sal noaniq
     keeper.isLoading = true;
     notifyListeners();
     try {
@@ -52,19 +52,21 @@ class BaseProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<HabitModel>> createActivities(
+  Future<void> createActivities(
       HabitModel model, List<DateTime> date) async {
     return await executeWithLoading(() async {
       await habitRepository.createActivity(model, date);
-      return await loadHabits();
+       await loadHabits();
+       notifyListeners();
     });
   }
 
-  Future<List<HabitModel>> deleteActivities(
+  Future<void> deleteActivities(
       HabitModel model, List<DateTime> date) async {
     return await executeWithLoading(() async {
-     // await habitRepository.deleteActivity(model, date);
-      return await loadHabits();
+      await habitRepository.deleteActivity(model, date);
+       await loadHabits();
+       notifyListeners();
     });
   }
 }

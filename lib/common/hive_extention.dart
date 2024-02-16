@@ -12,8 +12,8 @@ extension HabitModeltoDb on HabitModel {
       title: title,
       hiveRepetition: repetition?.toHiveRepetition(),
       activities: activities
-          ?.map((activities) => activities.toHiveActivities())
-          .toList(),
+              ?.map((activities) => activities.toHiveActivities())
+              .toList() ?? [],
     );
   }
 }
@@ -24,8 +24,8 @@ extension DbtoHabitModel on HiveHabitModel {
       title: title,
       id: id,
       dbKey: key,
-      isSynced: isSynced ?? false,
-      isDeleted: isDeleted ?? false,
+      isSynced: isSynced,
+      isDeleted: isDeleted,
       color: color,
       activities:
           activities?.map((activities) => activities.toActivities()).toList(),

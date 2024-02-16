@@ -11,7 +11,7 @@ import '../../../models/habit_model.dart';
 class HabitPage extends BaseProvider {
   var activityState = <Activity>[];
   var calendarDates = <DateTime>[];
-  HabitModel? selectedHabit;
+   HabitModel? selectedHabit;
   var title = '';
 
   HabitPage(LogOutState logOutState, Repository habitRepository,

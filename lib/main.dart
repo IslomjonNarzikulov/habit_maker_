@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/common/constants.dart';
 import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
-import 'package:habit_maker/data/hive/hive.box.dart';
 import 'package:habit_maker/data/network_client/network_client.dart';
 import 'package:habit_maker/data/repository/repository.dart';
 import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
@@ -23,6 +22,8 @@ import 'package:habit_maker/router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
+
+import 'data/hive_database/hive.box.dart';
 
 void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =

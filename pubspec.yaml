@@ -53,6 +53,8 @@ dependencies:
   hive: ^2.2.3
   hive_flutter:
   hive_generator: ^2.0.1
+  gap: ^3.0.1
+  flutter_local_notifications: ^16.3.2
 flutter_local_notifications: ^16.2.0
 flutter_datetime_picker:
 

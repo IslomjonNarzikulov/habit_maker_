@@ -1,36 +1,31 @@
 import 'package:flutter/material.dart';
 
 Widget tabBar(
-    TabController? _tabController, void Function(int) tabBarChanging) {
-  return SizedBox(
-    width: 600,
+    TabController? tabController, void Function(int) tabBarChanging) {
+  return Container(
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),color: Colors.white54),
+    margin:const EdgeInsets.all(12),
     child: TabBar(
         onTap: (index) {
           tabBarChanging(index);
         },
-        labelColor: Colors.black,
-        controller: _tabController,
-        tabs: [
-          Container(
-            width: 300,
-            color: Colors.blue,
-            child: const Tab(
-              child: Text(
-                'Daily',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
+        dividerColor: Colors.transparent,
+        indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), color: Colors.blue),
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.black,
+        controller: tabController,
+        tabs: const [
+          Tab(
+            child: Center(
+              child: Text('Daily'),
             ),
           ),
-          Container(
-            width: 300,
-            color: Colors.lightBlue,
-            child: const Tab(
-              child: Text(
-                'Weekly',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
+          Tab(
+            child: Center(
+              child: Text('Weekly'),
             ),
-          ),
+          )
         ]),
   );
 }

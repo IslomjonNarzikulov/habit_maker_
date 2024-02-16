@@ -7,9 +7,9 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../../common/kdays.dart';
 
-
 class HabitScreen extends StatelessWidget {
   HabitModel habitModel;
+
   HabitScreen({super.key, required this.habitModel});
 
   late HabitPage provider;
@@ -62,7 +62,7 @@ class HabitScreen extends StatelessWidget {
                     headerStyle: const HeaderStyle(
                         formatButtonVisible: false, titleCentered: true),
                     selectedDayPredicate: (day) {
-                      return provider.isDaySelected( day);
+                      return provider.isDaySelected(day);
                     },
                     onDaySelected: (selectedDay, focusedDay) {
                       provider.onDaySelected(selectedDay, focusedDay);
@@ -83,13 +83,4 @@ class HabitScreen extends StatelessWidget {
               ),
             ));
   }
-
-// Future<void> navigateToUpdatePage(
-//     BuildContext context, HabitModel habitModel) async {
-//   final route = MaterialPageRoute(
-//       builder: (context) => CreateScreen(
-//             habitModel: habitModel,
-//           ));
-//   await Navigator.pushReplacement(context, route);
-// }
 }

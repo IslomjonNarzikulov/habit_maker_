@@ -29,8 +29,8 @@ class Database {
   Future<void> updateHabit(HabitModel habitModel) async {
     var habits = habitBox.values.toList();
     var item = habits.firstWhere((element) => element.key == habitModel.dbKey);
-    item.isDeleted = habitModel.isDeleted;
-    item.isSynced = habitModel.isSynced;
+    item.isDeleted = habitModel.isDeleted ?? false;
+    item.isSynced = habitModel.isSynced ?? false;
     item.activities =
         habitModel.activities?.map((e) => e.toHiveActivities()).toList();
     item.hiveRepetition = habitModel.repetition?.toHiveRepetition();
@@ -59,21 +59,51 @@ class Database {
 
   Future<void> createActivity(
       HabitModel habitModel, List<DateTime> dates) async {
+    try {
+      await Future.forEach(dates, (dateTime) {
+        var activity = habitModel.activities?.getTheSameDay(dateTime);
+        if (activity == null) {
+          var habits = habitBox.values.toList();
+          var hiveActivity = HiveActivities(
+            date: dateTime.toIso8601String(),
+            isDeleted: false,
+            isSynced: false,
+          );
+          var item = habits.firstWhere((element) =>
+              element.key ==
+              habitModel.dbKey); // shuni tenglashdan maqsad nima?
+          if (item.activities == null) {
+            item.activities = [hiveActivity];
+          } else {
+            item.activities?.add(hiveActivity);
+          }
+          item.save();
+        } else {
+          var habit = habitBox.values
+              .toList()
+              .firstWhere((element) => element.key == habitModel.dbKey);
+          habit.activities?.getTheSameDay(dateTime)?.isDeleted = false;
+          habit.activities?.getTheSameDay(dateTime)?.isSynced = false;
+          habit.save();
+        }
+      });
+    } catch (e) {
+      e.toString();
+    }
+  }
+
+  Future<void> deleteActivities(
+      HabitModel habitModel, List<DateTime> dates) async {
     await Future.forEach(dates, (dateTime) {
       var activity = habitModel.activities?.getTheSameDay(dateTime);
       if (activity == null) {
-        var test = habitModel.toHiveHabitModel();
-        test.activities?.add(HiveActivities(
-          date: dateTime.toIso8601String(),
-        ));
-        test.save();
+        return;
       } else {
         var habit = habitBox.values
             .toList()
             .firstWhere((element) => element.key == habitModel.dbKey);
+        habit.activities?.getTheSameDay(dateTime)?.isDeleted = true;
         habit.activities?.getTheSameDay(dateTime)?.isSynced = false;
-        habit.activities?.getTheSameDay(dateTime)?.isSynced = false;
-        habit.save();
       }
     });
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
@@ -81,15 +82,15 @@ class _CreateScreenState extends State<CreateScreen>
                   child: Column(
                     children: [
                       textForm(titleController),
-                      const SizedBox(height: 8),
+                      Gap(8),
                       changingColor(createProvider),
-                      const SizedBox(height: 36),
+                      Gap(30),
                       tabBar(_tabController, (index) {
                         createProvider.tabBarChanging(index);
                       }),
                       tabBarSwitch(createProvider, _tabController,
                           createProvider.repetition),
-                      const SizedBox(height: 24),
+                      const Gap(30),
                       Container(
                         margin: const EdgeInsets.all(12),
                         height: 36,
@@ -102,7 +103,6 @@ class _CreateScreenState extends State<CreateScreen>
                               style: TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(width: 12),
                             Visibility(
                               visible:
                                   createProvider.repetition.showNotification!,

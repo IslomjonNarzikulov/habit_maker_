@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/common/colors.dart';
+import 'package:habit_maker/common/extension.dart';
 import 'package:habit_maker/models/habit_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -25,17 +26,14 @@ Widget weeklyDate(HabitModel habitModel, BuildContext context, int index,
         width: 360,
         child: Column(
           children: [
-            Text(
-              habitModel.title!,
-              style: const TextStyle(fontSize: 20, color: Colors.white),
-            ),
-            Container(
-              width: 350,
-              height: 20,
-              alignment: Alignment.topRight,
-              child: Text(
-                '${habitModel.repetition!.numberOfDays} times a week',
-                style: const TextStyle(color: Colors.white54),
+            ListTile(
+              title: Text(
+                habitModel.title!,
+                style: const TextStyle(color: Colors.black),
+              ),
+              trailing: Text(
+                habitModel.repetition!.display(),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
             Expanded(
