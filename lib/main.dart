@@ -2,28 +2,29 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/common/constants.dart';
-import 'package:habit_maker/data/habit_keeper/habit_keeper.dart';
-import 'package:habit_maker/data/network_client/network_client.dart';
-import 'package:habit_maker/data/repository/repository.dart';
-import 'package:habit_maker/domain/interceptor/dio_interceptor.dart';
-import 'package:habit_maker/models/hive_habit_model.dart';
-import 'package:habit_maker/models/log_out_state.dart';
-import 'package:habit_maker/presentation/create_screen/create_provider/create_provider.dart';
-import 'package:habit_maker/presentation/habit_screen/habit_provider/habit_screen_provider.dart';
-import 'package:habit_maker/presentation/home/provider/logout_provider.dart';
-import 'package:habit_maker/presentation/login/login_provider.dart';
-import 'package:habit_maker/presentation/main_provider.dart';
-import 'package:habit_maker/presentation/profile/profile_provider.dart';
-import 'package:habit_maker/presentation/restore_password/restore_provider.dart';
-import 'package:habit_maker/presentation/signup/signup_provider.dart';
-import 'package:habit_maker/presentation/theme_data/theme_provider.dart';
-import 'package:habit_maker/router.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:habit_maker/features/data/data_source/remote/network_client.dart';
+import 'package:habit_maker/features/data/repository/repository.dart';
+import 'package:habit_maker/features/data/data_source/remote/dio_interceptor/dio_interceptor.dart';
+import 'package:habit_maker/features/presentation/habit_screen/habit_screen_provider.dart';
+import 'package:habit_maker/features/presentation/profile_screen/profile_provider.dart';
+import 'package:habit_maker/features/presentation/theme_screen/theme_provider.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-
-import 'data/hive_database/hive.box.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'core/common/constants.dart';
+import 'core/resources/router.dart';
+import 'features/data/habit_keeper/habit_keeper.dart';
+import 'features/data/data_source/local/hive_database/hive.box.dart';
+import 'features/data/models/hive_habit_model.dart';
+import 'features/data/models/log_out_state.dart';
+import 'features/presentation/create_screen/create_provider.dart';
+import 'features/presentation/home/home_provider.dart';
+import 'features/presentation/login_screen/login_provider.dart';
+import 'features/presentation/main_provider.dart';
+import 'features/presentation/restore_password/restore_provider.dart';
+import 'features/presentation/sign_up_screen/signup_provider.dart';
 
 void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
@@ -37,18 +38,19 @@ void configureDioForProxy(Dio dio) {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Asia/Tashkent')); // Set your timezone
   AndroidOptions _getAndroidOptions() => const AndroidOptions(
         encryptedSharedPreferences: true,
       );
-  final dbDir = await path_provider.getApplicationDocumentsDirectory();
-  await Hive.initFlutter(dbDir.path);
-  await Hive.initFlutter;
+  var directory = await getApplicationDocumentsDirectory();
+  Hive.init(directory.path);
   Hive.registerAdapter(HiveHabitModelAdapter());
   Hive.registerAdapter(HiveRepetitionAdapter());
   Hive.registerAdapter(HiveDayAdapter());
   Hive.registerAdapter(HiveActivitiesAdapter());
-  var habitBox = await Hive.openBox<HiveHabitModel>('habitBox');
 
+  var habitBox = await Hive.openBox<HiveHabitModel>('habitBox');
   var secureStorage = FlutterSecureStorage(aOptions: _getAndroidOptions());
   var token = await secureStorage.read(key: accessToken);
   await secureStorage.write(
@@ -61,7 +63,7 @@ Future<void> main() async {
 
   final networkClient = NetworkClient(dio: dio);
   final repository = Repository(
-    database: database,
+      database: database,
       networkClient: networkClient,
       secureStorage: secureStorage);
 
