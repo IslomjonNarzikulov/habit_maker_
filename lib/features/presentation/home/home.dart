@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habit_maker/features/data/service/notification_service.dart';
 import 'package:habit_maker/features/presentation/analytics_screen/analytics.dart';
 import 'package:habit_maker/features/presentation/daily_screen/daily_screen.dart';
 import 'package:habit_maker/features/presentation/home/home_provider.dart';
 import 'package:habit_maker/features/presentation/home/widgets/list_tile_item.dart';
 import 'package:provider/provider.dart';
-
 import '../weekly_screen/weekly.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     provider = Provider.of<HomeProvider>(context, listen: false);
     provider.isLogged();
+    print('home:${provider.loggedState.toString()}');
     return Consumer<HomeProvider>(builder: (context, provider, child) {
       return Scaffold(
         appBar: AppBar(

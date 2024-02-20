@@ -8,6 +8,7 @@ import 'package:habit_maker/features/data/data_source/remote/dio_interceptor/dio
 import 'package:habit_maker/features/presentation/habit_screen/habit_screen_provider.dart';
 import 'package:habit_maker/features/presentation/profile_screen/profile_provider.dart';
 import 'package:habit_maker/features/presentation/theme_screen/theme_provider.dart';
+import 'package:habit_maker/injection_container.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,7 @@ void configureDioForProxy(Dio dio) {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDependencies();
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Tashkent')); // Set your timezone
   AndroidOptions _getAndroidOptions() => const AndroidOptions(
@@ -85,7 +87,7 @@ Future<void> main() async {
             create: (_) => CreateProvider(logOutState, repository, keeper)),
         ChangeNotifierProvider(
             create: (_) => HabitPage(logOutState, repository, keeper)),
-        ChangeNotifierProvider(create: (_) => ProfileProvider(secureStorage)),
+        ChangeNotifierProvider(create: (_) => ProfileProvider(logOutState,repository,keeper)),
         ChangeNotifierProvider(
             create: (_) => LogInProvider(logOutState, repository, keeper)),
         ChangeNotifierProvider(create: (_) => SignUpProvider(repository)),

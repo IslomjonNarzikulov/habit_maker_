@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-final dio = Dio(); // With default `Options`.
+final dio = Dio();
 
 void configureDio() {
   // Set default configs

@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:js_interop_unsafe';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/core/common/extension.dart';
 import 'package:habit_maker/features/data/data_source/local/hive_database/hive.box.dart';
+import 'package:habit_maker/features/data/data_source/remote/network_client.dart';
 import 'package:habit_maker/features/data/models/habit_model.dart';
 import 'package:habit_maker/features/data/models/login_response.dart';
-import 'package:habit_maker/features/data/data_source/remote/network_client.dart';
 import 'package:habit_maker/features/domain/activity_extention/activity_extention.dart';
+import 'package:habit_maker/injection_container.dart';
 
 class Repository {
   NetworkClient networkClient;
@@ -107,7 +110,8 @@ class Repository {
 
   Future<void> deleteHabits(HabitModel model) async {
     executeTask(logged: (token) async {
-      await networkClient.deleteHabits(model.id!, token);
+      //await networkClient.deleteHabits(model.id!, token);
+      sl.deleteHabits(model.id!,token);
     }, notLogged: (e) async {
       await database.deleteHabit(model);
     });
@@ -176,6 +180,18 @@ class Repository {
     } catch (e) {
       return notLogged(e);
     }
+  }
+
+  Future<String?> getUserFirstName() async{
+    return  secureStorage.read(key: firstName);
+  }
+
+  Future<String?> getUserLastName() async{
+    return  secureStorage.read(key: lastName);
+  }
+
+  Future<String?> getUserEmail() {
+    return secureStorage.read(key: email);
   }
 
   Future<String?> userRefreshToken() async {
