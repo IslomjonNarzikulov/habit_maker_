@@ -13,7 +13,7 @@ Widget texItem(double w,
         height: h * 0.3,
         decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/lottie/hey.jpg'),
+              image: AssetImage('assets/lottie/bear.png'),
               fit: BoxFit.cover),
         ),
         child: Column(
@@ -42,6 +42,4 @@ Widget texItem(double w,
       ),
     ],
   );
-
-
 }

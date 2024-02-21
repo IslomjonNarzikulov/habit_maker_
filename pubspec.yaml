@@ -62,6 +62,7 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   flutter_datetime_picker_plus: ^2.1.0
   get_it: ^7.6.7
+  flare_flutter:
 
 dev_dependencies:
   flutter_test:

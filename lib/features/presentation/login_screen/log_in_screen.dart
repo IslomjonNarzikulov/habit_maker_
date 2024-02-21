@@ -40,15 +40,6 @@ class LogInScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  "Let's grow with daily habits",
-                  style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white38,
-                      fontWeight: FontWeight.w300,
-                      fontStyle: FontStyle.italic),
-                ),
-                const SizedBox(height: 220),
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: textFieldItem(w, emailController, passwordController),
