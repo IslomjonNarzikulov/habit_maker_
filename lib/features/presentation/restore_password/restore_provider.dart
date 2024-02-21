@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart';
-import 'package:habit_maker/features/data/repository/repository.dart';
+import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
 class RestoreProvider extends ChangeNotifier {
-  Repository repository;
+  HabitRepositoryApi repository;
 
   RestoreProvider({required this.repository});
 
   void newPassword(String emailAddress, void Function() success,
       void Function() failure) async {
     if (await repository.changePassword(emailAddress)) {
-       success();
+      success();
     } else {
-       failure();
+      failure();
     }
   }
 }

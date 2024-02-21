@@ -1,19 +1,19 @@
 import 'package:habit_maker/features/data/arch_provider/arch_provider.dart';
 import 'package:habit_maker/features/data/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/features/data/models/log_out_state.dart';
-import 'package:habit_maker/features/data/repository/repository.dart';
+import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
 class HomeProvider extends BaseProvider {
   var loggedState = false;
   String? userFirstName;
   String? userLastName;
 
-  HomeProvider(LogOutState logOutState, Repository habitRepository,
+  HomeProvider(LogOutState logOutState, HabitRepositoryApi habitRepository,
       HabitStateKeeper keeper)
       : super(
           keeper,
-
-          habitRepository,logOutState,
+          habitRepository,
+          logOutState,
         ) {
     isLogged();
   }
@@ -31,5 +31,4 @@ class HomeProvider extends BaseProvider {
     loggedState = result;
     notifyListeners();
   }
-
 }

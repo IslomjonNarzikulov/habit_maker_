@@ -22,7 +22,7 @@ void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
       (client) {
     client.findProxy = (uri) {
-      return 'PROXY 192.168.100.3:8888';
+      return 'PROXY 192.168.100.34:8888';
     };
     return client;
   };
@@ -31,11 +31,10 @@ void configureDioForProxy(Dio dio) {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
+  final sl = GetIt.instance;
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Tashkent')); // Set your timezone
-
-  // dio.interceptors.add(CustomInterceptors(sl(), dio));
-  final sl = GetIt.instance;
+  configureDioForProxy(sl<Dio>());
 
   runApp(
     MultiProvider(

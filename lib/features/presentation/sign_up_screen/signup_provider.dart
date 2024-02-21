@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../../data/repository/repository.dart';
+import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
 class SignUpProvider extends ChangeNotifier {
-  Repository repository;
+  HabitRepositoryApi repository;
 
   SignUpProvider(this.repository);
 

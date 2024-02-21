@@ -1,12 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:habit_maker/core/common/constants.dart';
+import 'package:habit_maker/features/data/data_source/remote/network_client.dart';
+import 'package:habit_maker/features/data/models/login_response.dart';
 
 import '../../../repository/repository.dart';
 
 class CustomInterceptors extends Interceptor {
-  Repository habitRepository;
+  FlutterSecureStorage secureStorage;
+  NetworkClient networkClient;
   final Dio _dio;
 
-  CustomInterceptors(this.habitRepository, this._dio);
+  CustomInterceptors(this.secureStorage,this.networkClient, this._dio);
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
@@ -18,7 +23,7 @@ class CustomInterceptors extends Interceptor {
   }
 
   Future<Response> updateUserToken(RequestOptions requestOptions) async {
-    final String newToken = (await habitRepository.userRefreshToken())!;
+    final String newToken = (await userRefreshToken())!;
     _dio.options.headers['Authorization'] = 'Bearer $newToken';
     final opts = Options(
       method: requestOptions.method,
@@ -31,6 +36,23 @@ class CustomInterceptors extends Interceptor {
       queryParameters: requestOptions.queryParameters,
     );
     return clonedRequest;
+  }
+
+  Future<String?> userRefreshToken() async {
+    var tokenRefresh = await secureStorage.read(key: refreshToken);
+    var user = await networkClient.refreshToken(tokenRefresh);
+    await saveUserCredentials(user!);
+    return await secureStorage.read(key: accessToken);
+  }
+
+  Future<void> saveUserCredentials(LoginResponse user) async {
+    await secureStorage.write(key: accessToken, value: user.token!.accessToken);
+    await secureStorage.write(
+        key: refreshToken, value: user.token!.refreshToken);
+    await secureStorage.write(key: firstName, value: user.user!.firstName);
+    await secureStorage.write(key: lastName, value: user.user!.lastName);
+    await secureStorage.write(key: email, value: user.user!.email);
+    await secureStorage.write(key: userId, value: user.user!.id);
   }
 
   @override

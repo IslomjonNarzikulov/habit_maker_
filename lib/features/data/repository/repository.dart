@@ -8,17 +8,19 @@ import 'package:habit_maker/features/data/data_source/remote/network_client.dart
 import 'package:habit_maker/features/data/models/habit_model.dart';
 import 'package:habit_maker/features/data/models/login_response.dart';
 import 'package:habit_maker/features/domain/activity_extention/activity_extention.dart';
+import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
-class Repository {
+class HabitRepository extends HabitRepositoryApi {
   NetworkClient networkClient;
   FlutterSecureStorage secureStorage;
   Database database;
 
-  Repository(
+  HabitRepository(
       {required this.database,
       required this.networkClient,
       required this.secureStorage});
 
+  @override
   Future<void> createHabits(HabitModel habitModel, bool isDailySelected) async {
     if (isDailySelected) {
       if (habitModel.repetition?.weekdays
@@ -43,6 +45,7 @@ class Repository {
     });
   }
 
+  @override
   Future<bool> updateHabits(HabitModel habitModel, bool isDailySelected) async {
     if (isDailySelected) {
       if (habitModel.repetition?.weekdays
@@ -71,6 +74,7 @@ class Repository {
     return true;
   }
 
+  @override
   Future<List<HabitModel>> loadHabits() async {
     return await executeTask(
       logged: (token) async {
@@ -83,6 +87,7 @@ class Repository {
     );
   }
 
+  @override
   Future<void> createActivity(HabitModel model, List<DateTime> date) async {
     await executeTask(logged: (token) async {
       await Future.forEach(date, (dateTime) async {
@@ -94,6 +99,7 @@ class Repository {
     });
   }
 
+  @override
   Future<void> deleteActivity(HabitModel model, List<DateTime> date) async {
     await executeTask(logged: (token) async {
       await Future.forEach(date, (dateTime) async {
@@ -106,6 +112,7 @@ class Repository {
     });
   }
 
+  @override
   Future<void> deleteHabits(HabitModel model) async {
     executeTask(logged: (token) async {
       await networkClient.deleteHabits(model.id!, token);
@@ -114,6 +121,7 @@ class Repository {
     });
   }
 
+  @override
   Future<bool> signIn(
     String email,
     String password,
@@ -127,6 +135,7 @@ class Repository {
     return true;
   }
 
+  @override
   Future<bool> signUp(
     String username,
     String password,
@@ -140,6 +149,7 @@ class Repository {
     }
   }
 
+  @override
   Future<bool> verify(String otp) async {
     var token = await secureStorage.read(key: accessToken);
     if (token != null && otp.isNotEmpty) {
@@ -154,6 +164,7 @@ class Repository {
     return false;
   }
 
+  @override
   Future<void> refreshUserToken() async {
     var token = await secureStorage.read(key: refreshToken);
     var user = await networkClient.refreshToken(token!);
@@ -179,18 +190,22 @@ class Repository {
     }
   }
 
+  @override
   Future<String?> getUserFirstName() async{
     return  secureStorage.read(key: firstName);
   }
 
+  @override
   Future<String?> getUserLastName() async{
     return  secureStorage.read(key: lastName);
   }
 
+  @override
   Future<String?> getUserEmail() {
     return secureStorage.read(key: email);
   }
 
+  @override
   Future<String?> userRefreshToken() async {
     var tokenRefresh = await secureStorage.read(key: refreshToken);
     var user = await networkClient.refreshToken(tokenRefresh);
@@ -198,6 +213,7 @@ class Repository {
     return await secureStorage.read(key: accessToken);
   }
 
+  @override
   Future<void> saveUserCredentials(LoginResponse user) async {
     await secureStorage.write(key: accessToken, value: user.token!.accessToken);
     await secureStorage.write(
@@ -208,16 +224,19 @@ class Repository {
     await secureStorage.write(key: userId, value: user.user!.id);
   }
 
+  @override
   Future<bool> isLogged() async {
     var isLoggedIn = await secureStorage.read(key: isUserLogged);
     return isLoggedIn != null ? bool.parse(isLoggedIn) : false;
   }
 
+  @override
   Future<void> logout() async {
     await secureStorage.deleteAll();
     await database.deleteAllHabits();
   }
 
+  @override
   Future<bool> changePassword(String emailAddress) async {
     if (emailAddress.isNotEmpty) {
       var user = await networkClient.restorePassword(emailAddress);
