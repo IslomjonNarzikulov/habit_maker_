@@ -12,16 +12,16 @@ class HabitScreen extends StatelessWidget {
 
   HabitScreen({super.key, required this.habitModel});
 
-  late HabitPage provider;
+  late HabitScreenProvider provider;
   DateTime selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    provider = Provider.of<HabitPage>(context, listen: false);
+    provider = Provider.of<HabitScreenProvider>(context, listen: false);
     provider.initSelectedHabit(habitModel);
-    return Consumer<HabitPage>(
-        builder: (BuildContext context, HabitPage value, Widget? child) =>
+    return Consumer<HabitScreenProvider>(
+        builder: (BuildContext context, HabitScreenProvider value, Widget? child) =>
             Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.white54,

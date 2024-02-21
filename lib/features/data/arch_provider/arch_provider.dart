@@ -15,8 +15,9 @@ class BaseProvider extends ChangeNotifier {
 
   BaseProvider(
     this.keeper,
+      this.habitRepository,
     this.logoutState,
-    this.habitRepository,
+
   ) {
     logoutState.logOutEvent.stream.listen((element) {
       if (element) {

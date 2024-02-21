@@ -12,8 +12,8 @@ class ProfileProvider extends BaseProvider {
       HabitStateKeeper keeper)
       : super(
           keeper,
-          logOutState,
-          habitRepository,
+
+          habitRepository, logOutState,
         ) {
     isLogged();
     userInfo();

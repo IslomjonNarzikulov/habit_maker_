@@ -45,7 +45,7 @@ class DailyScreen extends StatelessWidget {
             return Center(
               child: Container(
                   alignment: Alignment.center,
-                  child: const Text('No data added yet')),
+                  child: const Text('No habits added yet')),
             );
           } else {
             return const CircularProgressIndicator();

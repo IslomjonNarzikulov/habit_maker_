@@ -8,7 +8,7 @@ class LogInProvider extends BaseProvider {
 
   LogInProvider(
       LogOutState logOutState, Repository habitRepository,HabitStateKeeper keeper)
-      : super(keeper,logOutState, habitRepository,);
+      : super(keeper, habitRepository,logOutState,);
 
 
   void signIn(String email, String password, void Function() success,

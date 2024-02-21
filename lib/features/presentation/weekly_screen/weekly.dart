@@ -27,9 +27,9 @@ class Weekly extends StatelessWidget {
                   itemCount: habits.length,
                   itemBuilder: (context, habitIndex) {
                     var item = habits[habitIndex];
-                    return weeklyDate(item, context,habitIndex,
+                    return weeklyDate(item, context, habitIndex,
                         (habitIndex, dayIndex) {
-                      _changeButtonColor(habitIndex,dayIndex);
+                      _changeButtonColor(habitIndex, dayIndex);
                     });
                   }),
             ),
@@ -38,6 +38,12 @@ class Weekly extends StatelessWidget {
                   color: Colors.transparent.withOpacity(0.5),
                   child: const Center(child: CircularProgressIndicator()))
           ]);
+        } else if (provider.weekly.isEmpty) {
+          return Container(
+            child:
+                const Text
+                  ('No habits added yet.' 'Do you want to change it?'),
+          );
         } else {
           return Container();
         }

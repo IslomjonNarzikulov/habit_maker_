@@ -7,13 +7,14 @@ import 'package:habit_maker/features/data/repository/repository.dart';
 class CreateProvider extends BaseProvider {
   int selectedColorIndex = 0;
   var isDailySelected = true;
- late Repetition repetition;
+  late Repetition repetition;
+
   CreateProvider(LogOutState logOutState, Repository habitRepository,
       HabitStateKeeper keeper)
       : super(
           keeper,
-          logOutState,
           habitRepository,
+          logOutState,
         );
 
   void selectColor(int index) {
@@ -58,7 +59,7 @@ class CreateProvider extends BaseProvider {
   }
 
   void changeButtonColors(int index, Repetition repeat) {
-    if (repeat.weekdays![index].isSelected == false) {
+    if (repeat.weekdays![index].isSelected == false) {//setstate alternative
       repeat.weekdays![index].isSelected = true;
     } else {
       repeat.weekdays![index].isSelected = false;

@@ -8,18 +8,18 @@ import 'package:habit_maker/features/data/repository/repository.dart';
 import 'package:habit_maker/features/domain/activity_extention/activity_extention.dart';
 
 
-class HabitPage extends BaseProvider {
+class HabitScreenProvider extends BaseProvider {
   var activityState = <Activity>[];
   var calendarDates = <DateTime>[];
   HabitModel? selectedHabit;
   var title = '';
 
-  HabitPage(LogOutState logOutState, Repository habitRepository,
+  HabitScreenProvider(LogOutState logOutState, Repository habitRepository,
       HabitStateKeeper keeper)
       : super(
           keeper,
-          logOutState,
-          habitRepository,
+
+          habitRepository, logOutState,
         );
 
   Future<void> deleteHabits(HabitModel item) async {

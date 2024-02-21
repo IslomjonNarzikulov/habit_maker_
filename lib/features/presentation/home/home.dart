@@ -10,10 +10,9 @@ import '../weekly_screen/weekly.dart';
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
-  static final List<Widget> _widgetOptions = <Widget>[
+   static final List<Widget> _widgetOptions = <Widget>[
     DailyScreen(),
-    Weekly(),
-    AnalyticsPage(),
+    Weekly()
   ];
 
   @override
@@ -86,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(Icons.line_weight_sharp), label: 'Daily'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.view_week_outlined), label: 'Weekly'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.bar_chart), label: 'Analytics'),
+            // BottomNavigationBarItem(
+            //     icon: Icon(Icons.bar_chart), label: 'Analytics'),
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber,
