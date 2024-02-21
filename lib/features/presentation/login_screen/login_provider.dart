@@ -5,11 +5,15 @@ import 'package:habit_maker/features/data/models/log_out_state.dart';
 import '../../data/repository/repository.dart';
 
 class LogInProvider extends BaseProvider {
+  bool passwordVisible = false;
 
-  LogInProvider(
-      LogOutState logOutState, Repository habitRepository,HabitStateKeeper keeper)
-      : super(keeper, habitRepository,logOutState,);
-
+  LogInProvider(LogOutState logOutState, Repository habitRepository,
+      HabitStateKeeper keeper)
+      : super(
+          keeper,
+          habitRepository,
+          logOutState,
+        );
 
   void signIn(String email, String password, void Function() success,
       void Function() failure) async {
@@ -18,6 +22,11 @@ class LogInProvider extends BaseProvider {
       success();
     }
     failure();
+    notifyListeners();
+  }
+
+  void passwordVisibility() {
+    passwordVisible = !passwordVisible;
     notifyListeners();
   }
 }

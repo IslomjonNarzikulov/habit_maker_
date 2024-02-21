@@ -49,24 +49,12 @@ class SignUp extends StatelessWidget {
               const SizedBox(
                 height: 18,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    child: TextButton(
-                        onPressed: () {
-                         context.push('/login/restore');
-                        },
-                        child: const Text('Forget password?',style: TextStyle(color: Colors.blue,fontSize: 16),)),
-                  ),
-                  SizedBox(width: 36),
-                  Container(
-                    child: TextButton(
-                      onPressed: (){},
-                      child: const Text('Remember me',style: TextStyle(color: Colors.blue,fontSize: 16),),
-                    ),
-                  )
-                ],
+              Center(
+                child: TextButton(
+                    onPressed: () {
+                     context.push('/login/restore');
+                    },
+                    child: const Text('Forget password?',style: TextStyle(color: Colors.blue,fontSize: 16),)),
               ),
               const SizedBox(
                 height: 20,

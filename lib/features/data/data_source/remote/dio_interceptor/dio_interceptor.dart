@@ -4,7 +4,7 @@ import '../../../repository/repository.dart';
 
 class CustomInterceptors extends Interceptor {
   Repository habitRepository;
-  Dio _dio;
+  final Dio _dio;
 
   CustomInterceptors(this.habitRepository, this._dio);
 

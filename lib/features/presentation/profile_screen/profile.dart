@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           });
                                           Navigator.pop(context);
                                         },
-                                        child: Image(
+                                        child: const Image(
                                           image: AssetImage('assets/lottie/avatar.jpg'),
                                         ),
                                       ),

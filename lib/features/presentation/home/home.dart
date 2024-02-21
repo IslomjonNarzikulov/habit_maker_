@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Consumer<HomeProvider>(builder: (context, provider, child) {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.deepPurpleAccent,
           actions: [
             IconButton(
               onPressed: () {
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.home_outlined))
+                icon: const Icon(Icons.notification_important_outlined))
           ],
           title: const Text('Habit Tracker'),
         ),
