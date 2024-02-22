@@ -1,6 +1,7 @@
 import 'package:habit_maker/features/data/arch_provider/arch_provider.dart';
 import 'package:habit_maker/features/data/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/features/data/models/log_out_state.dart';
+import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
 import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
 class HomeProvider extends BaseProvider {
@@ -8,9 +9,10 @@ class HomeProvider extends BaseProvider {
   String? userFirstName;
   String? userLastName;
 
-  HomeProvider(LogOutState logOutState, HabitRepositoryApi habitRepository,
-      HabitStateKeeper keeper)
+  HomeProvider(LoginRepositoryApi loginRepository, LogOutState logOutState,
+      HabitRepositoryApi habitRepository, HabitStateKeeper keeper)
       : super(
+          loginRepository,
           keeper,
           habitRepository,
           logOutState,
@@ -21,13 +23,13 @@ class HomeProvider extends BaseProvider {
   void logOut() {
     logoutState.logOutEvent.add(true);
     loggedState = false;
-    habitRepository.logout();
+    loginRepository.logout();
     keeper.clear();
     notifyListeners();
   }
 
   Future<void> isLogged() async {
-    var result = await habitRepository.isLogged();
+    var result = await loginRepository.isLogged();
     loggedState = result;
     notifyListeners();
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habit_maker/features/presentation/analytics_screen/analytics.dart';
 import 'package:habit_maker/features/presentation/daily_screen/daily_screen.dart';
 import 'package:habit_maker/features/presentation/home/home_provider.dart';
 import 'package:habit_maker/features/presentation/home/widgets/list_tile_item.dart';
@@ -38,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Consumer<HomeProvider>(builder: (context, provider, child) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.deepPurpleAccent,
+          backgroundColor: Colors.white60,
           actions: [
             IconButton(
               onPressed: () {
@@ -48,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.notification_important_outlined))
+                icon: const Icon(Icons.notifications_none))
           ],
           title: const Text('Habit Tracker'),
         ),

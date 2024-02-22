@@ -4,8 +4,6 @@ import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/features/data/data_source/remote/network_client.dart';
 import 'package:habit_maker/features/data/models/login_response.dart';
 
-import '../../../repository/repository.dart';
-
 class CustomInterceptors extends Interceptor {
   FlutterSecureStorage secureStorage;
   NetworkClient networkClient;

@@ -63,7 +63,10 @@ dependencies:
   flutter_datetime_picker_plus: ^2.1.0
   get_it: ^7.6.7
   flare_flutter:
-
+  retrofit: ^4.1.0
+  retrofit_generator: ^8.1.0
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.8
 dev_dependencies:
   flutter_test:
     sdk: flutter

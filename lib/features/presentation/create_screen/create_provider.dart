@@ -2,6 +2,7 @@ import 'package:habit_maker/features/data/arch_provider/arch_provider.dart';
 import 'package:habit_maker/features/data/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/features/data/models/habit_model.dart';
 import 'package:habit_maker/features/data/models/log_out_state.dart';
+import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
 import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
 class CreateProvider extends BaseProvider {
@@ -9,9 +10,10 @@ class CreateProvider extends BaseProvider {
   var isDailySelected = true;
   late Repetition repetition;
 
-  CreateProvider(LogOutState logOutState, HabitRepositoryApi habitRepository,
-      HabitStateKeeper keeper)
+  CreateProvider(LoginRepositoryApi loginRepository, LogOutState logOutState,
+      HabitRepositoryApi habitRepository, HabitStateKeeper keeper)
       : super(
+          loginRepository,
           keeper,
           habitRepository,
           logOutState,

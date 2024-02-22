@@ -34,7 +34,7 @@ Future<void> main() async {
   final sl = GetIt.instance;
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Tashkent')); // Set your timezone
-  configureDioForProxy(sl<Dio>());
+  //configureDioForProxy(sl<Dio>());
 
   runApp(
     MultiProvider(
