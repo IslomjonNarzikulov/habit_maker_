@@ -3,7 +3,7 @@ import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/core/common/extension.dart';
-import 'package:habit_maker/features/data/models/habit_model.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:habit_maker/features/presentation/create_screen/create_provider.dart';
 import 'package:habit_maker/features/presentation/create_screen/widgets/change_color.dart';
 import 'package:habit_maker/features/presentation/create_screen/widgets/save_item.dart';

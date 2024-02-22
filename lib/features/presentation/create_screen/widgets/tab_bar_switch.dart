@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:habit_maker/features/data/models/habit_model.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:habit_maker/features/presentation/create_screen/create_provider.dart';
 
 Widget tabBarSwitch(

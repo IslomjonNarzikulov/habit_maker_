@@ -1,4 +1,5 @@
-import 'package:habit_maker/features/data/models/login_response.dart';
+
+import 'package:habit_maker/features/domain/models/network_response/login_response.dart';
 
 abstract class LoginRepositoryApi {
   Future<bool> signIn(String email, String password);

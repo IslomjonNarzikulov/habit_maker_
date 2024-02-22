@@ -1,5 +1,5 @@
 
-import 'package:habit_maker/features/data/models/habit_model.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 
 enum WeekDay { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habit_maker/features/data/models/habit_model.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:habit_maker/features/presentation/create_screen/create_habit.dart';
 import 'package:habit_maker/features/presentation/habit_screen/habit_screen.dart';
 import 'package:habit_maker/features/presentation/home/home.dart';

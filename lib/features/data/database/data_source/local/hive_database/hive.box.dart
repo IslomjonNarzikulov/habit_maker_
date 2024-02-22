@@ -1,6 +1,6 @@
 import 'package:habit_maker/core/common/hive_extention.dart';
-import 'package:habit_maker/features/data/models/habit_model.dart';
-import 'package:habit_maker/features/data/models/hive_habit_model.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
+import 'package:habit_maker/features/domain/models/hive_habit_model/hive_habit_model.dart';
 import 'package:hive/hive.dart';
 import 'package:habit_maker/features/domain/activity_extension/activity_extension.dart';
 

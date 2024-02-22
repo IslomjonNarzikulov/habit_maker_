@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:habit_maker/features/data/arch_provider/arch_provider.dart';
-import 'package:habit_maker/features/data/habit_keeper/habit_keeper.dart';
-import 'package:habit_maker/features/data/models/habit_model.dart';
-import 'package:habit_maker/features/data/models/log_out_state.dart';
+import 'package:habit_maker/features/domain/habit_keeper/habit_keeper.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
+import 'package:habit_maker/features/domain/models/network_response/log_out_state.dart';
 import 'package:habit_maker/features/domain/activity_extension/activity_extension.dart';
 import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
 import 'package:habit_maker/features/domain/repository/repository_api.dart';

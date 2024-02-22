@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
-import 'package:habit_maker/features/data/data_source/local/di/hive_di.dart';
-import 'package:habit_maker/features/data/data_source/remote/di/network.di.dart';
+import 'package:habit_maker/features/data/database/data_source/local/di/hive_di.dart';
+import 'package:habit_maker/features/data/database/data_source/remote/di/network.di.dart';
 import 'package:habit_maker/features/data/repository/di/repository_di.dart';
 import 'package:habit_maker/injection_container.dart';
 

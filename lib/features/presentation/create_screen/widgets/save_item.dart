@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/features/presentation/create_screen/create_provider.dart';
 
-import '../../../data/models/habit_model.dart';
+import '../../../domain/models/habit_model/habit_model.dart';
 
 Widget saveButton(
     bool isEdit,

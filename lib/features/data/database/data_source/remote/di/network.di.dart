@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/features/data/data_source/remote/dio_interceptor/dio_interceptor.dart';
-import 'package:habit_maker/features/data/data_source/remote/network_client.dart';
+import 'package:habit_maker/features/data/database/data_source/remote/dio_interceptor/dio_interceptor.dart';
+import 'package:habit_maker/features/data/database/data_source/remote/network_client.dart';
 import 'package:habit_maker/injection_container.dart';
 
 Future<void> networkModule() async {

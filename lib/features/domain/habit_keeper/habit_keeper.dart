@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:habit_maker/features/data/models/habit_model.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HabitStateKeeper {

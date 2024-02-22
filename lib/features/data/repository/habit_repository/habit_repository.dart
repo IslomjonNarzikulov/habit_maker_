@@ -3,20 +3,21 @@ import 'dart:async';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/core/common/extension.dart';
-import 'package:habit_maker/features/data/data_source/local/hive_database/hive.box.dart';
-import 'package:habit_maker/features/data/data_source/remote/network_client.dart';
-import 'package:habit_maker/features/data/models/habit_model.dart';
+import 'package:habit_maker/features/data/database/data_source/local/hive_database/hive.box.dart';
+import 'package:habit_maker/features/data/service/habit_api_service/habit_api_service.dart';
+import 'package:habit_maker/features/data/service/network_api_service/network_api_service.dart';
+import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:habit_maker/features/domain/activity_extension/activity_extension.dart';
 import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
 class HabitRepository extends HabitRepositoryApi {
-  NetworkClient networkClient;
+HabitApiService habitApiService;
   FlutterSecureStorage secureStorage;
   Database database;
 
   HabitRepository(
       {required this.secureStorage,
-      required this.networkClient,
+      required this.habitApiService,
       required this.database});
 
   @override
@@ -37,7 +38,7 @@ class HabitRepository extends HabitRepositoryApi {
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
     await executeTask(logged: (token) async {
-      await networkClient.createHabit(habitModel, token);
+      await habitApiService.createHabit(habitModel);
     }, notLogged: (e) async {
       habitModel.isSynced == false;
       await database.insertHabit(habitModel);
@@ -63,7 +64,7 @@ class HabitRepository extends HabitRepositoryApi {
     }
     executeTask(
       logged: (token) async {
-        networkClient.updateHabits(habitModel, token);
+        habitApiService.updateHabits(habitModel.id!,habitModel);
       },
       notLogged: (e) async {
         habitModel.isSynced = false;
@@ -77,8 +78,8 @@ class HabitRepository extends HabitRepositoryApi {
   Future<List<HabitModel>> loadHabits() async {
     return await executeTask(
       logged: (token) async {
-        var habits = await networkClient.loadHabits(token);
-        return await database.insertAllHabits(habits);
+        var habits = await (habitApiService.loadHabits()).habits;
+        return await database.insertAllHabits(habits??[]);
       },
       notLogged: (e) async {
         return await database.getHabitList();
@@ -108,8 +109,8 @@ class HabitRepository extends HabitRepositoryApi {
   Future<void> createActivity(HabitModel model, List<DateTime> date) async {
     await executeTask(logged: (token) async {
       await Future.forEach(date, (dateTime) async {
-        await networkClient.createActivities(
-            model.id!, dateTime.toIso8601String(), token);
+        await habitApiService.createActivities(
+            model.id!, dateTime.toIso8601String());
       });
     }, notLogged: (e) async {
       await database.createActivity(model, date);
@@ -122,7 +123,7 @@ class HabitRepository extends HabitRepositoryApi {
       await Future.forEach(date, (dateTime) async {
         var activityId = model.activities!.getTheSameDay(dateTime)?.id;
         if (activityId == null) return;
-        await networkClient.deleteActivities(activityId, token);
+        await habitApiService.deleteActivities(activityId);
       });
     }, notLogged: (e) async {
       await database.deleteActivities(model, date);
@@ -132,7 +133,7 @@ class HabitRepository extends HabitRepositoryApi {
   @override
   Future<void> deleteHabits(HabitModel model) async {
     executeTask(logged: (token) async {
-      await networkClient.deleteHabits(model.id!, token);
+      await habitApiService.deleteHabits(model.id!);
     }, notLogged: (e) async {
       await database.deleteHabit(model);
     });
