@@ -1,6 +1,6 @@
 import 'package:habit_maker/core/common/extension.dart';
+import 'package:habit_maker/features/data/database/hive_habit_model/hive_habit_model.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
-import 'package:habit_maker/features/domain/models/hive_habit_model/hive_habit_model.dart';
 
 extension HabitModeltoDb on HabitModel {
   HiveHabitModel toHiveHabitModel() {

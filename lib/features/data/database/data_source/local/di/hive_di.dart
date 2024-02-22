@@ -1,5 +1,5 @@
 import 'package:habit_maker/features/data/database/data_source/local/hive_database/hive.box.dart';
-import 'package:habit_maker/features/domain/models/hive_habit_model/hive_habit_model.dart';
+import 'package:habit_maker/features/data/database/hive_habit_model/hive_habit_model.dart';
 import 'package:habit_maker/injection_container.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';

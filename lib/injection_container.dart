@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'features/data/database/data_source/di/data_di.dart';
+import 'features/data/database/di/data_di.dart';
 import 'features/domain/di/domain_di.dart';
 import 'features/presentation/presentation_di/presentation_di.dart';
 

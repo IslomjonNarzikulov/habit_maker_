@@ -2,8 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:retrofit/http.dart';
-part'habit_api_service.g.dart';
-
+part 'habit_api_service.g.dart';
 @RestApi(baseUrl: baseUrl)
 abstract class HabitApiService{
   factory HabitApiService(Dio dio) = _HabitApiService;

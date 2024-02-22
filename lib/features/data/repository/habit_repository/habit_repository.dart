@@ -1,13 +1,13 @@
 import 'dart:async';
-
+import 'package:habit_maker/core/common/activity_extension.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/core/common/extension.dart';
+import 'package:habit_maker/features/data/database/data_source/habit_api_service/habit_api_service.dart';
 import 'package:habit_maker/features/data/database/data_source/local/hive_database/hive.box.dart';
-import 'package:habit_maker/features/data/service/habit_api_service/habit_api_service.dart';
-import 'package:habit_maker/features/data/service/network_api_service/network_api_service.dart';
+import 'package:habit_maker/features/data/network/network_api_service/network_api_service.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
-import 'package:habit_maker/features/domain/activity_extension/activity_extension.dart';
+import 'package:habit_maker/core/common/activity_extension.dart';
 import 'package:habit_maker/features/domain/repository/repository_api.dart';
 
 class HabitRepository extends HabitRepositoryApi {
@@ -78,7 +78,7 @@ HabitApiService habitApiService;
   Future<List<HabitModel>> loadHabits() async {
     return await executeTask(
       logged: (token) async {
-        var habits = await (habitApiService.loadHabits()).habits;
+        var habits = (await habitApiService.loadHabits()).habits;
         return await database.insertAllHabits(habits??[]);
       },
       notLogged: (e) async {

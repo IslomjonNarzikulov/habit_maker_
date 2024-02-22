@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
-import 'package:habit_maker/features/data/database/data_source/remote/network_client.dart';
+import 'package:habit_maker/features/data/network/network_api_service/network_api_service.dart';
 import 'package:habit_maker/features/domain/models/network_response/login_response.dart';
 
 class CustomInterceptors extends Interceptor {
   FlutterSecureStorage secureStorage;
-  NetworkClient networkClient;
+  NetworkApiService networkApiService;
   final Dio _dio;
 
-  CustomInterceptors(this.secureStorage,this.networkClient, this._dio);
+  CustomInterceptors(this.secureStorage,this.networkApiService, this._dio);
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
@@ -38,7 +38,7 @@ class CustomInterceptors extends Interceptor {
 
   Future<String?> userRefreshToken() async {
     var tokenRefresh = await secureStorage.read(key: refreshToken);
-    var user = await networkClient.refreshToken(tokenRefresh);
+    var user = await networkApiService.refreshToken(tokenRefresh!);
     await saveUserCredentials(user!);
     return await secureStorage.read(key: accessToken);
   }

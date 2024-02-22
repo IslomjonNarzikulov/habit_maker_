@@ -1,4 +1,4 @@
-import '../data/arch_provider/arch_provider.dart';
+import '../../arch_provider/arch_provider.dart';
 
 class MainProvider extends BaseProvider {
   MainProvider(

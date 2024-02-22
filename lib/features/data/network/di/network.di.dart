@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/features/data/database/data_source/remote/dio_interceptor/dio_interceptor.dart';
-import 'package:habit_maker/features/data/database/data_source/remote/network_client.dart';
+import 'package:habit_maker/features/data/network/data_source/remote/dio_interceptor/dio_interceptor.dart';
+import 'package:habit_maker/features/data/network/network_api_service/network_api_service.dart';
 import 'package:habit_maker/injection_container.dart';
 
 Future<void> networkModule() async {
@@ -12,7 +12,7 @@ Future<void> networkModule() async {
           receiveTimeout: const Duration(seconds: 5)),
     ),
   );
-  sl.registerSingleton<NetworkClient>(NetworkClient(dio: sl()));
+  sl.registerSingleton<NetworkApiService>(NetworkApiService(sl()));
   sl.registerSingletonWithDependencies<CustomInterceptors>(
       () => CustomInterceptors(sl(), sl(), sl()),
       dependsOn: [FlutterSecureStorage]);
