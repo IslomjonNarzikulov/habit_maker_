@@ -1,23 +1,40 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
-import 'package:habit_maker/features/data/network/network_api_service/network_api_service.dart';
-import 'package:habit_maker/features/domain/models/network_response/login_response.dart';
+import 'package:habit_maker/features/data/network/login_api_service/login_api_service.dart';
+import 'package:habit_maker/features/data/network/login_response/login_response.dart';
 
 class CustomInterceptors extends Interceptor {
   FlutterSecureStorage secureStorage;
-  NetworkApiService networkApiService;
+  LoginApiService networkApiService;
   final Dio _dio;
+  bool isTokenRefreshInProgress = false;
 
-  CustomInterceptors(this.secureStorage,this.networkApiService, this._dio);
+  CustomInterceptors(this.secureStorage, this.networkApiService, this._dio);
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     if (response.statusCode == 401) {
+      isTokenRefreshInProgress == true;
       handler.next(await updateUserToken(response.requestOptions));
     } else {
       handler.next(response);
     }
+  }
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    if (!isTokenRefreshInProgress) {
+      var token = await secureStorage.read(key: accessToken);
+      options.headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+      super.onRequest(options, handler);
+    }else{
+      super.onRequest(options, handler);
+    }
+
   }
 
   Future<Response> updateUserToken(RequestOptions requestOptions) async {
@@ -38,7 +55,7 @@ class CustomInterceptors extends Interceptor {
 
   Future<String?> userRefreshToken() async {
     var tokenRefresh = await secureStorage.read(key: refreshToken);
-    var user = await networkApiService.refreshToken(tokenRefresh!);
+    var user = await networkApiService.refreshToken(tokenRefresh ?? '');
     await saveUserCredentials(user!);
     return await secureStorage.read(key: accessToken);
   }

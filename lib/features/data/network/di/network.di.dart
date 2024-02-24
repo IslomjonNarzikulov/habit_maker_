@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/features/data/network/data_source/remote/dio_interceptor/dio_interceptor.dart';
-import 'package:habit_maker/features/data/network/network_api_service/network_api_service.dart';
+import 'package:habit_maker/features/data/database/habit_api_service/habit_api_service.dart';
+import 'package:habit_maker/features/data/network/data_source/habit_source.dart';
+import 'package:habit_maker/features/data/network/data_source/login_source.dart';
+import 'package:habit_maker/features/data/network/login_api_service/login_api_service.dart';
+import 'package:habit_maker/features/data/network/remote/dio_interceptor/dio_interceptor.dart';
 import 'package:habit_maker/injection_container.dart';
 
 Future<void> networkModule() async {
@@ -12,7 +15,10 @@ Future<void> networkModule() async {
           receiveTimeout: const Duration(seconds: 5)),
     ),
   );
-  sl.registerSingleton<NetworkApiService>(NetworkApiService(sl()));
+  sl.registerSingleton<LoginApiService>(LoginApiService(sl()));
+  sl.registerSingleton<HabitApiService>(HabitApiService(sl()));
+  sl.registerSingleton<HabitNetworkDataSource>(HabitNetworkDataSource(sl()));
+  sl.registerSingleton<LoginNetworkDataSource>(LoginNetworkDataSource(networkApiService: sl()));
   sl.registerSingletonWithDependencies<CustomInterceptors>(
       () => CustomInterceptors(sl(), sl(), sl()),
       dependsOn: [FlutterSecureStorage]);

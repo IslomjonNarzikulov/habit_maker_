@@ -1,12 +1,12 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
-import 'package:habit_maker/features/data/database/data_source/local/hive_database/hive.box.dart';
-import 'package:habit_maker/features/data/network/network_api_service/network_api_service.dart';
-import 'package:habit_maker/features/domain/models/network_response/login_response.dart';
+import 'package:habit_maker/features/data/database/local/hive_database/hive.box.dart';
+import 'package:habit_maker/features/data/network/data_source/login_source.dart';
+import 'package:habit_maker/features/data/network/login_response/login_response.dart';
 import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
 
 class LoginRepository extends LoginRepositoryApi{
-  NetworkApiService networkApiService;
+  LoginNetworkDataSource networkApiService;
   FlutterSecureStorage secureStorage;
   Database database;
 
@@ -48,7 +48,7 @@ class LoginRepository extends LoginRepositoryApi{
   Future<bool> verify(String otp) async {
     var token = await secureStorage.read(key: accessToken);
     if (token != null && otp.isNotEmpty) {
-      var user = await networkApiService.verifyOtp(token, otp);
+      var user = await networkApiService.verify(token, otp);
       secureStorage.write(key: accessToken, value: user!.token!.accessToken);
       secureStorage.write(key: firstName, value: user.user!.firstName);
       secureStorage.write(key: lastName, value: user.user!.lastName);

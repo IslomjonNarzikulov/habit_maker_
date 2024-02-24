@@ -22,7 +22,7 @@ void configureDioForProxy(Dio dio) {
   (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
       (client) {
     client.findProxy = (uri) {
-      return 'PROXY 192.168.100.34:8888';
+      return 'PROXY 192.168.100.35:8888';
     };
     return client;
   };
@@ -34,7 +34,7 @@ Future<void> main() async {
   final sl = GetIt.instance;
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Tashkent')); // Set your timezone
-  //configureDioForProxy(sl<Dio>());
+ configureDioForProxy(sl<Dio>());
 
   runApp(
     MultiProvider(

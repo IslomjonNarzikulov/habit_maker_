@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
-import 'package:habit_maker/features/domain/models/network_response/registration_response.dart';
-import 'package:habit_maker/features/domain/models/network_response/restore_response.dart';
+import 'package:habit_maker/features/data/network/network_response/registration_response.dart';
+import 'package:habit_maker/features/data/network/network_response/restore_response.dart';
 import 'package:retrofit/http.dart';
 
-import '../../../domain/models/network_response/login_response.dart';
-part 'network_api_service.g.dart';
+import '../login_response/login_response.dart';
+part 'login_api_service.g.dart';
 
 @RestApi(baseUrl: 'http://38.242.252.210:6001')
-abstract class NetworkApiService {
-  factory NetworkApiService(Dio dio) = _NetworkApiService;
+abstract class LoginApiService {
+  factory LoginApiService(Dio dio) = _LoginApiService;
 
   @POST('/v1/auth/login')
   Future<LoginResponse?> login(@Field('email') String email,

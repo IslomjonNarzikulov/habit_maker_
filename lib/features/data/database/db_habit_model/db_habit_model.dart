@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-part 'hive_habit_model.g.dart';
+part 'db_habit_model.g.dart';
 @HiveType(typeId: 0)
 class HiveHabitModel extends HiveObject {
   @HiveField(0)

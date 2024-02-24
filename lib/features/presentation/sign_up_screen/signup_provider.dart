@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
-import 'package:habit_maker/features/domain/repository/repository_api.dart';
+import 'package:habit_maker/features/domain/repository/habit_repository_api.dart';
 
 class SignUpProvider extends ChangeNotifier {
   LoginRepositoryApi loginRepository;
