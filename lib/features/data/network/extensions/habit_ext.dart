@@ -1,6 +1,6 @@
 import 'package:habit_maker/features/data/network/extensions/activities_ext.dart';
 import 'package:habit_maker/features/data/network/extensions/repetition_ext.dart';
-import 'package:habit_maker/features/data/network/habit_response/habit_response.dart';
+import 'package:habit_maker/features/data/network/models/habit_response/habit_response.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 
 extension HabitModelExt on HabitModel{

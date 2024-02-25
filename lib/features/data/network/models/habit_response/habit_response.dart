@@ -18,17 +18,18 @@ class HabitsWrapper {
 class HabitResponse {
   String? id;
   String? title;
-  RepetitionResponse? repetition;
   String? color;
+  RepetitionResponse? repetition;
+  String? createdAt;
   List<ActivitiesResponse>? activities;
 
-  HabitResponse({
-    this.id,
-    this.activities,
-    this.title,
-    this.repetition,
-    this.color,
-  });
+  HabitResponse(
+      {this.id,
+        this.title,
+        this.color,
+        this.repetition,
+        this.createdAt,
+        this.activities});
 
   factory HabitResponse.fromJson(Map<String, dynamic> jsonData) =>
       _$HabitResponseFromJson(jsonData);
@@ -45,9 +46,9 @@ class RepetitionResponse {
 
   RepetitionResponse(
       {this.numberOfDays,
-      this.notifyTime,
-      this.showNotification,
-      this.weekdays});
+        this.notifyTime,
+        this.showNotification,
+        this.weekdays});
 
   factory RepetitionResponse.fromJson(Map<String, dynamic> json) =>
       _$RepetitionResponseFromJson(json);
@@ -87,3 +88,6 @@ class ActivitiesResponse {
     return _$ActivitiesResponseToJson(this);
   }
 }
+
+
+

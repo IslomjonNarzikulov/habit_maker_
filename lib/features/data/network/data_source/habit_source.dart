@@ -1,17 +1,18 @@
-import 'package:habit_maker/features/data/database/habit_api_service/habit_api_service.dart';
 import 'package:habit_maker/features/data/network/extensions/habit_ext.dart';
-import 'package:habit_maker/features/data/network/habit_response/habit_response.dart';
+import 'package:habit_maker/features/data/network/habit_api/habit_api_service/habit_api_service.dart';
+import 'package:habit_maker/features/data/network/models/habit_response/habit_response.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 
 class HabitNetworkDataSource {
+  ///this is bridge for network response and repository. Extensions used here .
   HabitApiService habitApi;
 
   HabitNetworkDataSource(this.habitApi);
 
   Future<bool> createHabits(HabitModel habitModel) {
-    try{
-    var result = habitApi.createHabit(habitModel.toHabitResponse());
-    }catch(e){
+    try {
+      var result = habitApi.createHabit(habitModel.toHabitResponse());
+    } catch (e) {
       e.toString();
     }
     return Future.value(false);
@@ -30,8 +31,7 @@ class HabitNetworkDataSource {
   }
 
   Future<bool> updateHabits(String id, HabitModel habitModel) {
-    var result = habitApi.updateHabits(
-       id, habitModel.toHabitResponse());
+    var result = habitApi.updateHabits(id, habitModel.toHabitResponse());
     return result;
   }
 

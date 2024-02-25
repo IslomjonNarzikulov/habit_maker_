@@ -2,7 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/features/data/database/local/hive_database/hive.box.dart';
 import 'package:habit_maker/features/data/network/data_source/login_source.dart';
-import 'package:habit_maker/features/data/network/login_response/login_response.dart';
+import 'package:habit_maker/features/data/network/models/login_response/login_response.dart';
 import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
 
 class LoginRepository extends LoginRepositoryApi{
@@ -59,16 +59,7 @@ class LoginRepository extends LoginRepositoryApi{
     return false;
   }
 
-  @override
-  Future<void> saveUserCredentials(LoginResponse user) async {
-    await secureStorage.write(key: accessToken, value: user.token!.accessToken);
-    await secureStorage.write(
-        key: refreshToken, value: user.token!.refreshToken);
-    await secureStorage.write(key: firstName, value: user.user!.firstName);
-    await secureStorage.write(key: lastName, value: user.user!.lastName);
-    await secureStorage.write(key: email, value: user.user!.email);
-    await secureStorage.write(key: userId, value: user.user!.id);
-  }
+
 
   @override
   Future<bool> restorePassword(String emailAddress) async {
@@ -100,6 +91,16 @@ class LoginRepository extends LoginRepositoryApi{
   @override
   Future<String?> getUserEmail() {
     return secureStorage.read(key: email);
+  }
+  @override
+  Future<void> saveUserCredentials(LoginResponse user) async {
+    await secureStorage.write(key: accessToken, value: user.token!.accessToken);
+    await secureStorage.write(
+        key: refreshToken, value: user.token!.refreshToken);
+    await secureStorage.write(key: firstName, value: user.user!.firstName);
+    await secureStorage.write(key: lastName, value: user.user!.lastName);
+    await secureStorage.write(key: email, value: user.user!.email);
+    await secureStorage.write(key: userId, value: user.user!.id);
   }
 
   @override

@@ -1,7 +1,7 @@
-import 'package:habit_maker/features/data/network/login_api_service/login_api_service.dart';
-import 'package:habit_maker/features/data/network/login_response/login_response.dart';
-import 'package:habit_maker/features/data/network/network_response/registration_response.dart';
-import 'package:habit_maker/features/data/network/network_response/restore_response.dart';
+import 'package:habit_maker/features/data/network/habit_api/login_api_service/login_api_service.dart';
+import 'package:habit_maker/features/data/network/models/login_response/login_response.dart';
+import 'package:habit_maker/features/data/network/models/network_response/registration_response.dart';
+import 'package:habit_maker/features/data/network/models/network_response/restore_response.dart';
 
 class LoginNetworkDataSource {
   LoginApiService networkApiService;
@@ -12,8 +12,8 @@ class LoginNetworkDataSource {
     return networkApiService.login(email, password);
   }
 
-  Future<SignUpResponse?> signUp(String email, String password) {
-    return networkApiService.signUp(email, password);
+  Future<SignUpResponse?> signUp(String username, String password) {
+    return networkApiService.signUp(username, password);
   }
 
   Future<LoginResponse?> verify(String otp, String token) {

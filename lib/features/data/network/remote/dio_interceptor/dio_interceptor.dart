@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/constants.dart';
-import 'package:habit_maker/features/data/network/login_api_service/login_api_service.dart';
-import 'package:habit_maker/features/data/network/login_response/login_response.dart';
+import 'package:habit_maker/features/data/network/habit_api/login_api_service/login_api_service.dart';
+import 'package:habit_maker/features/data/network/models/login_response/login_response.dart';
 
 class CustomInterceptors extends Interceptor {
   FlutterSecureStorage secureStorage;

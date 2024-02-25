@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:habit_maker/config/service.dart';
 import 'package:habit_maker/features/presentation/habit_screen/habit_screen_provider.dart';
 import 'package:habit_maker/features/presentation/profile_screen/profile_provider.dart';
 import 'package:habit_maker/features/presentation/theme_screen/theme_provider.dart';
@@ -30,11 +31,12 @@ void configureDioForProxy(Dio dio) {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.initializeNotification();
   await initializeDependencies();
   final sl = GetIt.instance;
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Tashkent')); // Set your timezone
- configureDioForProxy(sl<Dio>());
+ //configureDioForProxy(sl<Dio>());
 
   runApp(
     MultiProvider(
@@ -56,6 +58,9 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 
   @override
   Widget build(BuildContext context) {

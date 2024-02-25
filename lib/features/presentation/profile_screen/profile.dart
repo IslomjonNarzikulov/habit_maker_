@@ -6,24 +6,15 @@ import 'package:habit_maker/features/presentation/profile_screen/widgets_profile
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   ProfileScreen({Key? key}) : super(key: key);
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
   late ProfileProvider provider;
 
   @override
   Widget build(BuildContext context) {
-    provider = Provider.of<ProfileProvider>(context, listen: false);
-    provider.isLogged();
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
-    print('profile:${provider.loggedState.toString()}');
-
     return Consumer<ProfileProvider>(builder: (context, value, child) {
+      provider = Provider.of<ProfileProvider>(context, listen: false);
+      provider.isLogged();
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -33,10 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               icon: const Icon(LineAwesomeIcons.angle_left)),
           title: Text('Profile', style: Theme.of(context).textTheme.headline4),
           actions: [
-            IconButton(
-                onPressed: () {},
-                icon:
-                    Icon(isDark ? LineAwesomeIcons.sun : LineAwesomeIcons.moon))
+            IconButton(onPressed: () {}, icon: Icon(LineAwesomeIcons.sun))
           ],
         ),
         body: Center(
@@ -45,53 +33,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: provider.loggedState == true
                   ? Column(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return GridView.count(
-                                    crossAxisCount: 3,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          provider.selectAvatar('assets/lottie/avatar.jpg');
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Image(
-                                          image: AssetImage(
-                                              'assets/lottie/avatar.jpg'),
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.pop(context,
-                                              'assets/lottie/blank.png');
-                                        },
-                                        child: const Image(
-                                          image: AssetImage(
-                                              'assets/lottie/blank.png'),
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          // Handle selecting this image as avatar
-                                          Navigator.pop(context,
-                                              'assets/lottie/blank.png');
-                                        },
-                                        child: const Image(
-                                          image: AssetImage(
-                                              'assets/lottie/blank.png'),
-                                        ),
-                                      ),
-                                      // Add more GestureDetector widgets for additional images
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                        SizedBox(
+                          height: 120,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
                             child: const Image(
                               image: AssetImage('assets/lottie/blank.png'),
                             ),
@@ -133,50 +78,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 140,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(100),
-                              child: GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) {
-                                      return GridView.count(
-                                        crossAxisCount: 3,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              provider.selectAvatar('assets/lottie/avatar.jpg');
-                                            },
-                                            child: const Image(
-                                              image: AssetImage(
-                                                  'assets/lottie/avatar.jpg'),
-                                            ),
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                            },
-                                            child: const Image(
-                                              image: AssetImage(
-                                                  'assets/lottie/blank.png'),
-                                            ),
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              Navigator.pop(context,
-                                                  'assets/lottie/blank.png');
-                                            },
-                                            child: const Image(
-                                              image: AssetImage(
-                                                  'assets/lottie/blank.png'),
-                                            ),
-                                          ),
-                                          // Add more GestureDetector widgets for additional images
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                child:  Image(
-                                  image: AssetImage(provider.selectedImagePath),
-                                ),
+                              child: const Image(
+                                image: AssetImage('assets/lottie/blank.png'),
                               ),
                             ),
                           ),

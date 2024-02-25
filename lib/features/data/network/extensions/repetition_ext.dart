@@ -1,5 +1,5 @@
 import 'package:habit_maker/features/data/network/extensions/day_ext.dart';
-import 'package:habit_maker/features/data/network/habit_response/habit_response.dart';
+import 'package:habit_maker/features/data/network/models/habit_response/habit_response.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 
 extension RepetitionExt on RepetitionResponse{
@@ -27,7 +27,7 @@ extension RepetitionResponseExt on Repetition{
       showNotification: showNotification,
       weekdays: weekdays?.map((day) => day.toDayResponse()).toList(),
       numberOfDays: numberOfDays,
-      notifyTime: notifyTime!=null? _formatDateTimeToHHMM(notifyTime!):null,
+      notifyTime: notifyTime!=null? _formatDateTimeToHHMM(notifyTime!):'',
     );
   }
   String _formatDateTimeToHHMM(DateTime dateTime) {

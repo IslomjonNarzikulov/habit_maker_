@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:habit_maker/config/service.dart';
 import 'package:habit_maker/features/presentation/daily_screen/daily_screen.dart';
 import 'package:habit_maker/features/presentation/home/home_provider.dart';
 import 'package:habit_maker/features/presentation/home/widgets/list_tile_item.dart';
 import 'package:provider/provider.dart';
+
 import '../weekly_screen/weekly.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
-   static final List<Widget> _widgetOptions = <Widget>[
-    DailyScreen(),
-    Weekly()
-  ];
+  static final List<Widget> _widgetOptions = <Widget>[DailyScreen(), Weekly()];
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -46,7 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.add),
             ),
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  NotificationService.showNotification(
+                    title: "Scheduled Notification",
+                    body: "Notification was fired after 5 seconds",
+                    scheduled: true,
+                    interval: 5,
+                  );
+                },
                 icon: const Icon(Icons.notifications_none))
           ],
           title: const Text('Habit Tracker'),

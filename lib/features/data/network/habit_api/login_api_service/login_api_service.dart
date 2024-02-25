@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:habit_maker/features/data/network/network_response/registration_response.dart';
-import 'package:habit_maker/features/data/network/network_response/restore_response.dart';
+import 'package:habit_maker/features/data/network/models/network_response/registration_response.dart';
+import 'package:habit_maker/features/data/network/models/network_response/restore_response.dart';
 import 'package:retrofit/http.dart';
 
-import '../login_response/login_response.dart';
+import '../../models/login_response/login_response.dart';
 part 'login_api_service.g.dart';
 
 @RestApi(baseUrl: 'http://38.242.252.210:6001')
