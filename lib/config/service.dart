@@ -32,7 +32,7 @@ class NotificationService {
     );
 
     await AwesomeNotifications().isNotificationAllowed().then(
-          (isAllowed) async {
+      (isAllowed) async {
         if (!isAllowed) {
           await AwesomeNotifications().requestPermissionToSendNotifications();
         }
@@ -73,13 +73,14 @@ class NotificationService {
     if (payload["navigate"] == "true") {
       MyApp.navigatorKey.currentState?.push(
         MaterialPageRoute(
-          builder: (_) =>  HomeScreen(),
+          builder: (_) => HomeScreen(),
         ),
       );
     }
   }
 
   static Future<void> showNotification({
+    required final DateTime time,
     required final String title,
     required final String body,
     final String? summary,
@@ -90,32 +91,25 @@ class NotificationService {
     final String? bigPicture,
     final List<NotificationActionButton>? actionButtons,
     final bool scheduled = false,
-    final int? interval,
   }) async {
-    assert(!scheduled || (scheduled && interval != null));
+    assert(!scheduled || (scheduled));
 
     await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: -1,
-        channelKey: 'high_importance_channel',
-        title: title,
-        body: body,
-        actionType: actionType,
-        notificationLayout: notificationLayout,
-        summary: summary,
-        category: category,
-        payload: payload,
-        bigPicture: bigPicture,
-      ),
-      actionButtons: actionButtons,
-      schedule: scheduled
-          ? NotificationInterval(
-        interval: interval,
-        timeZone:
-        await AwesomeNotifications().getLocalTimeZoneIdentifier(),
-        preciseAlarm: true,
-      )
-          : null,
-    );
+        content: NotificationContent(
+          id: -1,
+          channelKey: 'high_importance_channel',
+          title: title,
+          body: body,
+          actionType: actionType,
+          notificationLayout: notificationLayout,
+          summary: summary,
+          category: NotificationCategory.Reminder,
+          payload: payload,
+          bigPicture: bigPicture,
+        ),
+        actionButtons: actionButtons,
+        schedule: NotificationCalendar.fromDate(
+          date: time,
+        ));
   }
 }

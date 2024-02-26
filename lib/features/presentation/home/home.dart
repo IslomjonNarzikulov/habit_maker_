@@ -46,12 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             IconButton(
                 onPressed: () {
-                  NotificationService.showNotification(
-                    title: "Scheduled Notification",
-                    body: "Notification was fired after 5 seconds",
-                    scheduled: true,
-                    interval: 5,
-                  );
                 },
                 icon: const Icon(Icons.notifications_none))
           ],
