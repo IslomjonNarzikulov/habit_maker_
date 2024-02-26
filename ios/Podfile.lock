@@ -1,4 +1,7 @@
 PODS:
+  - awesome_notifications (0.9.0):
+    - Flutter
+    - IosAwnCore (~> 0.9.1)
   - connectivity (0.0.1):
     - Flutter
     - Reachability
@@ -7,23 +10,34 @@ PODS:
     - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - IosAwnCore (0.9.1)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - Reachability (3.2)
+  - share_plus (0.0.1):
+    - Flutter
+  - url_launcher_ios (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
+  - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
+    - IosAwnCore
     - Reachability
 
 EXTERNAL SOURCES:
+  awesome_notifications:
+    :path: ".symlinks/plugins/awesome_notifications/ios"
   connectivity:
     :path: ".symlinks/plugins/connectivity/ios"
   Flutter:
@@ -34,14 +48,22 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  awesome_notifications: 399076ea2bdf119beef9126f1ca6914215390997
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
+  IosAwnCore: 4691f457bd8dc9a3a0a941cee6439a894a0b81aa
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
+  url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 

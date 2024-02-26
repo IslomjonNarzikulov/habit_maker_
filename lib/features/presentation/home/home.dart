@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:habit_maker/config/service.dart';
 import 'package:habit_maker/features/presentation/daily_screen/daily_screen.dart';
 import 'package:habit_maker/features/presentation/home/home_provider.dart';
 import 'package:habit_maker/features/presentation/home/widgets/list_tile_item.dart';
+import 'package:habit_maker/features/presentation/weekly_screen/weekly.dart';
 import 'package:provider/provider.dart';
-
-import '../weekly_screen/weekly.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -21,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late HomeProvider provider;
 
   int _selectedIndex = 0;
+  bool isDark = false;
 
   void onItemTapped(int index) {
     setState(() {
@@ -44,10 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               icon: const Icon(Icons.add),
             ),
-            IconButton(
-                onPressed: () {
-                },
-                icon: const Icon(Icons.notifications_none))
+            IconButton(onPressed: (){}, icon: Icon(Icons.bar_chart))
           ],
           title: const Text('Habit Tracker'),
         ),
@@ -57,10 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
               listItem(Icons.person, 'Profile', () {
                 context.push('/home/profile');
               }),
-              listItem(Icons.settings, 'Settings', () {
-                context.push('/home/settings');
+              listItem(Icons.approval_outlined, 'More apps', () {moreApps();}),
+              listItem(Icons.star_border, 'Rate us', () {rateURl();
               }),
-              listItem(Icons.approval_outlined, 'More apps', () {}),
               provider.loggedState == true
                   ? ListTile(
                       leading: const Icon(Icons.logout),
@@ -94,5 +90,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     });
+  }
+  rateURl() async {
+    final Uri url = Uri.parse(
+        "https://play.google.com/store/apps/details?id=com.akramovv.meme");
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+  moreApps() async {
+    final Uri url = Uri.parse(
+        "https://play.google.com/store/apps/dev?id=7296467308517793885");
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }

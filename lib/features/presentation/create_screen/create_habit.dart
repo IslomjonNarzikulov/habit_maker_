@@ -108,6 +108,7 @@ class _CreateScreenState extends State<CreateScreen>
       floatingActionButton:
           saveButton(isEdit, createProvider, body, context, _formKey, () {
         createProvider.updateHabits(body);
+        saveReminder();
         context.replace('/home/calendar', extra: body);
       }, () {
         createProvider.createHabit(body);

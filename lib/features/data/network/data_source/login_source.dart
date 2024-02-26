@@ -16,7 +16,7 @@ class LoginNetworkDataSource {
     return networkApiService.signUp(username, password);
   }
 
-  Future<LoginResponse?> verify(String otp, String token) {
+  Future<LoginResponse?> verify(String token, String otp) {
     return networkApiService.verifyOtp(token, otp);
   }
 

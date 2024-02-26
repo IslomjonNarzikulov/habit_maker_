@@ -23,9 +23,6 @@ class ProfileScreen extends StatelessWidget {
               },
               icon: const Icon(LineAwesomeIcons.angle_left)),
           title: Text('Profile', style: Theme.of(context).textTheme.headline4),
-          actions: [
-            IconButton(onPressed: () {}, icon: Icon(LineAwesomeIcons.sun))
-          ],
         ),
         body: Center(
           child: Container(
@@ -44,9 +41,11 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          '${provider.userFirstName} ${provider.userLastName}',
+                          'New User ',
                           style: const TextStyle(fontSize: 24),
                         ),
+                        Gap(12),
+                        Text('${provider.userEmail}'),
                         const Divider(),
                         const SizedBox(height: 10),
                         ProfileMenuWidget(

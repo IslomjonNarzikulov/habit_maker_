@@ -8,6 +8,7 @@ class ProfileProvider extends BaseProvider {
   var loggedState = false;
   String? userFirstName;
   String? userLastName;
+  String? userEmail ;
  String selectedImagePath = 'assets/lottie/blank.png';
   ProfileProvider(LoginRepositoryApi loginRepository, LogOutState logOutState,
       HabitRepositoryApi habitRepository, HabitStateKeeper keeper)
@@ -38,6 +39,7 @@ class ProfileProvider extends BaseProvider {
   Future<void> userInfo() async {
     userFirstName = await loginRepository.getUserFirstName();
     userLastName = await loginRepository.getUserLastName();
+    userEmail = await loginRepository.getUserEmail();
     notifyListeners();
   }
 }
