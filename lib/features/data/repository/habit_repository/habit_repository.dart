@@ -101,6 +101,16 @@ class HabitRepository extends HabitRepositoryApi {
       return notLogged(e);
     }
   }
+  @override
+  Future<void> loadUnSyncedData() async {
+    try {
+      var unSyncedHabits = await database.loadUnSyncedData();
+      await habitDataSource.syncHabits(unSyncedHabits);
+      await database.deleteCachedHabits();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   @override
   Future<void> createActivity(HabitModel model, List<DateTime> date) async {

@@ -1,9 +1,9 @@
+import 'package:habit_maker/core/common/activity_extension.dart';
 import 'package:habit_maker/features/data/database/db_habit_model/db_habit_model.dart';
 import 'package:habit_maker/features/data/database/extensions/activities_mapper.dart';
 import 'package:habit_maker/features/data/database/extensions/habit_mapper.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:hive/hive.dart';
-import 'package:habit_maker/core/common/activity_extension.dart';
 
 class Database {
   late Box<HiveHabitModel> habitBox;
@@ -17,6 +17,7 @@ class Database {
   Future<List<HabitModel>> insertAllHabits(List<HabitModel> list) async {
     await deleteAllHabits();
     await Future.forEach(list, (element) async {
+      element.isSynced = true;
       await insertHabit(element);
     });
     return getHabitList();
@@ -42,9 +43,29 @@ class Database {
   }
 
   Future<void> deleteAllHabits() async {
-    final List<int> habitKeys = habitBox.keys.cast<int>().toList();
-    await Future.forEach(habitKeys, (key) async {
-      await habitBox.delete(key);
+    final List<HiveHabitModel> habitKeys = habitBox.values.toList();
+    await Future.forEach(habitKeys, (habit) async {
+      if (habit.isSynced == false) {
+        await habitBox.delete(habit.key);
+      }
+    });
+  }
+
+  Future<List<HabitModel>> loadUnSyncedData() async {
+    return habitBox.values
+        .toList()
+        .where((element) => element.isSynced == false)
+        .map((e) => e.toHabitModel())
+        .toList();
+  }
+
+  Future<void> deleteCachedHabits() async {
+    var habits = habitBox.values
+        .toList()
+        .where((element) => element.isSynced == false)
+        .toList();
+    await Future.forEach(habits, (habit) async {
+      await habitBox.delete(habit.key);
     });
   }
 
@@ -78,6 +99,7 @@ class Database {
           } else {
             item.activities?.add(hiveActivity);
           }
+          item.isSynced = false;
           item.save();
         } else {
           var habit = habitBox.values
@@ -85,6 +107,7 @@ class Database {
               .firstWhere((element) => element.key == habitModel.dbKey);
           habit.activities?.getTheSameDay(dateTime)?.isDeleted = false;
           habit.activities?.getTheSameDay(dateTime)?.isSynced = false;
+          habit.isSynced = false;
           habit.save();
         }
       });

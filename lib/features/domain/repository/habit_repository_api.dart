@@ -13,6 +13,8 @@ abstract class HabitRepositoryApi {
 
   Future<void> deleteHabits(HabitModel model);
 
+  Future<void> loadUnSyncedData();
+
 
 
 

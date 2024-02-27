@@ -25,14 +25,22 @@ class HabitNetworkDataSource {
         .toList();
   }
 
-  Future<void> postUnSyncedData(List<HabitModel> list) async {
-    await Future.forEach(list, (element) async {
-      var habitId = (await habitApi.createHabit(element.toHabitResponse())).id;
-      if (habitId != null) {
+  Future<void> syncHabits(List<HabitModel> habits) async {
+    await Future.forEach(habits, (element) async {
+      if (element.id == null) {
+        var habitId =
+            (await habitApi.createHabit(element.toHabitResponse())).id;
+        if (habitId != null) {
+          await Future.forEach(element.activities ?? <Activities>[],
+                  (activity) async {
+                await habitApi.createActivities(habitId, activity.date!);
+              });
+        }
+      } else {
         await Future.forEach(element.activities ?? <Activities>[],
-            (activity) async {
-          await habitApi.createActivities(habitId, activity.date!);
-        });
+                (activity) async {
+              await habitApi.createActivities(element.id!, activity.date!);
+            });
       }
     });
   }
