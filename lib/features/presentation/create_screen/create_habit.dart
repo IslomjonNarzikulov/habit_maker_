@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -122,6 +123,7 @@ class _CreateScreenState extends State<CreateScreen>
     if (body.repetition?.showNotification == true) {
       print(body.repetition?.notifyTime ?? ''.toString());
       NotificationService.showNotification(
+        notificationLayout: NotificationLayout.Messaging,
         scheduled: true,
         title: body.title!,
         time: body.repetition?.notifyTime ?? DateTime.now(),

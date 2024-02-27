@@ -11,7 +11,7 @@ class Database {
   Database(this.habitBox);
 
   Future<void> insertHabit(HabitModel habitModel) async {
-    await habitBox.add(habitModel.toHiveHabitModel());
+    await habitBox.add(habitModel.toDbHabitModel());
   }
 
   Future<List<HabitModel>> insertAllHabits(List<HabitModel> list) async {

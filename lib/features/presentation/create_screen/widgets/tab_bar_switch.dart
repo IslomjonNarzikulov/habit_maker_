@@ -34,7 +34,7 @@ Widget tabBarSwitch(
                             backgroundColor: item.isSelected == true
                                 ? Colors.amberAccent
                                 : Colors.blueGrey,
-                            radius: 18,
+                            radius: 16,
                             child: Text(
                               '${repetition.weekdays![index].weekday?.name[0]}',
                               style: const TextStyle(color: Colors.white),
@@ -64,9 +64,7 @@ Widget tabBarSwitch(
                     ),
                     Text(
                       '${provider.repetition.numberOfDays} times a week',
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
+
                     ),
                   ],
                 ),

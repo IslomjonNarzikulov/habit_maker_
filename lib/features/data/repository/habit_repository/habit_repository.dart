@@ -35,7 +35,7 @@ class HabitRepository extends HabitRepositoryApi {
       habitModel.repetition?.weekdays =
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
-    await executeTask(logged: (token) async {
+    await executeTask(logged: () async {
       await habitDataSource.createHabits(habitModel);
     }, notLogged: (e) async {
       habitModel.isSynced == false;
@@ -61,7 +61,7 @@ class HabitRepository extends HabitRepositoryApi {
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
     executeTask(
-      logged: (token) async {
+      logged: () async {
         habitDataSource.updateHabits(habitModel.id!,habitModel);
       },
       notLogged: (e) async {
@@ -75,7 +75,7 @@ class HabitRepository extends HabitRepositoryApi {
   @override
   Future<List<HabitModel>> loadHabits() async {
     return await executeTask(
-      logged: (token) async {
+      logged: () async {
         var habits = await habitDataSource.loadHabits();
         return await database.insertAllHabits(habits);
       },
@@ -87,14 +87,13 @@ class HabitRepository extends HabitRepositoryApi {
 
   @override
   FutureOr<T> executeTask<T>(
-      {required Future<T> Function(String) logged,
+      {required Future<T> Function() logged,
       required Future<T> Function(Object?) notLogged}) async {
     try {
       var isLoggedIn = await secureStorage.read(key: isUserLogged);
       var isLogged = isLoggedIn != null ? bool.parse(isLoggedIn) : false;
-      var token = await secureStorage.read(key: accessToken);
-      if (isLogged && token != null) {
-        return logged(token);
+      if (isLogged) {
+        return logged();
       } else {
         return notLogged(null);
       }
@@ -105,7 +104,7 @@ class HabitRepository extends HabitRepositoryApi {
 
   @override
   Future<void> createActivity(HabitModel model, List<DateTime> date) async {
-    await executeTask(logged: (token) async {
+    await executeTask(logged: () async {
       await Future.forEach(date, (dateTime) async {
         await habitDataSource.createActivities(
             model.id!, dateTime.toIso8601String());
@@ -117,7 +116,7 @@ class HabitRepository extends HabitRepositoryApi {
 
   @override
   Future<void> deleteActivity(HabitModel model, List<DateTime> date) async {
-    await executeTask(logged: (token) async {
+    await executeTask(logged: () async {
       await Future.forEach(date, (dateTime) async {
         var activityId = model.activities!.getTheSameDay(dateTime)?.id;
         if (activityId == null) return;
@@ -130,7 +129,7 @@ class HabitRepository extends HabitRepositoryApi {
 
   @override
   Future<void> deleteHabits(HabitModel model) async {
-    executeTask(logged: (token) async {
+    executeTask(logged: () async {
       await habitDataSource.deleteHabits(model.id!);
     }, notLogged: (e) async {
       await database.deleteHabit(model);

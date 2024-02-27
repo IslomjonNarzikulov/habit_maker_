@@ -4,9 +4,9 @@ import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart'
 extension ActivityModelExt on Activities {
   ActivitiesResponse toActivitiesResponse() {
     return ActivitiesResponse(
-      habitId: null,
       date: date,
       id: id,
+      habitId: null,
     );
   }
 }

@@ -64,5 +64,6 @@ class Weekly extends StatelessWidget {
     } else {
       provider.deleteActivities(selectedHabit, [date]);
     }
+    print(isDaySelected.toString());
   }
 }

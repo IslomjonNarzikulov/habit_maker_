@@ -4,7 +4,7 @@ import 'package:habit_maker/features/data/database/extensions/activities_mapper.
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 
 extension HabitModeltoDb on HabitModel {
-  HiveHabitModel toHiveHabitModel() {
+  HiveHabitModel toDbHabitModel() {
     return HiveHabitModel(
       color: color,
       isDeleted: isDeleted ?? false,

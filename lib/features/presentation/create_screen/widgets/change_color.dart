@@ -13,30 +13,32 @@ Widget changingColor(CreateProvider createProvider){
       ),
       const SizedBox(height: 14),
       Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List<Widget>.generate(
-            7,
-                (index) {
-              return GestureDetector(
-                onTap: () {
-                  createProvider.selectColor(index);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: colorList[index],
-                    child: createProvider.selectedColorIndex == index
-                        ? const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                    )
-                        : null,
+        child: SingleChildScrollView(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List<Widget>.generate(
+              7,
+                  (index) {
+                return GestureDetector(
+                  onTap: () {
+                    createProvider.selectColor(index);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      radius: 16,
+                      backgroundColor: colorList[index],
+                      child: createProvider.selectedColorIndex == index
+                          ? const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      )
+                          : null,
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

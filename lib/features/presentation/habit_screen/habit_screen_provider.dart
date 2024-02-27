@@ -36,7 +36,6 @@ class HabitScreenProvider extends BaseProvider {
     selectedHabit = model;
     calendarDates = getActivitiesDate(model.dbKey!);
     title = model.title ?? "";
-    notifyListeners();
   }
 
   Future<void> onDaySelected(DateTime selectedDay, DateTime focusedDay) async {

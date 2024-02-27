@@ -79,7 +79,9 @@ class NotificationService {
     }
   }
 
-  static Future<void> showNotification({
+  static Future<void> showNotification(
+      {
+
     required final DateTime time,
     required final String title,
     required final String body,
@@ -90,12 +92,15 @@ class NotificationService {
     final NotificationCategory? category,
     final String? bigPicture,
     final List<NotificationActionButton>? actionButtons,
-    final bool scheduled = false,
+    final bool scheduled = true,
   }) async {
     assert(!scheduled || (scheduled));
 
     await AwesomeNotifications().createNotification(
         content: NotificationContent(
+          displayOnBackground: true,
+          displayOnForeground: true,
+          wakeUpScreen: true,
           id: -1,
           channelKey: 'high_importance_channel',
           title: title,
@@ -103,12 +108,13 @@ class NotificationService {
           actionType: actionType,
           notificationLayout: notificationLayout,
           summary: summary,
-          category: NotificationCategory.Reminder,
+          category: NotificationCategory.Alarm,
           payload: payload,
           bigPicture: bigPicture,
         ),
         actionButtons: actionButtons,
         schedule: NotificationCalendar.fromDate(
+          repeats: true,
           date: time,
         ));
   }
