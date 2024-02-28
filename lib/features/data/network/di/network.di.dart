@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/features/data/network/data_source/habit_source.dart';
-import 'package:habit_maker/features/data/network/data_source/login_source.dart';
+import 'package:habit_maker/features/data/network/data_source/habit_network_source.dart';
+import 'package:habit_maker/features/data/network/data_source/login_network_source.dart';
 import 'package:habit_maker/features/data/network/habit_api/habit_api_service/habit_api_service.dart';
 import 'package:habit_maker/features/data/network/habit_api/login_api_service/login_api_service.dart';
 import 'package:habit_maker/features/data/network/remote/dio_interceptor/dio_interceptor.dart';

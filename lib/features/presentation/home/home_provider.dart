@@ -1,13 +1,19 @@
 import 'package:habit_maker/arch_provider/arch_provider.dart';
-import 'package:habit_maker/features/domain/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/features/data/network/models/network_response/log_out_state.dart';
-import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
+import 'package:habit_maker/features/domain/habit_keeper/habit_keeper.dart';
 import 'package:habit_maker/features/domain/repository/habit_repository_api.dart';
+import 'package:habit_maker/features/domain/repository/login_repository_api.dart';
 
 class HomeProvider extends BaseProvider {
   var loggedState = false;
   String? userFirstName;
   String? userLastName;
+
+
+  @override
+  void display() {
+    print("HomeProvider");
+  }
 
   HomeProvider(LoginRepositoryApi loginRepository, LogOutState logOutState,
       HabitRepositoryApi habitRepository, HabitStateKeeper keeper)
@@ -32,5 +38,13 @@ class HomeProvider extends BaseProvider {
     var result = await loginRepository.isLogged();
     loggedState = result;
     notifyListeners();
+  }
+
+  void syncData() async {
+    var isLogged = await loginRepository.isLogged();
+    var hasInternet = await habitRepository.checkConnectivity();
+    if (isLogged && hasInternet) {
+      await habitRepository.loadUnSyncedData();
+    }
   }
 }

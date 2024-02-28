@@ -1,10 +1,12 @@
 import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/activity_extension.dart';
 import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/core/common/extension.dart';
 import 'package:habit_maker/features/data/database/local/hive_database/hive.box.dart';
-import 'package:habit_maker/features/data/network/data_source/habit_source.dart';
+import 'package:habit_maker/features/data/network/data_source/habit_network_source.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:habit_maker/features/domain/repository/habit_repository_api.dart';
 
@@ -12,6 +14,7 @@ class HabitRepository extends HabitRepositoryApi {
   HabitNetworkDataSource habitDataSource;
   FlutterSecureStorage secureStorage;
   Database database;
+  StreamSubscription<ConnectivityResult>? subscription;
 
   HabitRepository(
       {required this.secureStorage,
@@ -38,7 +41,7 @@ class HabitRepository extends HabitRepositoryApi {
     await executeTask(logged: () async {
       await habitDataSource.createHabits(habitModel);
     }, notLogged: (e) async {
-      habitModel.isSynced == false;
+      habitModel.isSynced = false;
       await database.insertHabit(habitModel);
     });
   }
@@ -62,7 +65,7 @@ class HabitRepository extends HabitRepositoryApi {
     }
     executeTask(
       logged: () async {
-        habitDataSource.updateHabits(habitModel.id!,habitModel);
+        habitDataSource.updateHabits(habitModel.id!, habitModel);
       },
       notLogged: (e) async {
         habitModel.isSynced = false;
@@ -70,6 +73,35 @@ class HabitRepository extends HabitRepositoryApi {
       },
     );
     return true;
+  }
+
+  @override
+  Future<bool> checkConnectivity() async {
+    try {
+      subscription = Connectivity().onConnectivityChanged.listen((event) async {
+        if (event == ConnectivityResult.none) {
+          print('No internet connection');
+        } else {
+          print('Internet connection available');
+          await loadUnSyncedData();
+        }
+      });
+      return true;
+    } catch (e) {
+      e.toString();
+      return false;
+    }
+  }
+
+  @override
+  Future<void> loadUnSyncedData() async {
+    try {
+      var unSyncedHabits = await database.loadUnSyncedData();
+      await habitDataSource.syncHabits(unSyncedHabits);
+      await database.deleteCachedHabits();
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -93,22 +125,12 @@ class HabitRepository extends HabitRepositoryApi {
       var isLoggedIn = await secureStorage.read(key: isUserLogged);
       var isLogged = isLoggedIn != null ? bool.parse(isLoggedIn) : false;
       if (isLogged) {
-        return logged();
+        return await logged();
       } else {
         return notLogged(null);
       }
     } catch (e) {
       return notLogged(e);
-    }
-  }
-  @override
-  Future<void> loadUnSyncedData() async {
-    try {
-      var unSyncedHabits = await database.loadUnSyncedData();
-      await habitDataSource.syncHabits(unSyncedHabits);
-      await database.deleteCachedHabits();
-    } catch (e) {
-      print(e.toString());
     }
   }
 

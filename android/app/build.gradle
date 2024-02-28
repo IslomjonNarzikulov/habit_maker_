@@ -50,10 +50,13 @@ android {
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
+
     }
 
     buildTypes {
         debug {
+            crunchPngs false
             minifyEnabled false
             debuggable true}
         release {
@@ -69,5 +72,6 @@ flutter {
 }
 
 dependencies {
+    implementation 'com.android.support:multidex:1.0.3'
 
 }

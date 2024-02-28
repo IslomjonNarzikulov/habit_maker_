@@ -25,6 +25,7 @@ class Database {
 
   Future<List<HabitModel>> getHabitList() async {
     var habits = habitBox.values.toList();
+    print('db:${habits.length}');
     return habits.map((e) => e.toHabitModel()).toList();
   }
 
@@ -45,7 +46,7 @@ class Database {
   Future<void> deleteAllHabits() async {
     final List<HiveHabitModel> habitKeys = habitBox.values.toList();
     await Future.forEach(habitKeys, (habit) async {
-      if (habit.isSynced == false) {
+      if (habit.isSynced == true) {
         await habitBox.delete(habit.key);
       }
     });

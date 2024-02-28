@@ -1,6 +1,8 @@
 import '../../arch_provider/arch_provider.dart';
 
 class MainProvider extends BaseProvider {
+  var loggedState = false;
+
   MainProvider(
     loginRepository,
     keeper,
@@ -12,5 +14,27 @@ class MainProvider extends BaseProvider {
       weekly = keeper.weekly;
       notifyListeners();
     });
+  }
+
+  void logOut() {
+    logoutState.logOutEvent.add(true);
+    loggedState = false;
+    loginRepository.logout();
+    keeper.clear();
+    notifyListeners();
+  }
+
+  Future<void> isLogged() async {
+    var result = await loginRepository.isLogged();
+    loggedState = result;
+    notifyListeners();
+  }
+
+  void syncData() async {
+    var isLogged = await loginRepository.isLogged();
+    if (isLogged) {
+      await habitRepository.loadUnSyncedData();
+    }
+    notifyListeners();
   }
 }

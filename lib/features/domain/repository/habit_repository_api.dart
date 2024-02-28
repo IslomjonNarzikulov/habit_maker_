@@ -15,6 +15,8 @@ abstract class HabitRepositoryApi {
 
   Future<void> loadUnSyncedData();
 
+  Future<bool> checkConnectivity();
+
 
 
 
