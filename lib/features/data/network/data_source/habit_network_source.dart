@@ -9,13 +9,9 @@ class HabitNetworkDataSource {
 
   HabitNetworkDataSource(this.habitApi);
 
-  Future<bool> createHabits(HabitModel habitModel) {
-    try {
-      var result = habitApi.createHabit(habitModel.toHabitResponse());
-    } catch (e) {
-      e.toString();
-    }
-    return Future.value(false);
+  Future<bool> createHabits(HabitModel habitModel) async {
+     await habitApi.createHabit(habitModel.toHabitResponse());
+     return true;
   }
 
   Future<List<HabitModel>> loadHabits() async {
@@ -28,19 +24,44 @@ class HabitNetworkDataSource {
   Future<void> syncHabits(List<HabitModel> habits) async {
     await Future.forEach(habits, (element) async {
       if (element.id == null) {
-        var habitId =
-            (await habitApi.createHabit(element.toHabitResponse())).id;
-        if (habitId != null) {
-          await Future.forEach(element.activities ?? <Activities>[],
-                  (activity) async {
+        if (element.isDeleted == false) {
+          var habitId =
+              (await habitApi.createHabit(element.toHabitResponse())).id;
+          if (habitId != null) {
+            var sortUnsyncedActivities = element.activities
+                ?.where((element) => element.isSynced == false)
+                .toList() ??
+                [];
+            await Future.forEach(sortUnsyncedActivities, (activity) async {
+              if (activity.isDeleted == false) {
                 await habitApi.createActivities(habitId, activity.date!);
-              });
+              } else if (activity.id != null) {
+                await habitApi.deleteActivities(activity.id!);
+              }
+            });
+          }
         }
       } else {
-        await Future.forEach(element.activities ?? <Activities>[],
-                (activity) async {
-              await habitApi.createActivities(element.id!, activity.date!);
-            });
+        if (element.isDeleted == false) {
+          await habitApi.updateHabits(element.id!, element.toHabitResponse());
+        } else {
+          await habitApi.deleteHabits(element.id!);
+        }
+        await syncActivities(element);
+      }
+    });
+  }
+
+  Future<void> syncActivities(HabitModel element) async {
+    var sortUnSyncedActivities = element.activities
+        ?.where((element) => element.isSynced == false)
+        .toList() ??
+        [];
+    await Future.forEach(sortUnSyncedActivities, (activity) async {
+      if (activity.isDeleted == false) {
+        await habitApi.createActivities(element.id!, activity.date!);
+      } else if (activity.id != null) {
+        await habitApi.deleteActivities(activity.id!);
       }
     });
   }
@@ -52,7 +73,7 @@ class HabitNetworkDataSource {
 
   Future<bool> updateHabits(String id, HabitModel habitModel) {
     var result = habitApi.updateHabits(id, habitModel.toHabitResponse());
-    return result;
+    return Future.value(true);
   }
 
   Future<ActivitiesResponse> createActivities(String habitId, String date) async{

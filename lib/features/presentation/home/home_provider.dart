@@ -9,12 +9,6 @@ class HomeProvider extends BaseProvider {
   String? userFirstName;
   String? userLastName;
 
-
-  @override
-  void display() {
-    print("HomeProvider");
-  }
-
   HomeProvider(LoginRepositoryApi loginRepository, LogOutState logOutState,
       HabitRepositoryApi habitRepository, HabitStateKeeper keeper)
       : super(
@@ -40,11 +34,4 @@ class HomeProvider extends BaseProvider {
     notifyListeners();
   }
 
-  void syncData() async {
-    var isLogged = await loginRepository.isLogged();
-    var hasInternet = await habitRepository.checkConnectivity();
-    if (isLogged && hasInternet) {
-      await habitRepository.loadUnSyncedData();
-    }
-  }
 }

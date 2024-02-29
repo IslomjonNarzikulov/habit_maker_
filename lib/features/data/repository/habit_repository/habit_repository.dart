@@ -14,12 +14,18 @@ class HabitRepository extends HabitRepositoryApi {
   HabitNetworkDataSource habitDataSource;
   FlutterSecureStorage secureStorage;
   Database database;
-  StreamSubscription<ConnectivityResult>? subscription;
 
   HabitRepository(
       {required this.secureStorage,
       required this.habitDataSource,
-      required this.database});
+      required this.database}) {
+    Connectivity().onConnectivityChanged.listen((result) async {
+      var isLogged = (await secureStorage.read(key: accessToken)) != null;
+      if (result != ConnectivityResult.none && isLogged) {
+        await loadUnSyncedData();
+      }
+    });
+  }
 
   @override
   Future<void> createHabits(HabitModel habitModel, bool isDailySelected) async {
@@ -76,24 +82,19 @@ class HabitRepository extends HabitRepositoryApi {
   }
 
   @override
-  Future<bool> checkConnectivity() async {
+  Future<void> initializeConnectivity() async {
     try {
-      subscription = Connectivity().onConnectivityChanged.listen((event) async {
-        if (event == ConnectivityResult.none) {
-          print('No internet connection');
-        } else {
-          print('Internet connection available');
-          await loadUnSyncedData();
-        }
-      });
-      return true;
+      var isConnected =
+          (await Connectivity().checkConnectivity()) != ConnectivityResult.none;
+      var isLogged = (await secureStorage.read(key: accessToken)) != null;
+      if (isConnected && isLogged) {
+        await loadUnSyncedData();
+      }
     } catch (e) {
-      e.toString();
-      return false;
+      print(e.toString());
     }
   }
 
-  @override
   Future<void> loadUnSyncedData() async {
     try {
       var unSyncedHabits = await database.loadUnSyncedData();
@@ -117,7 +118,6 @@ class HabitRepository extends HabitRepositoryApi {
     );
   }
 
-  @override
   FutureOr<T> executeTask<T>(
       {required Future<T> Function() logged,
       required Future<T> Function(Object?) notLogged}) async {

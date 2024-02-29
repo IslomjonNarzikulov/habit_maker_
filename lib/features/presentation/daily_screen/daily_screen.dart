@@ -11,7 +11,6 @@ class DailyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     provider = Provider.of<MainProvider>(context, listen: false);
-    provider.syncData();
     return Scaffold(
       body: Center(
         child: Consumer<MainProvider>(

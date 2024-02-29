@@ -30,11 +30,4 @@ class MainProvider extends BaseProvider {
     notifyListeners();
   }
 
-  void syncData() async {
-    var isLogged = await loginRepository.isLogged();
-    if (isLogged) {
-      await habitRepository.loadUnSyncedData();
-    }
-    notifyListeners();
-  }
 }

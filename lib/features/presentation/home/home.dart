@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     provider = Provider.of<HomeProvider>(context, listen: false);
     provider.isLogged();
-    provider.syncData();
     print('home:${provider.loggedState.toString()}');
     return Consumer<HomeProvider>(builder: (context, provider, child) {
       return Scaffold(

@@ -102,7 +102,7 @@ class _HabitApiService implements HabitApiService {
   }
 
   @override
-  Future<bool> updateHabits(
+  Future<CreateHabitResponse> updateHabits(
     String id,
     HabitResponse habitModel,
   ) async {
@@ -111,23 +111,24 @@ class _HabitApiService implements HabitApiService {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(habitModel.toJson());
-    final _result = await _dio.fetch<bool>(_setStreamType<bool>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<CreateHabitResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
-        .compose(
-          _dio.options,
-          '/v1/habits/${id}',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-    final value = _result.data!;
+            .compose(
+              _dio.options,
+              '/v1/habits/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = CreateHabitResponse.fromJson(_result.data!);
     return value;
   }
 

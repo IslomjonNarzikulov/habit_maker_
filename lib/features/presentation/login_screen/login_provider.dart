@@ -19,6 +19,7 @@ class LogInProvider extends BaseProvider {
   void signIn(String email, String password, void Function() success,
       void Function() failure) async {
     if (await loginRepository.signIn(email, password)) {
+      await habitRepository.initializeConnectivity();
       loadHabits();
       success();
     }

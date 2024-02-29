@@ -13,9 +13,7 @@ abstract class HabitRepositoryApi {
 
   Future<void> deleteHabits(HabitModel model);
 
-  Future<void> loadUnSyncedData();
-
-  Future<bool> checkConnectivity();
+  Future<void> initializeConnectivity();
 
 
 

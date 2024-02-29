@@ -21,7 +21,7 @@ abstract class HabitApiService {
   Future<bool> deleteHabits(@Path('id') String id);
 
   @PUT('/v1/habits/{id}')
-  Future<bool> updateHabits(
+  Future<CreateHabitResponse> updateHabits(
       @Path('id') String id, @Body() HabitResponse habitModel);
 
   @POST('/v1/activities')
