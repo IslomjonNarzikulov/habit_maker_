@@ -35,16 +35,16 @@ class ProfileScreen extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(100),
                             child: const Image(
-                              image: AssetImage('assets/lottie/blank.png'),
+                              image: AssetImage('assets/lottie/red.jpeg'),
                             ),
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Text(
+                        const Text(
                           'New User ',
-                          style: const TextStyle(fontSize: 24),
+                          style: TextStyle(fontSize: 24),
                         ),
-                        Gap(12),
+                        const Gap(12),
                         Text('${provider.userEmail}'),
                         const Divider(),
                         const SizedBox(height: 10),
@@ -83,10 +83,9 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           const Gap(15),
-                          const Text('Jack sparrow',
-                              style: TextStyle(color: Colors.black)),
-                          Text('Pirate',
-                              style: Theme.of(context).textTheme.bodyText2),
+                          const Text('User',
+                              style: TextStyle(fontSize:24,color: Colors.black)),
+                          Gap(12),
                           const Divider(),
                           const SizedBox(height: 10),
                           ProfileMenuWidget(

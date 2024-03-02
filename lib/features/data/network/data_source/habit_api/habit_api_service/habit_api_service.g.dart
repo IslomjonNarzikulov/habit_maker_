@@ -76,12 +76,12 @@ class _HabitApiService implements HabitApiService {
   }
 
   @override
-  Future<bool> deleteHabits(String id) async {
+  Future<void> deleteHabits(String id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<bool>(_setStreamType<bool>(Options(
+    await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
@@ -97,8 +97,6 @@ class _HabitApiService implements HabitApiService {
           _dio.options.baseUrl,
           baseUrl,
         ))));
-    final value = _result.data!;
-    return value;
   }
 
   @override

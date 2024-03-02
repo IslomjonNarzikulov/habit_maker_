@@ -70,7 +70,7 @@ class HabitScreen extends StatelessWidget {
                     onPageChanged: (focusedDay) {
                       _focusedDay = focusedDay;
                     },
-                    rowHeight: 60,
+                    rowHeight: 80,
                     weekNumbersVisible: false,
                     firstDay: kFirstDay,
                     lastDay: kLastDay,

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 Widget tabBar(
-    TabController? tabController, void Function(int) tabBarChanging) {
+    TabController? tabController, void Function(int) tabBarChanging, BuildContext context) {
   return Container(
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),color: Colors.white54),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),color: Theme.of(context).colorScheme.background),
     margin:const EdgeInsets.all(12),
     child: TabBar(
         onTap: (index) {
@@ -11,9 +12,9 @@ Widget tabBar(
         },
         dividerColor: Colors.transparent,
         indicator: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: Colors.blue),
+            borderRadius: BorderRadius.circular(12), color: Colors.blue),
         labelColor: Colors.white,
-        unselectedLabelColor: Colors.black,
+        unselectedLabelColor: Colors.grey,
         controller: tabController,
         tabs: const [
           Tab(

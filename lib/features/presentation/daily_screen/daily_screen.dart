@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:habit_maker/features/presentation/daily_screen/widgets/dismissable.item.dart';
 import 'package:habit_maker/features/presentation/main_provider.dart';
 import 'package:provider/provider.dart';
@@ -43,9 +44,7 @@ class DailyScreen extends StatelessWidget {
             );
           } else if (provider.weekly.isEmpty && !provider.isLoadingState()) {
             return Center(
-              child: Container(
-                  alignment: Alignment.center,
-                  child: const Text('No habits added yet')),
+              child: Text('No habits added yet'.tr),
             );
           } else {
             return const CircularProgressIndicator();

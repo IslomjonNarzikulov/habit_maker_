@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:habit_maker/core/common/activity_extension.dart';
 import 'package:habit_maker/core/common/constants.dart';
 import 'package:habit_maker/core/common/extension.dart';
-import 'package:habit_maker/features/data/database/local/hive_database/hive.box.dart';
+import 'package:habit_maker/features/data/database/data_source/hive_database/hive.box.dart';
 import 'package:habit_maker/features/data/network/data_source/habit_network_source.dart';
 import 'package:habit_maker/features/domain/models/habit_model/habit_model.dart';
 import 'package:habit_maker/features/domain/repository/habit_repository_api.dart';
@@ -54,6 +54,7 @@ class HabitRepository extends HabitRepositoryApi {
 
   @override
   Future<bool> updateHabits(HabitModel habitModel, bool isDailySelected) async {
+
     if (isDailySelected) {
       if (habitModel.repetition?.weekdays
               ?.every((element) => element.isSelected == false) ??
@@ -69,16 +70,15 @@ class HabitRepository extends HabitRepositoryApi {
       habitModel.repetition?.weekdays =
           defaultRepeat.map((day) => Day.copy(day)).toList();
     }
-    executeTask(
+    return await executeTask(
       logged: () async {
-        habitDataSource.updateHabits(habitModel.id!, habitModel);
+        return await habitDataSource.updateHabits(habitModel.id!, habitModel);
       },
       notLogged: (e) async {
         habitModel.isSynced = false;
-        await database.updateHabit(habitModel);
+       return await database.updateHabit(habitModel);
       },
     );
-    return true;
   }
 
   @override

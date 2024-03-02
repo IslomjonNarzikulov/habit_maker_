@@ -17,6 +17,8 @@ extension Activity on ActivitiesResponse {
       id: id,
       date: date,
       habitId: habitId,
+      isSynced: true,
+      isDeleted: false
     );
   }
 }

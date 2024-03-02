@@ -69,12 +69,12 @@ class _CreateScreenState extends State<CreateScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white38,
+        backgroundColor: Colors.white60,
         title: Text(isEdit ? 'Update habits' : 'Create habits'),
       ),
       body:
           Consumer<CreateProvider>(builder: ((context, createProvider, child) {
-        return DefaultTabController(
+          return DefaultTabController(
           length: 2,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -89,7 +89,7 @@ class _CreateScreenState extends State<CreateScreen>
                     const Gap(30),
                     tabBar(_tabController, (index) {
                       createProvider.tabBarChanging(index);
-                    }),
+                    }, context),
                     tabBarSwitch(createProvider, _tabController,
                         createProvider.repetition),
                     const Gap(30),

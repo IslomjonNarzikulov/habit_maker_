@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:habit_maker/features/data/database/local/hive_database/hive.box.dart';
+import 'package:habit_maker/features/data/database/data_source/hive_database/hive.box.dart';
 import 'package:habit_maker/features/data/repository/habit_repository/habit_repository.dart';
 import 'package:habit_maker/features/data/repository/login_repository/login_repository.dart';
 import 'package:habit_maker/features/domain/repository/login_repository_api.dart';

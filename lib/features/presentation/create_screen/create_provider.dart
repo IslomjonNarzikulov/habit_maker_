@@ -30,7 +30,7 @@ class CreateProvider extends BaseProvider {
     notifyListeners();
   }
 
-  void updateHabits(HabitModel model) async {
+ Future <void> updateHabits(HabitModel model) async {
     await habitRepository.updateHabits(model, isDailySelected);
     await loadHabits();
     notifyListeners();

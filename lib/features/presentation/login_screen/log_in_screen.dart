@@ -13,11 +13,11 @@ class LogInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logInProvider = Provider.of<LogInProvider>(context, listen: false);
+    logInProvider.passwordVisible = false;
     double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Scaffold(
+    return Consumer<LogInProvider>(builder: (context, value, child) {
+      return Scaffold(
+        backgroundColor: Colors.white,
         body: Stack(children: [
           const Image(
             image: AssetImage('assets/lottie/andrew.jpg'),
@@ -65,9 +65,7 @@ class LogInScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 12,
-                ),
+                const SizedBox(height: 12),
                 Divider(thickness: 0.7),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: Colors.blue),
@@ -88,8 +86,8 @@ class LogInScreen extends StatelessWidget {
             ),
           )
         ]),
-      ),
-    );
+      );
+    });
   }
 
   textFieldItem(
@@ -196,3 +194,4 @@ class LogInScreen extends StatelessWidget {
     );
   }
 }
+

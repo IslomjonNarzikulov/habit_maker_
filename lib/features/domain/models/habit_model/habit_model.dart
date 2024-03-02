@@ -1,69 +1,70 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:habit_maker/core/common/extension.dart';
 
-class HabitModel {
-  String? id;
-  String? title;
-  Repetition? repetition;
-  int? color;
-  bool? isDeleted;
-  bool? isSynced;
-  List<Activities>? activities;
-  dynamic dbKey;
+part 'habit_model.freezed.dart';
+part 'habit_model.g.dart';
 
-  HabitModel(
-      {this.id,
-      this.dbKey,
-      this.activities,
-      this.title,
-      this.repetition,
-      this.color,
-      this.isDeleted,
-      this.isSynced});
+@unfreezed
+class HabitModel with _$HabitModel {
+  factory HabitModel({
+    String? id,
+    dynamic dbKey,
+    List<Activities>? activities,
+    String? title,
+    Repetition? repetition,
+    int? color,
+    bool? isDeleted,
+    bool? isSynced,
+  }) = _HabitModel;
+
+  factory HabitModel.fromJson(Map<String, dynamic> json) =>
+      _$HabitModelFromJson(json);
 }
 
-class Repetition {
-  int? numberOfDays;
-  DateTime? notifyTime;
-  bool? showNotification;
-  List<Day>? weekdays;
-  String? id;
-  dynamic dbKey;
+@unfreezed
+class Repetition with _$Repetition {
+  factory Repetition({
+    int? numberOfDays,
+    dynamic dbKey,
+    DateTime? notifyTime,
+    bool? showNotification,
+    List<Day>? weekdays,
+  }) = _Repetition;
 
-  Repetition(
-      {this.numberOfDays,
-      this.dbKey,
-      this.notifyTime,
-      this.showNotification,
-      this.weekdays});
+  factory Repetition.fromJson(Map<String, dynamic> json) =>
+      _$RepetitionFromJson(json);
 }
 
-class Day {
-  WeekDay? weekday;
-  bool? isSelected;
-  String? id;
-  dynamic dbKey;
+@unfreezed
+class Day with _$Day {
+  factory Day({
+    WeekDay? weekday,
+    bool? isSelected,
+    dynamic dbKey,
+    String? id,
+  }) = _Day;
 
-  Day.copy(Day other)
-      : weekday = other.weekday,
-        isSelected = other.isSelected;
+  factory Day.fromJson(Map<String, dynamic> json) => _$DayFromJson(json);
 
-
-  Day({this.weekday, this.isSelected, this.dbKey});
+  factory Day.copy(Day other)=>Day(
+    weekday: other.weekday,
+    isSelected: other.isSelected,
+    dbKey: other.dbKey,
+    id: other.id,
+  );
 }
 
-class Activities {
-  String? id;
-  String? date;
-  String? habitId;
-  bool? isDeleted;
-  bool? isSynced;
-  dynamic dbKey;
+@unfreezed
+class Activities with _$Activities {
+  factory Activities({
+    String? id,
+    String? date,
+    String? habitId,
+    bool? isDeleted,
+    bool? isSynced,
+    dynamic dbKey,
+  }) = _Activities;
 
-  Activities(
-      {this.id,
-      this.date,
-      this.habitId,
-      this.isDeleted,
-      this.dbKey,
-      this.isSynced});
+  factory Activities.fromJson(Map<String, dynamic> json) =>
+      _$ActivitiesFromJson(json);
 }

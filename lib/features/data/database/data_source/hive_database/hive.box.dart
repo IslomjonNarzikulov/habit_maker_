@@ -29,7 +29,7 @@ class Database {
     return habits.map((e) => e.toHabitModel()).toList();
   }
 
-  Future<void> updateHabit(HabitModel habitModel) async {
+  Future<bool> updateHabit(HabitModel habitModel) async {
     var habits = habitBox.values.toList();
     var item = habits.firstWhere((element) => element.key == habitModel.dbKey);
     item.isDeleted = habitModel.isDeleted ?? false;
@@ -41,6 +41,7 @@ class Database {
     item.id = habitModel.id;
     item.color = habitModel.color;
     item.save();
+    return true;
   }
 
   Future<void> deleteAllHabits() async {
