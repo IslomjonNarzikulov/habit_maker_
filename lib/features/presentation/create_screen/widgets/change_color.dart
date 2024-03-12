@@ -24,7 +24,7 @@ Widget changingColor(CreateProvider createProvider){
                     createProvider.selectColor(index);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(10.5),
                     child: CircleAvatar(
                       radius: 16,
                       backgroundColor: colorList[index],

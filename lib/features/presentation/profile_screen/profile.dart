@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:habit_maker/features/presentation/profile_screen/profile_provider.dart';
+import 'package:habit_maker/features/presentation/profile_screen/widgets_profile/information.dart';
 import 'package:habit_maker/features/presentation/profile_screen/widgets_profile/tprofile_widget.dart';
+import 'package:habit_maker/features/presentation/profile_screen/widgets_profile/user_management.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -55,19 +57,25 @@ class ProfileScreen extends StatelessWidget {
                               context.push('/home/settings');
                             }),
                         ProfileMenuWidget(
-                            title: "Billing Details",
-                            icon: LineAwesomeIcons.wallet,
-                            onPress: () {}),
-                        ProfileMenuWidget(
                             title: "User Management",
                             icon: LineAwesomeIcons.user_check,
-                            onPress: () {}),
+                            onPress: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UserInfoScreen()));
+                            }),
                         const Divider(),
                         const SizedBox(height: 10),
                         ProfileMenuWidget(
                             title: "Information",
                             icon: LineAwesomeIcons.info,
-                            onPress: () {}),
+                            onPress: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => InfoScreen()));
+                            }),
                       ],
                     )
                   : Container(
@@ -84,7 +92,8 @@ class ProfileScreen extends StatelessWidget {
                           ),
                           const Gap(15),
                           const Text('User',
-                              style: TextStyle(fontSize:24,color: Colors.black)),
+                              style:
+                                  TextStyle(fontSize: 24, color: Colors.black)),
                           Gap(12),
                           const Divider(),
                           const SizedBox(height: 10),
@@ -95,19 +104,27 @@ class ProfileScreen extends StatelessWidget {
                                 context.push('/home/settings');
                               }),
                           ProfileMenuWidget(
-                              title: "Billing Details",
-                              icon: LineAwesomeIcons.wallet,
-                              onPress: () {}),
-                          ProfileMenuWidget(
                               title: "User Management",
                               icon: LineAwesomeIcons.user_check,
-                              onPress: () {}),
+                              onPress: () {
+                                const snackBar = SnackBar(
+                                  content: Text('You should login first'),
+                                  duration: Duration(seconds: 4),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }),
                           const Divider(),
                           const SizedBox(height: 10),
                           ProfileMenuWidget(
                               title: "Information",
                               icon: LineAwesomeIcons.info,
-                              onPress: () {}),
+                              onPress: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => InfoScreen()));
+                              }),
                         ],
                       ),
                     )),

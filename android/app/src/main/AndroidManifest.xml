@@ -7,7 +7,7 @@
 
 
     <application
-        android:label="habit_maker"
+        android:label="Habitus"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

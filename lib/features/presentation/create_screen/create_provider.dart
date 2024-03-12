@@ -23,7 +23,9 @@ class CreateProvider extends BaseProvider {
     selectedColorIndex = index;
     notifyListeners();
   }
+void saveInfo(HabitModel habitModel)async{
 
+}
   void createHabit(HabitModel habitModel) async {
     await habitRepository.createHabits(habitModel, isDailySelected);
     await loadHabits();

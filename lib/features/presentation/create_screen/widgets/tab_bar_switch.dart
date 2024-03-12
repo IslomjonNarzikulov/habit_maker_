@@ -29,7 +29,7 @@ Widget tabBarSwitch(
                           provider.changeButtonColors(index, repetition);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.5),
                           child: CircleAvatar(
                             backgroundColor: item.isSelected == true
                                 ? Colors.amberAccent

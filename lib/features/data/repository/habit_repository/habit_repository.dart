@@ -167,4 +167,7 @@ class HabitRepository extends HabitRepositoryApi {
       await database.deleteHabit(model);
     });
   }
+
+  Future<void> saveInfo()async{
+  }
 }
